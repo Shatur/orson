@@ -3,8 +3,6 @@
 
 #include "package.h"
 
-#include "alpm.h"
-
 #include <QStringList>
 
 class PackageManager

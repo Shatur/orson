@@ -18,11 +18,6 @@ PackageManager::PackageManager()
     }
 }
 
-PackageManager::~PackageManager()
-{
-
-}
-
 alpm_errno_t PackageManager::error() const
 {
     return m_error;
@@ -43,8 +38,21 @@ void PackageManager::loadPackages(alpm_handle_t *handle, const char *databaseNam
         Package package;
         package.setName(alpm_pkg_get_name(packageData));
         package.setVersion(alpm_pkg_get_version(packageData));
-        package.setRepo(databaseName);
+        package.setDescription(alpm_pkg_get_desc(packageData));
+        package.setArch(alpm_pkg_get_arch(packageData));
+        package.setUrl(alpm_pkg_get_url(packageData));
         package.setSize(alpm_pkg_get_size(packageData));
+        package.setReason(alpm_pkg_get_reason(packageData));
+        package.setHasScript(alpm_pkg_has_scriptlet(packageData));
+        package.setPackager(alpm_pkg_get_packager(packageData));
+        package.setRepo(databaseName);
+
+        // Licenses
+        const alpm_list_t *licensesList = alpm_pkg_get_licenses(packageData);
+        while (licensesList != nullptr) {
+            package.addLicense(static_cast<const char*>(licensesList->data));
+            licensesList = licensesList->next;
+        }
 
         // Check if package exists in local (installed) packages
         if (alpm_db_get_pkg(localDatabase, alpm_pkg_get_name(packageData)) != nullptr)

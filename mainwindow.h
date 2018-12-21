@@ -4,6 +4,7 @@
 #include "packagemanager.h"
 
 #include <QMainWindow>
+#include <QTreeWidgetItem>
 
 namespace Ui {
 class MainWindow;
@@ -20,8 +21,10 @@ public:
 private slots:
     void on_searchEdit_textEdited(const QString &text);
 
+    void on_packagesTreeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
+
 private:
-    PackageManager alpm;
+    PackageManager packageManager;
 
     Ui::MainWindow *ui;
 };
