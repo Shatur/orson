@@ -37,11 +37,8 @@ void PackageManager::loadPackages(const char *databaseName)
     alpm_list_t *packageCache = alpm_db_get_pkgcache(remoteDatabase);
     for (int i = 0; packageCache != nullptr; ++i) {
         alpm_pkg_t *packageData = static_cast<alpm_pkg_t *>(packageCache->data);
-        Package package(packageData);
-
-        // Check if package exists in local database
-        if (alpm_db_get_pkg(localDatabase, alpm_pkg_get_name(packageData)) != nullptr)
-            package.setInstalled(true);
+        alpm_pkg_t *localPackageData = alpm_db_get_pkg(localDatabase, alpm_pkg_get_name(packageData));
+        Package package(packageData, localPackageData);
 
         m_packages.append(package);
         packageCache = packageCache->next;

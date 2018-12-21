@@ -10,7 +10,7 @@
 class Package
 {
 public:
-    explicit Package(alpm_pkg_t *packageData);
+    Package(alpm_pkg_t *syncPackageData, alpm_pkg_t *localPackageData);
 
     QString name() const;
     QString repo() const;
@@ -31,10 +31,9 @@ public:
     void setInstalled(bool installed);
 
 private:
-    alpm_pkg_t *m_packageData;
-    QString m_repo;
-
-    bool m_isInstalled = false;
+    alpm_pkg_t *m_syncPackageData;
+    alpm_pkg_t *m_localPackageData;
+    bool m_isInstalled;
 
 };
 

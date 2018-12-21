@@ -68,7 +68,6 @@ void MainWindow::on_packagesTreeWidget_currentItemChanged(QTreeWidgetItem *curre
     ui->sizeLabel->setText(QString::number(package->size()));
     ui->packagerLabel->setText(package->packager());
     ui->buildDateLabel->setText(package->buildDate().toString("ddd dd MMM yyyy HH:mm:ss"));
-    ui->installDateLabel->setText(package->installDate().toString("ddd dd MMM yyyy HH:mm:ss"));
 
     // Licenses
     QString licenses = package->licenses().at(0);
@@ -76,7 +75,7 @@ void MainWindow::on_packagesTreeWidget_currentItemChanged(QTreeWidgetItem *curre
         licenses.append(", " + package->licenses().at(i));
     ui->licensesLabel->setText(licenses);
 
-    // Licenses
+    // Groups
     if (!package->groups().isEmpty()) {
         QString groups = package->groups().at(0);
         for (int i = 1; i < package->groups().size(); ++i)
@@ -86,16 +85,26 @@ void MainWindow::on_packagesTreeWidget_currentItemChanged(QTreeWidgetItem *curre
         ui->groupslabel->setText(tr("No"));
     }
 
-    // Reason
-    if (package->reason() == ALPM_PKG_REASON_EXPLICIT)
-        ui->reasonLabel->setText("Installed explicitly");
-    else
-        ui->reasonLabel->setText("Installed as dependency");
+    // Install-specific info
+    if(package->isInstalled()) {
+        // Build date
+        ui->installDateLabel->setText(package->installDate().toString("ddd dd MMM yyyy HH:mm:ss"));
 
-    // Install script
-    if (package->hasScript())
-        ui->scriptLabel->setText(tr("Yes"));
-    else
-        ui->scriptLabel->setText(tr("No"));
+        // Reason
+        if (package->reason() == ALPM_PKG_REASON_EXPLICIT)
+            ui->reasonLabel->setText("Installed explicitly");
+        else
+            ui->reasonLabel->setText("Installed as dependency");
+
+        // Install script
+        if (package->hasScript())
+            ui->scriptLabel->setText(tr("Yes"));
+        else
+            ui->scriptLabel->setText(tr("No"));
+    } else {
+        ui->installDateLabel->setText("-");
+        ui->reasonLabel->setText("-");
+        ui->scriptLabel->setText("-");
+    }
 
 }
