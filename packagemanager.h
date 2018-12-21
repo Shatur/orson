@@ -9,13 +9,15 @@ class PackageManager
 {
 public:
     PackageManager();
+    ~PackageManager();
 
     alpm_errno_t error() const;
     QList<Package> packages() const;
 
 private:
-    void loadPackages(alpm_handle_t *handle, const char *databaseName);
+    void loadPackages(const char *databaseName);
 
+    alpm_handle_t *m_handle;
     alpm_errno_t m_error = ALPM_ERR_OK;
     QList<Package> m_packages;
 };

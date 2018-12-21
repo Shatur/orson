@@ -1,150 +1,77 @@
 #include "package.h"
 
-Package::Package()
+Package::Package(alpm_pkg_t *packageData) :
+    m_packageData(packageData)
 {
 }
 
 QString Package::name() const
 {
-    return m_name;
-}
-
-void Package::setName(const QString &name)
-{
-    m_name = name;
+    return alpm_pkg_get_name(m_packageData);
 }
 
 QString Package::repo() const
 {
-    return m_repo;
-}
-
-void Package::setRepo(const QString &repo)
-{
-    m_repo = repo;
+    return alpm_db_get_name(alpm_pkg_get_db(m_packageData));
 }
 
 QString Package::version() const
 {
-    return m_version;
-}
-
-void Package::setVersion(const QString &version)
-{
-    m_version = version;
+    return alpm_pkg_get_version(m_packageData);
 }
 
 QString Package::description() const
 {
-    return m_description;
-}
-
-void Package::setDescription(const QString &description)
-{
-    m_description = description;
+    return alpm_pkg_get_desc(m_packageData);
 }
 
 QString Package::arch() const
 {
-    return m_arch;
-}
-
-void Package::setArch(const QString &arch)
-{
-    m_arch = arch;
+    return alpm_pkg_get_arch(m_packageData);
 }
 
 QString Package::url() const
 {
-    return m_url;
-}
-
-void Package::setUrl(const QString &url)
-{
-    m_url = url;
-}
-
-QStringList Package::licenses() const
-{
-    return m_licenses;
-}
-
-void Package::addLicense(const QString &license)
-{
-    m_licenses.append(license);
-}
-
-void Package::setLicenses(const QStringList &licenses)
-{
-    m_licenses = licenses;
+    return alpm_pkg_get_url(m_packageData);
 }
 
 QString Package::packager() const
 {
-    return m_packager;
+    return alpm_pkg_get_packager(m_packageData);
 }
 
-void Package::setPackager(const QString &packager)
+QStringList Package::licenses() const
 {
-    m_packager = packager;
-}
-
-QString Package::groups() const
-{
-    return m_groups;
-}
-
-void Package::setGroups(const QString &groups)
-{
-    m_groups = groups;
-}
-
-QString Package::provides() const
-{
-    return m_provides;
-}
-
-void Package::setProvides(const QString &provides)
-{
-    m_provides = provides;
+    QStringList licenses;
+    alpm_list_t *licensesList = alpm_pkg_get_licenses(m_packageData);
+    while (licensesList != nullptr) {
+        licenses.append(static_cast<const char*>(licensesList->data));
+        licensesList = licensesList->next;
+    }
+    return licenses;
 }
 
 alpm_pkgreason_t Package::reason() const
 {
-    return m_reason;
-}
-
-void Package::setReason(alpm_pkgreason_t reason)
-{
-    m_reason = reason;
-}
-
-long Package::size() const
-{
-    return m_size;
-}
-
-void Package::setSize(long size)
-{
-    m_size = size;
-}
-
-bool Package::installed() const
-{
-    return m_installed;
-}
-
-void Package::setInstalled(bool installed)
-{
-    m_installed = installed;
+    return alpm_pkg_get_reason(m_packageData);
 }
 
 bool Package::hasScript() const
 {
-    return m_hasScript;
+    return alpm_pkg_has_scriptlet(m_packageData);
 }
 
-void Package::setHasScript(bool hasScript)
+long Package::size() const
 {
-    m_hasScript = hasScript;
+    return alpm_pkg_get_size(m_packageData);
+}
+
+bool Package::isInstalled() const
+{
+    return m_isInstalled;
+}
+
+void Package::setInstalled(bool installed)
+{
+    m_isInstalled = installed;
 }

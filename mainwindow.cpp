@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
         item->setText(2, package->version());
         item->setText(3, QString::number(package->size()));
         item->setText(4, package->repo());
-        if (package->installed())
+        if (package->isInstalled())
             item->setText(0, tr("Installed"));
 
         ui->packagesTreeWidget->addTopLevelItem(item);
