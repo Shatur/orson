@@ -67,12 +67,24 @@ void MainWindow::on_packagesTreeWidget_currentItemChanged(QTreeWidgetItem *curre
     ui->urlLabel->setText("<a href=\"" + package->url() + "\">" + package->url() + "</a>");
     ui->sizeLabel->setText(QString::number(package->size()));
     ui->packagerLabel->setText(package->packager());
+    ui->buildDateLabel->setText(package->buildDate().toString("ddd dd MMM yyyy HH:mm:ss"));
+    ui->installDateLabel->setText(package->installDate().toString("ddd dd MMM yyyy HH:mm:ss"));
 
     // Licenses
     QString licenses = package->licenses().at(0);
     for (int i = 1; i < package->licenses().size(); ++i)
         licenses.append(", " + package->licenses().at(i));
     ui->licensesLabel->setText(licenses);
+
+    // Licenses
+    if (!package->groups().isEmpty()) {
+        QString groups = package->groups().at(0);
+        for (int i = 1; i < package->groups().size(); ++i)
+            groups.append(", " + package->groups().at(i));
+        ui->groupslabel->setText(groups);
+    } else {
+        ui->groupslabel->setText(tr("No"));
+    }
 
     // Reason
     if (package->reason() == ALPM_PKG_REASON_EXPLICIT)
@@ -82,8 +94,8 @@ void MainWindow::on_packagesTreeWidget_currentItemChanged(QTreeWidgetItem *curre
 
     // Install script
     if (package->hasScript())
-        ui->scriptLabel->setText("Yes");
+        ui->scriptLabel->setText(tr("Yes"));
     else
-        ui->scriptLabel->setText("No");
+        ui->scriptLabel->setText(tr("No"));
 
 }

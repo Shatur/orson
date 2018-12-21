@@ -51,6 +51,27 @@ QStringList Package::licenses() const
     return licenses;
 }
 
+QStringList Package::groups() const
+{
+    QStringList groups;
+    alpm_list_t *groupsList = alpm_pkg_get_groups(m_packageData);
+    while (groupsList != nullptr) {
+        groups.append(static_cast<const char*>(groupsList->data));
+        groupsList = groupsList->next;
+    }
+    return groups;
+}
+
+QDateTime Package::buildDate() const
+{
+    return QDateTime::fromSecsSinceEpoch(alpm_pkg_get_builddate(m_packageData));
+}
+
+QDateTime Package::installDate() const
+{
+    return QDateTime::fromSecsSinceEpoch(alpm_pkg_get_installdate(m_packageData));
+}
+
 alpm_pkgreason_t Package::reason() const
 {
     return alpm_pkg_get_reason(m_packageData);

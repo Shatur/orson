@@ -4,12 +4,13 @@
 #include "alpm.h"
 
 #include <QString>
+#include <QDateTime>
 #include <QUrl>
 
 class Package
 {
 public:
-    Package(alpm_pkg_t *packageData);
+    explicit Package(alpm_pkg_t *packageData);
 
     QString name() const;
     QString repo() const;
@@ -19,6 +20,9 @@ public:
     QString url() const;
     QString packager() const;
     QStringList licenses() const;
+    QStringList groups() const;
+    QDateTime buildDate() const;
+    QDateTime installDate() const;
     alpm_pkgreason_t reason() const;
     bool hasScript() const;
     long size() const;
