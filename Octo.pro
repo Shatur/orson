@@ -25,24 +25,25 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++1z
 
 SOURCES += \
-        main.cpp \
-        mainwindow.cpp \
-    package.cpp \
-    packagemanager.cpp \
-    filestreewidget.cpp
+        src/main.cpp \
+        src/mainwindow.cpp \
+        src/package.cpp \
+        src/packagemanager.cpp \
+        src/filestreewidget.cpp
 
 HEADERS += \
-        mainwindow.h \
-    package.h \
-    packagemanager.h \
-    filestreewidget.h
+        src/mainwindow.h \
+        src/package.h \
+        src/packagemanager.h \
+        src/filestreewidget.h
 
 FORMS += \
-        mainwindow.ui
+        src/mainwindow.ui
 
 LIBS += -lalpm
 
 # Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
+bin.path = /usr/bin
+bin.files = $${TARGET}
+
+INSTALLS += bin

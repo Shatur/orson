@@ -353,7 +353,7 @@
   <customwidget>
    <class>FilesTreeWidget</class>
    <extends>QTreeWidget</extends>
-   <header>filestreewidget.h</header>
+   <header>src/filestreewidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
