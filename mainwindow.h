@@ -5,6 +5,7 @@
 
 #include <QMainWindow>
 #include <QTreeWidgetItem>
+#include <QFileSystemModel>
 
 namespace Ui {
 class MainWindow;

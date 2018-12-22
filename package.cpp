@@ -67,6 +67,15 @@ QStringList Package::groups() const
     return groups;
 }
 
+QStringList Package::files() const
+{
+    QStringList files;
+    alpm_filelist_t *filesList = alpm_pkg_get_files(m_localPackageData);
+    for (unsigned i = 0; i < filesList->count; ++i)
+        files.append(filesList->files[i].name);
+    return files;
+}
+
 QDateTime Package::buildDate() const
 {
     return QDateTime::fromSecsSinceEpoch(alpm_pkg_get_builddate(m_syncPackageData));

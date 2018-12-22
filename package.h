@@ -21,6 +21,7 @@ public:
     QString packager() const;
     QStringList licenses() const;
     QStringList groups() const;
+    QStringList files() const;
     QDateTime buildDate() const;
     QDateTime installDate() const;
     alpm_pkgreason_t reason() const;

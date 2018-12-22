@@ -28,12 +28,14 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     package.cpp \
-    packagemanager.cpp
+    packagemanager.cpp \
+    filestreewidget.cpp
 
 HEADERS += \
         mainwindow.h \
     package.h \
-    packagemanager.h
+    packagemanager.h \
+    filestreewidget.h
 
 FORMS += \
         mainwindow.ui

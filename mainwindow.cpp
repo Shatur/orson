@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->packagesTreeWidget->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
+    // Load packages list
     for (int i = 0; i < packageManager.packages().size(); ++i) {
         const Package *package = &packageManager.packages().at(i);
         auto item = new QTreeWidgetItem;
@@ -101,10 +102,15 @@ void MainWindow::on_packagesTreeWidget_currentItemChanged(QTreeWidgetItem *curre
             ui->scriptLabel->setText(tr("Yes"));
         else
             ui->scriptLabel->setText(tr("No"));
+
+        // Files
+        ui->filesTreeWidget->clear();
+        foreach (const QString &path, package->files())
+            ui->filesTreeWidget->addPath(path);
+        ui->filesTreeWidget->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
     } else {
         ui->installDateLabel->setText("-");
         ui->reasonLabel->setText("-");
         ui->scriptLabel->setText("-");
     }
-
 }
