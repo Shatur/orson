@@ -87,7 +87,7 @@ void MainWindow::on_packagesTreeWidget_currentItemChanged(QTreeWidgetItem *curre
     }
 
     // Install-specific info
-    if(package->isInstalled()) {
+    if (package->isInstalled()) {
         // Build date
         ui->installDateLabel->setText(package->installDate().toString("ddd dd MMM yyyy HH:mm:ss"));
 

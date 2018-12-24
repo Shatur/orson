@@ -340,7 +340,99 @@
        <attribute name="title">
         <string>Dependencies</string>
        </attribute>
-       <layout class="QFormLayout" name="formLayout_2"/>
+       <layout class="QFormLayout" name="formLayout_2">
+        <item row="0" column="0">
+         <widget class="QLabel" name="providesTitleLabel">
+          <property name="styleSheet">
+           <string notr="true">font-weight: bold;</string>
+          </property>
+          <property name="text">
+           <string>Provides:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <layout class="QHBoxLayout" name="providesLayout"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="dependsTitleLabel">
+          <property name="styleSheet">
+           <string notr="true">font-weight: bold;</string>
+          </property>
+          <property name="text">
+           <string>Depends:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <layout class="QVBoxLayout" name="dependsLayout"/>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="optdependsTitleLabel">
+          <property name="styleSheet">
+           <string notr="true">font-weight: bold;</string>
+          </property>
+          <property name="text">
+           <string>Optdepends:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <layout class="QVBoxLayout" name="optdependsLayout"/>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="checkdependsTitleLabel">
+          <property name="styleSheet">
+           <string notr="true">font-weight: bold;</string>
+          </property>
+          <property name="text">
+           <string>Checkdepends:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <layout class="QVBoxLayout" name="checkdependsLayout"/>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="makedependsTitleLabel">
+          <property name="styleSheet">
+           <string notr="true">font-weight: bold;</string>
+          </property>
+          <property name="text">
+           <string>Makedepends:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <layout class="QVBoxLayout" name="makedependsLayout"/>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="conflictsTitleLabel">
+          <property name="styleSheet">
+           <string notr="true">font-weight: bold;</string>
+          </property>
+          <property name="text">
+           <string>Conflicts:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <layout class="QVBoxLayout" name="conflictsLayout"/>
+        </item>
+        <item row="6" column="0">
+         <widget class="QLabel" name="replacesTitleLabel">
+          <property name="styleSheet">
+           <string notr="true">font-weight: bold;</string>
+          </property>
+          <property name="text">
+           <string>Replaces:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <layout class="QVBoxLayout" name="replacesLayout"/>
+        </item>
+       </layout>
       </widget>
       <widget class="QWidget" name="filesTab">
        <attribute name="title">

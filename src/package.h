@@ -22,6 +22,13 @@ public:
     QStringList licenses() const;
     QStringList groups() const;
     QStringList files() const;
+    QList<alpm_depend_t*> provides() const;
+    QList<alpm_depend_t*> depends() const;
+    QList<alpm_depend_t*> optdepends() const;
+    QList<alpm_depend_t*> checkdepends() const;
+    QList<alpm_depend_t*> makedepends() const;
+    QList<alpm_depend_t*> conflicts() const;
+    QList<alpm_depend_t*> replaces() const;
     QDateTime buildDate() const;
     QDateTime installDate() const;
     alpm_pkgreason_t reason() const;
@@ -30,6 +37,8 @@ public:
 
     bool isInstalled() const;
     void setInstalled(bool installed);
+
+    static QString depmodString(alpm_depmod_t mod);
 
 private:
     alpm_pkg_t *m_syncPackageData;
