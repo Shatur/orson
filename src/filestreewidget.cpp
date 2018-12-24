@@ -16,12 +16,12 @@ void FilesTreeWidget::addPath(const QString &path)
     const QStringList pathParts = path.split("/", QString::SkipEmptyParts);
     QTreeWidgetItem *lastFound = invisibleRootItem();
 
-    for (int i = 0; i < pathParts.size(); ++i) {
+    for (int partIndex = 0; partIndex < pathParts.size(); ++partIndex) {
         // Search item in tree
         bool found = false;
-        for (int j = 0; j < lastFound->childCount(); ++j) {
-            QTreeWidgetItem *child = lastFound->child(j);
-            if (child->text(0) == pathParts.at(i)) {
+        for (int i = 0; i < lastFound->childCount(); ++i) {
+            QTreeWidgetItem *child = lastFound->child(i);
+            if (child->text(0) == pathParts.at(partIndex)) {
                 lastFound = child;
                 found = true;
                 break;
@@ -32,15 +32,20 @@ void FilesTreeWidget::addPath(const QString &path)
         if (!found) {
             // Get item path
             QString itemPath;
-            for (int j = 0; j <= i; ++j)
-                itemPath.append("/" + pathParts.at(j));
+            for (int i = 0; i <= partIndex; ++i)
+                itemPath.append("/" + pathParts.at(i));
 
             const QFileInfo itemInfo(itemPath);
             QTreeWidgetItem *item = new QTreeWidgetItem;
 
             // Set information
-            item->setText(0, pathParts.at(i));
-            if (itemInfo.isFile()) {
+            item->setText(0, pathParts.at(partIndex));
+            if (!itemInfo.exists()) {
+                item->setText(2, tr("Missing"));
+                item->setIcon(0, QIcon::fromTheme("dialog-error"));
+                for (int column = 0; column < item->columnCount(); ++column)
+                    item->setBackgroundColor(column, QColor(255, 0, 0, 127));
+            } else if (itemInfo.isFile()) {
                 // Set icon
                 const QMimeDatabase mimeDatabase;
                 const QMimeType type = mimeDatabase.mimeTypeForFile(itemInfo);
