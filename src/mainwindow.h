@@ -22,8 +22,14 @@ public:
 private slots:
     void on_searchEdit_textEdited(const QString &text);
     void on_packagesTreeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
+    void on_packageTabsWidget_currentChanged(int index);
 
 private:
+    // Package info tabs
+    void loadPackageInfo(const Package *package);
+    void loadPackageDeps(const Package *package);
+    void loadPackageFiles(const Package *package);
+
     Ui::MainWindow *ui;
     PackageManager packageManager;
 };

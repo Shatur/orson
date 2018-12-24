@@ -122,11 +122,14 @@
      </layout>
     </item>
     <item>
-     <widget class="QTabWidget" name="tabWidget">
+     <widget class="QTabWidget" name="packageTabsWidget">
       <property name="currentIndex">
        <number>1</number>
       </property>
       <widget class="QWidget" name="infoTab">
+       <property name="loaded" stdset="0">
+        <bool>false</bool>
+       </property>
        <attribute name="title">
         <string>Info</string>
        </attribute>
@@ -336,7 +339,10 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="dependenciesTab">
+      <widget class="QWidget" name="depsTab">
+       <property name="loaded" stdset="0">
+        <bool>false</bool>
+       </property>
        <attribute name="title">
         <string>Dependencies</string>
        </attribute>
@@ -435,6 +441,9 @@
        </layout>
       </widget>
       <widget class="QWidget" name="filesTab">
+       <property name="loaded" stdset="0">
+        <bool>false</bool>
+       </property>
        <attribute name="title">
         <string>Files</string>
        </attribute>

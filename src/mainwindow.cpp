@@ -28,6 +28,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
         ui->packagesTreeWidget->addTopLevelItem(item);
     }
+
+    // Select first item
+    ui->packagesTreeWidget->setCurrentItem(ui->packagesTreeWidget->topLevelItem(0));
 }
 
 MainWindow::~MainWindow()
@@ -50,20 +53,66 @@ void MainWindow::on_searchEdit_textEdited(const QString &text)
 void MainWindow::on_packagesTreeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
 {
     Q_UNUSED(previous)
-    const int index = current->data(0, Qt::UserRole).toInt();
-    const Package *package = &packageManager.packages().at(index);
+    const int packageIndex = current->data(0, Qt::UserRole).toInt();
+    const Package *package = &packageManager.packages().at(packageIndex);
 
-    // Icon
+    // Reset loaded tabs information
+    ui->infoTab->setProperty("loaded", false);
+    ui->depsTab->setProperty("loaded", false);
+    ui->filesTab->setProperty("loaded", false);
+
+    // Load package info header
     QIcon icon;
     if (QIcon::hasThemeIcon(package->name()))
         icon = QIcon::fromTheme(package->name());
     else
         icon = QIcon::fromTheme("package-x-generic");
     ui->iconLabel->setPixmap(icon.pixmap(64, 64));
-
-    // General info
     ui->nameLabel->setText(package->name() + " " + package->version());
     ui->descriptionLabel->setText(package->description());
+
+    // Load only opened tab
+    switch (ui->packageTabsWidget->currentIndex()) {
+    case 0:
+        loadPackageInfo(package);
+        return;
+    case 1:
+        loadPackageDeps(package);
+        return;
+    case 2:
+        loadPackageFiles(package);
+        return;
+    default:
+        return;
+    }
+}
+
+void MainWindow::on_packageTabsWidget_currentChanged(int index)
+{
+    const int packageIndex = ui->packagesTreeWidget->currentItem()->data(0, Qt::UserRole).toInt();
+    const Package *package = &packageManager.packages().at(packageIndex);
+
+    switch (index) {
+    case 0:
+        if (!ui->infoTab->property("loaded").toBool())
+            loadPackageInfo(package);
+        return;
+    case 1:
+        if (!ui->depsTab->property("loaded").toBool())
+            loadPackageDeps(package);
+        return;
+    case 2:
+        if (!ui->filesTab->property("loaded").toBool())
+            loadPackageFiles(package);
+        return;
+    default:
+        return;
+    }
+}
+
+void MainWindow::loadPackageInfo(const Package *package)
+{
+    // General info
     ui->archLabel->setText(package->arch());
     ui->urlLabel->setText("<a href=\"" + package->url() + "\">" + package->url() + "</a>");
     ui->sizeLabel->setText(QString::number(package->size()));
@@ -102,15 +151,31 @@ void MainWindow::on_packagesTreeWidget_currentItemChanged(QTreeWidgetItem *curre
             ui->scriptLabel->setText(tr("Yes"));
         else
             ui->scriptLabel->setText(tr("No"));
-
-        // Files
-        ui->filesTreeWidget->clear();
-        foreach (const QString &path, package->files())
-            ui->filesTreeWidget->addPath(path);
-        ui->filesTreeWidget->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
     } else {
         ui->installDateLabel->setText("-");
         ui->reasonLabel->setText("-");
         ui->scriptLabel->setText("-");
     }
+
+    ui->infoTab->setProperty("loaded", true);
+}
+
+void MainWindow::loadPackageDeps(const Package *package)
+{
+    Q_UNUSED(package); // Not implemented
+
+    ui->depsTab->setProperty("loaded", true);
+}
+
+void MainWindow::loadPackageFiles(const Package *package)
+{
+    if (!package->isInstalled())
+        return;
+
+    ui->filesTreeWidget->clear();
+    foreach (const QString &path, package->files())
+        ui->filesTreeWidget->addPath(path);
+    ui->filesTreeWidget->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+
+    ui->filesTab->setProperty("loaded", true);
 }
