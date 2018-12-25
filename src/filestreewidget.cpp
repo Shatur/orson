@@ -36,7 +36,7 @@ void FilesTreeWidget::addPath(const QString &path)
                 itemPath.append("/" + pathParts.at(i));
 
             const QFileInfo itemInfo(itemPath);
-            QTreeWidgetItem *item = new QTreeWidgetItem;
+            auto *item = new QTreeWidgetItem;
 
             // Set information
             item->setText(0, pathParts.at(partIndex));
@@ -81,5 +81,5 @@ void FilesTreeWidget::addPath(const QString &path)
 
 void FilesTreeWidget::open(QTreeWidgetItem *item)
 {
-    QDesktopServices::openUrl(item->data(0, Qt::UserRole).value<QUrl>());
+    QDesktopServices::openUrl(item->data(0, Qt::UserRole).toUrl());
 }
