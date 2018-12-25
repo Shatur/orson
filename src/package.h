@@ -23,12 +23,12 @@ public:
     QStringList groups() const;
     QStringList files() const;
     QList<alpm_depend_t*> provides() const;
+    QList<alpm_depend_t*> replaces() const;
+    QList<alpm_depend_t*> conflicts() const;
     QList<alpm_depend_t*> depends() const;
     QList<alpm_depend_t*> optdepends() const;
     QList<alpm_depend_t*> checkdepends() const;
     QList<alpm_depend_t*> makedepends() const;
-    QList<alpm_depend_t*> conflicts() const;
-    QList<alpm_depend_t*> replaces() const;
     QDateTime buildDate() const;
     QDateTime installDate() const;
     alpm_pkgreason_t reason() const;

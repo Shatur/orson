@@ -5,7 +5,8 @@
 
 #include <QMainWindow>
 #include <QTreeWidgetItem>
-#include <QFileSystemModel>
+#include <QVBoxLayout>
+#include <QLabel>
 
 namespace Ui {
 class MainWindow;
@@ -29,6 +30,8 @@ private:
     void loadPackageInfo(const Package *package);
     void loadPackageDeps(const Package *package);
     void loadPackageFiles(const Package *package);
+
+    void loadDepsButtons(int row, const QList<alpm_depend_t*> &items);
 
     Ui::MainWindow *ui;
     PackageManager packageManager;

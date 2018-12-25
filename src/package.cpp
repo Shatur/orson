@@ -79,7 +79,7 @@ QStringList Package::files() const
 QList<alpm_depend_t*> Package::provides() const
 {
     QList<alpm_depend_t*> provides;
-    alpm_list_t *providesList = alpm_pkg_get_provides(m_localPackageData);
+    alpm_list_t *providesList = alpm_pkg_get_provides(m_syncPackageData);
     while (providesList != nullptr) {
         provides.push_back(static_cast<alpm_depend_t*>(providesList->data));
         providesList = providesList->next;
@@ -87,10 +87,32 @@ QList<alpm_depend_t*> Package::provides() const
     return provides;
 }
 
+QList<alpm_depend_t *> Package::replaces() const
+{
+    QList<alpm_depend_t*> replaces;
+    alpm_list_t *replacesList = alpm_pkg_get_replaces(m_syncPackageData);
+    while (replacesList != nullptr) {
+        replaces.push_back(static_cast<alpm_depend_t*>(replacesList->data));
+        replacesList = replacesList->next;
+    }
+    return replaces;
+}
+
+QList<alpm_depend_t *> Package::conflicts() const
+{
+    QList<alpm_depend_t*> conflicts;
+    alpm_list_t *conflictsList = alpm_pkg_get_conflicts(m_syncPackageData);
+    while (conflictsList != nullptr) {
+        conflicts.push_back(static_cast<alpm_depend_t*>(conflictsList->data));
+        conflictsList = conflictsList->next;
+    }
+    return conflicts;
+}
+
 QList<alpm_depend_t *> Package::depends() const
 {
     QList<alpm_depend_t*> depends;
-    alpm_list_t *dependsList = alpm_pkg_get_provides(m_localPackageData);
+    alpm_list_t *dependsList = alpm_pkg_get_depends(m_syncPackageData);
     while (dependsList != nullptr) {
         depends.push_back(static_cast<alpm_depend_t*>(dependsList->data));
         dependsList = dependsList->next;
@@ -101,7 +123,7 @@ QList<alpm_depend_t *> Package::depends() const
 QList<alpm_depend_t *> Package::optdepends() const
 {
     QList<alpm_depend_t*> optdepends;
-    alpm_list_t *optdependsList = alpm_pkg_get_provides(m_localPackageData);
+    alpm_list_t *optdependsList = alpm_pkg_get_optdepends(m_syncPackageData);
     while (optdependsList != nullptr) {
         optdepends.push_back(static_cast<alpm_depend_t*>(optdependsList->data));
         optdependsList = optdependsList->next;
@@ -112,7 +134,7 @@ QList<alpm_depend_t *> Package::optdepends() const
 QList<alpm_depend_t *> Package::checkdepends() const
 {
     QList<alpm_depend_t*> checkdepends;
-    alpm_list_t *checkdependsList = alpm_pkg_get_provides(m_localPackageData);
+    alpm_list_t *checkdependsList = alpm_pkg_get_checkdepends(m_syncPackageData);
     while (checkdependsList != nullptr) {
         checkdepends.push_back(static_cast<alpm_depend_t*>(checkdependsList->data));
         checkdependsList = checkdependsList->next;
@@ -123,34 +145,12 @@ QList<alpm_depend_t *> Package::checkdepends() const
 QList<alpm_depend_t *> Package::makedepends() const
 {
     QList<alpm_depend_t*> makedepends;
-    alpm_list_t *makedependsList = alpm_pkg_get_provides(m_localPackageData);
+    alpm_list_t *makedependsList = alpm_pkg_get_makedepends(m_syncPackageData);
     while (makedependsList != nullptr) {
         makedepends.push_back(static_cast<alpm_depend_t*>(makedependsList->data));
         makedependsList = makedependsList->next;
     }
     return makedepends;
-}
-
-QList<alpm_depend_t *> Package::conflicts() const
-{
-    QList<alpm_depend_t*> conflicts;
-    alpm_list_t *conflictsList = alpm_pkg_get_provides(m_localPackageData);
-    while (conflictsList != nullptr) {
-        conflicts.push_back(static_cast<alpm_depend_t*>(conflictsList->data));
-        conflictsList = conflictsList->next;
-    }
-    return conflicts;
-}
-
-QList<alpm_depend_t *> Package::replaces() const
-{
-    QList<alpm_depend_t*> replaces;
-    alpm_list_t *replacesList = alpm_pkg_get_provides(m_localPackageData);
-    while (replacesList != nullptr) {
-        replaces.push_back(static_cast<alpm_depend_t*>(replacesList->data));
-        replacesList = replacesList->next;
-    }
-    return replaces;
 }
 
 QDateTime Package::buildDate() const
@@ -203,6 +203,6 @@ QString Package::depmodString(alpm_depmod_t mod)
     case ALPM_DEP_MOD_LT:
         return " < ";
     default:
-        return " ";
+        return "";
     }
 }

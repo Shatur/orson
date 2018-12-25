@@ -5,7 +5,7 @@
 #include "alpm_list.h"
 
 #include <QDebug>
-#include <QCheckBox>
+#include <QPushButton>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -162,7 +162,13 @@ void MainWindow::loadPackageInfo(const Package *package)
 
 void MainWindow::loadPackageDeps(const Package *package)
 {
-    Q_UNUSED(package); // Not implemented
+    loadDepsButtons(0, package->provides());
+    loadDepsButtons(1, package->replaces());
+    loadDepsButtons(2, package->conflicts());
+    loadDepsButtons(3, package->depends());
+    loadDepsButtons(4, package->optdepends());
+    loadDepsButtons(5, package->checkdepends());
+    loadDepsButtons(6, package->makedepends());
 
     ui->depsTab->setProperty("loaded", true);
 }
@@ -178,4 +184,37 @@ void MainWindow::loadPackageFiles(const Package *package)
     ui->filesTreeWidget->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     ui->filesTab->setProperty("loaded", true);
+}
+
+void MainWindow::loadDepsButtons(int row, const QList<alpm_depend_t *> &items)
+{
+    auto depsContentLayout = dynamic_cast<QFormLayout*>(ui->depsContentWidget->layout());
+    auto packagesLabel = dynamic_cast<QLabel*>(depsContentLayout->itemAt(row, QFormLayout::LabelRole)->widget());
+    auto packagesLayout = dynamic_cast<QVBoxLayout*>(depsContentLayout->itemAt(row, QFormLayout::FieldRole)->layout());
+
+    // Remove old items
+    while (QLayoutItem *child = packagesLayout->takeAt(0)) {
+        delete child->widget();
+        delete child;
+    }
+
+    // Hide label if no dependencies
+    if (items.isEmpty()) {
+        packagesLabel->hide();
+        return;
+    }
+
+    // Add new
+    foreach (alpm_depend_t *item, items) {
+        auto button = new QPushButton;
+        button->setFlat(true);
+        button->setStyleSheet("padding: 6px");
+        button->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+        if (item->desc == nullptr)
+            button->setText(item->name + Package::depmodString(item->mod) + item->version);
+        else
+            button->setText(item->name + Package::depmodString(item->mod) + item->version + QString(": ") + item->desc);
+        packagesLayout->addWidget(button);
+    }
+    packagesLabel->show();
 }
