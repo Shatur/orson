@@ -12,7 +12,8 @@ public:
     ~PackageManager();
 
     alpm_errno_t error() const;
-    QList<Package> packages() const;
+    const QList<Package> &packages() const;
+    const Package &package(int index) const;
 
 private:
     void loadPackages(const char *databaseName);

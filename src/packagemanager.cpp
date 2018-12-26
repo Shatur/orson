@@ -45,7 +45,12 @@ void PackageManager::loadPackages(const char *databaseName)
     }
 }
 
-QList<Package> PackageManager::packages() const
+const QList<Package> &PackageManager::packages() const
 {
     return m_packages;
+}
+
+const Package &PackageManager::package(int index) const
+{
+    return m_packages.at(index);
 }

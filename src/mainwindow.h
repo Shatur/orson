@@ -29,9 +29,9 @@ private slots:
 
 private:
     // Package info tabs
-    void loadPackageInfo(const Package *package);
-    void loadPackageDeps(const Package *package);
-    void loadPackageFiles(const Package *package);
+    void loadPackageInfo(const Package &package);
+    void loadPackageDeps(const Package &package);
+    void loadPackageFiles(const Package &package);
 
     void loadDepsButtons(int row, const QList<alpm_depend_t*> &items);
 

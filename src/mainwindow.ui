@@ -156,7 +156,7 @@
        <attribute name="title">
         <string>Info</string>
        </attribute>
-       <layout class="QFormLayout" name="formLayout">
+       <layout class="QFormLayout" name="infoTabLayout">
         <item row="0" column="0">
          <widget class="QLabel" name="archTitleLabel">
           <property name="styleSheet">
@@ -369,7 +369,7 @@
        <attribute name="title">
         <string>Dependencies</string>
        </attribute>
-       <layout class="QVBoxLayout" name="depsLayout">
+       <layout class="QVBoxLayout" name="depsTabLayout">
         <item>
          <widget class="QScrollArea" name="depsScrollArea">
           <property name="widgetResizable">
@@ -529,7 +529,7 @@
        <attribute name="title">
         <string>Files</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <layout class="QVBoxLayout" name="filesTabLayout">
         <item>
          <widget class="FilesTreeWidget" name="filesTreeWidget">
           <column>
