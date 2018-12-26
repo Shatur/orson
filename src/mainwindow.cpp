@@ -38,7 +38,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_searchEdit_textEdited(const QString &text)
+void MainWindow::on_searchEdit_textChanged(const QString &text)
 {
     QTreeWidgetItemIterator it(ui->packagesTreeWidget);
     while (*it) {
@@ -107,6 +107,40 @@ void MainWindow::on_packageTabsWidget_currentChanged(int index)
         return;
     default:
         return;
+    }
+}
+
+void MainWindow::selectPackage()
+{
+    auto button = qobject_cast<QPushButton*>(sender());
+    ui->packagesTreeWidget->clearSelection();
+    ui->searchEdit->clear();
+
+    // Search by text
+    QTreeWidgetItemIterator it(ui->packagesTreeWidget);
+    while (*it) {
+        QTreeWidgetItem *item = *it;
+        if (item->text(1) == button->toolTip()) {
+            ui->packagesTreeWidget->setCurrentItem(item);
+            ui->packagesTreeWidget->scrollToItem(item);
+            return;
+        }
+        ++it;
+    }
+
+    // Search by providing
+    it = QTreeWidgetItemIterator(ui->packagesTreeWidget);
+    while (*it) {
+        QTreeWidgetItem *item = *it;
+        int packageIndex = item->data(0, Qt::UserRole).toInt();
+        foreach (const alpm_depend_t *package, packageManager.packages().at(packageIndex).provides()) {
+            if (package->name == button->toolTip()) {
+                ui->packagesTreeWidget->setCurrentItem(item);
+                ui->packagesTreeWidget->scrollToItem(item);
+                return;
+            }
+        }
+        ++it;
     }
 }
 
@@ -210,10 +244,12 @@ void MainWindow::loadDepsButtons(int row, const QList<alpm_depend_t *> &items)
         button->setFlat(true);
         button->setStyleSheet("padding: 6px");
         button->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+        button->setToolTip(item->name);
         if (item->desc == nullptr)
             button->setText(item->name + Package::depmodString(item->mod) + item->version);
         else
             button->setText(item->name + Package::depmodString(item->mod) + item->version + QString(": ") + item->desc);
+        connect(button, &QPushButton::clicked, this, &MainWindow::selectPackage);
         packagesLayout->addWidget(button);
     }
     packagesLabel->show();
