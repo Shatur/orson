@@ -40,14 +40,43 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_searchEdit_textChanged(const QString &text)
 {
+    constexpr int NAME_DESCRIPTION_INDEX = 0;
+    constexpr int NAME_INDEX = 1;
+    constexpr int DESCRIPTION_INDEX = 2;
+
     QTreeWidgetItemIterator it(ui->packagesTreeWidget);
-    while (*it) {
-        QTreeWidgetItem *item = *it;
-        if (!item->text(1).contains(text))
-            item->setHidden(true);
-        else
-            item->setHidden(false);
-        ++it;
+    switch (ui->searchComboBox->currentIndex()) {
+    case NAME_DESCRIPTION_INDEX:
+        while (*it) {
+            QTreeWidgetItem *item = *it;
+            const int packageIndex = item->data(0, Qt::UserRole).toInt();
+            if (item->text(1).contains(text) || packageManager.packages().at(packageIndex).description().contains(text))
+                item->setHidden(false);
+            else
+                item->setHidden(true);
+            ++it;
+        }
+        break;
+    case NAME_INDEX:
+        while (*it) {
+            QTreeWidgetItem *item = *it;
+            if (item->text(1).contains(text))
+                item->setHidden(false);
+            else
+                item->setHidden(true);
+            ++it;
+        }
+        break;
+    case DESCRIPTION_INDEX:
+        while (*it) {
+            QTreeWidgetItem *item = *it;
+            const int packageIndex = item->data(0, Qt::UserRole).toInt();
+            if (packageManager.packages().at(packageIndex).description().contains(text))
+                item->setHidden(false);
+            else
+                item->setHidden(true);
+            ++it;
+        }
     }
 }
 void MainWindow::on_packagesTreeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
