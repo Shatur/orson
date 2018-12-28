@@ -180,22 +180,14 @@ void MainWindow::loadPackageInfo(const Package &package)
     ui->urlLabel->setText("<a href=\"" + package.url() + "\">" + package.url() + "</a>");
     ui->packagerLabel->setText(package.packager());
     ui->buildDateLabel->setText(package.buildDate().toString("ddd dd MMM yyyy HH:mm:ss"));
-
-    // Licenses
-    QString licenses = package.licenses().at(0);
-    for (int i = 1; i < package.licenses().size(); ++i)
-        licenses.append(", " + package.licenses().at(i));
-    ui->licensesLabel->setText(licenses);
+    ui->licensesLabel->setText(package.licenses().join(", "));
 
     // Groups
-    if (!package.groups().isEmpty()) {
-        QString groups = package.groups().at(0);
-        for (int i = 1; i < package.groups().size(); ++i)
-            groups.append(", " + package.groups().at(i));
-        ui->groupslabel->setText(groups);
-    } else {
+    const QStringList groups = package.groups();
+    if (!groups.isEmpty())
+        ui->groupslabel->setText(groups.join(", "));
+    else
         ui->groupslabel->setText(tr("No"));
-    }
 
     // Install-specific info
     if (package.isInstalled()) {
@@ -204,9 +196,9 @@ void MainWindow::loadPackageInfo(const Package &package)
 
         // Reason
         if (package.reason() == ALPM_PKG_REASON_EXPLICIT)
-            ui->reasonLabel->setText("Installed explicitly");
+            ui->reasonLabel->setText(tr("Installed explicitly"));
         else
-            ui->reasonLabel->setText("Installed as dependency");
+            ui->reasonLabel->setText(tr("Installed as dependency"));
 
         // Install script
         if (package.hasScript())

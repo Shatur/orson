@@ -1,5 +1,5 @@
 #include "package.h"
-
+#include <QDebug>
 Package::Package()
 {
 }
@@ -25,6 +25,7 @@ QString Package::name() const
 
 QString Package::repo() const
 {
+    // Load from sync repo first
     if (m_syncData == nullptr)
         return alpm_db_get_name(alpm_pkg_get_db(m_localData));
     return alpm_db_get_name(alpm_pkg_get_db(m_syncData));
@@ -71,7 +72,8 @@ QStringList Package::licenses() const
     alpm_list_t *licensesList;
     if (m_localData == nullptr)
         licensesList = alpm_pkg_get_licenses(m_syncData);
-    licensesList = alpm_pkg_get_licenses(m_localData);
+    else
+        licensesList = alpm_pkg_get_licenses(m_localData);
 
     while (licensesList != nullptr) {
         licenses.append(static_cast<const char*>(licensesList->data));
@@ -87,7 +89,8 @@ QStringList Package::groups() const
     alpm_list_t *groupsList;
     if (m_localData == nullptr)
         groupsList = alpm_pkg_get_groups(m_syncData);
-    groupsList = alpm_pkg_get_groups(m_localData);
+    else
+        groupsList = alpm_pkg_get_groups(m_localData);
 
     while (groupsList != nullptr) {
         groups.append(static_cast<const char*>(groupsList->data));
@@ -103,7 +106,8 @@ QStringList Package::files() const
     alpm_filelist_t *filesList;
     if (m_localData == nullptr)
         filesList = alpm_pkg_get_files(m_syncData);
-    filesList = alpm_pkg_get_files(m_localData);
+    else
+        filesList = alpm_pkg_get_files(m_localData);
 
     for (unsigned i = 0; i < filesList->count; ++i)
         files.append(filesList->files[i].name);
@@ -117,7 +121,8 @@ QList<alpm_depend_t*> Package::provides() const
     alpm_list_t *providesList;
     if (m_localData == nullptr)
         providesList = alpm_pkg_get_provides(m_syncData);
-    providesList = alpm_pkg_get_provides(m_localData);
+    else
+        providesList = alpm_pkg_get_provides(m_localData);
 
     while (providesList != nullptr) {
         provides.push_back(static_cast<alpm_depend_t*>(providesList->data));
@@ -133,7 +138,8 @@ QList<alpm_depend_t *> Package::replaces() const
     alpm_list_t *replacesList;
     if (m_localData == nullptr)
         replacesList = alpm_pkg_get_replaces(m_syncData);
-    replacesList = alpm_pkg_get_replaces(m_localData);
+    else
+        replacesList = alpm_pkg_get_replaces(m_localData);
 
     while (replacesList != nullptr) {
         replaces.push_back(static_cast<alpm_depend_t*>(replacesList->data));
@@ -149,7 +155,8 @@ QList<alpm_depend_t *> Package::conflicts() const
     alpm_list_t *conflictsList;
     if (m_localData == nullptr)
         conflictsList = alpm_pkg_get_conflicts(m_syncData);
-    conflictsList = alpm_pkg_get_conflicts(m_localData);
+    else
+        conflictsList = alpm_pkg_get_conflicts(m_localData);
 
     while (conflictsList != nullptr) {
         conflicts.push_back(static_cast<alpm_depend_t*>(conflictsList->data));
@@ -165,7 +172,8 @@ QList<alpm_depend_t *> Package::depends() const
     alpm_list_t *dependsList;
     if (m_localData == nullptr)
         dependsList = alpm_pkg_get_depends(m_syncData);
-    dependsList = alpm_pkg_get_depends(m_localData);
+    else
+        dependsList = alpm_pkg_get_depends(m_localData);
 
     while (dependsList != nullptr) {
         depends.push_back(static_cast<alpm_depend_t*>(dependsList->data));
@@ -181,7 +189,8 @@ QList<alpm_depend_t *> Package::optdepends() const
     alpm_list_t *optdependsList;
     if (m_localData == nullptr)
         optdependsList = alpm_pkg_get_optdepends(m_syncData);
-    optdependsList = alpm_pkg_get_optdepends(m_localData);
+    else
+        optdependsList = alpm_pkg_get_optdepends(m_localData);
 
     while (optdependsList != nullptr) {
         optdepends.push_back(static_cast<alpm_depend_t*>(optdependsList->data));
@@ -242,9 +251,10 @@ long Package::downloadSize() const
     return alpm_pkg_get_size(m_syncData);
 }
 
-// Can be obtained only from local data
 long Package::installedSize() const
 {
+    if (m_localData == nullptr)
+        return alpm_pkg_get_isize(m_syncData);
     return alpm_pkg_get_isize(m_localData);
 }
 
