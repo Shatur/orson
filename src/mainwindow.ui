@@ -257,6 +257,16 @@
          </widget>
         </item>
         <item row="5" column="0">
+         <widget class="QLabel" name="installedSizeTitleLabel">
+          <property name="styleSheet">
+           <string notr="true">font-weight: bold;</string>
+          </property>
+          <property name="text">
+           <string>Installed size:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0">
          <widget class="QLabel" name="packagerTitleLabel">
           <property name="styleSheet">
            <string notr="true">font-weight: bold;</string>
@@ -266,7 +276,7 @@
           </property>
          </widget>
         </item>
-        <item row="5" column="1">
+        <item row="6" column="1">
          <widget class="QLabel" name="packagerLabel">
           <property name="text">
            <string/>
@@ -276,7 +286,7 @@
           </property>
          </widget>
         </item>
-        <item row="6" column="0">
+        <item row="7" column="0">
          <widget class="QLabel" name="buildDateTitleLabel">
           <property name="styleSheet">
            <string notr="true">font-weight: bold;</string>
@@ -286,7 +296,7 @@
           </property>
          </widget>
         </item>
-        <item row="6" column="1">
+        <item row="7" column="1">
          <widget class="QLabel" name="buildDateLabel">
           <property name="text">
            <string/>
@@ -296,7 +306,7 @@
           </property>
          </widget>
         </item>
-        <item row="7" column="0">
+        <item row="8" column="0">
          <widget class="QLabel" name="installDateTitleLabel">
           <property name="styleSheet">
            <string notr="true">font-weight: bold;</string>
@@ -306,7 +316,7 @@
           </property>
          </widget>
         </item>
-        <item row="7" column="1">
+        <item row="8" column="1">
          <widget class="QLabel" name="installDateLabel">
           <property name="text">
            <string/>
@@ -316,7 +326,7 @@
           </property>
          </widget>
         </item>
-        <item row="8" column="0">
+        <item row="9" column="0">
          <widget class="QLabel" name="reasonTitleLabel">
           <property name="styleSheet">
            <string notr="true">font-weight: bold;</string>
@@ -326,7 +336,7 @@
           </property>
          </widget>
         </item>
-        <item row="8" column="1">
+        <item row="9" column="1">
          <widget class="QLabel" name="reasonLabel">
           <property name="text">
            <string/>
@@ -336,7 +346,7 @@
           </property>
          </widget>
         </item>
-        <item row="9" column="0">
+        <item row="10" column="0">
          <widget class="QLabel" name="scriptTitleLabel">
           <property name="styleSheet">
            <string notr="true">font-weight: bold;</string>
@@ -346,13 +356,20 @@
           </property>
          </widget>
         </item>
-        <item row="9" column="1">
+        <item row="10" column="1">
          <widget class="QLabel" name="scriptLabel">
           <property name="text">
            <string/>
           </property>
           <property name="textInteractionFlags">
            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QLabel" name="installedSizeLabel">
+          <property name="text">
+           <string/>
           </property>
          </widget>
         </item>
@@ -377,7 +394,7 @@
              <x>0</x>
              <y>0</y>
              <width>707</width>
-             <height>231</height>
+             <height>255</height>
             </rect>
            </property>
            <layout class="QFormLayout" name="depsContentLayout">

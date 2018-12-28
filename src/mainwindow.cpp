@@ -199,8 +199,8 @@ void MainWindow::loadPackageInfo(const Package &package)
 
     // Install-specific info
     if (package.isInstalled()) {
-        // Build date
         ui->installDateLabel->setText(package.installDate().toString("ddd dd MMM yyyy HH:mm:ss"));
+        ui->installedSizeLabel->setText(QString::number(package.installedSize()));
 
         // Reason
         if (package.reason() == ALPM_PKG_REASON_EXPLICIT)
@@ -221,6 +221,7 @@ void MainWindow::loadPackageInfo(const Package &package)
             ui->downloadSizeLabel->setText(QString::number(package.downloadSize()));
     } else {
         ui->installDateLabel->setText("-");
+        ui->installedSizeLabel->setText("-");
         ui->reasonLabel->setText("-");
         ui->scriptLabel->setText("-");
     }
