@@ -100,6 +100,14 @@ void MainWindow::on_packagesTreeWidget_currentItemChanged(QTreeWidgetItem *curre
     ui->nameLabel->setText(package.name() + " " + package.version());
     ui->descriptionLabel->setText(package.description());
 
+    // Disable the tab with files for uninstalled packages
+    if (!package.isInstalled()) {
+        ui->packageTabsWidget->setTabEnabled(2, false);
+        ui->packageTabsWidget->setCurrentIndex(0);
+    } else {
+        ui->packageTabsWidget->setTabEnabled(2, true);
+    }
+
     // Load only opened tab
     switch (ui->packageTabsWidget->currentIndex()) {
     case 0:
