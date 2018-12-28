@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
         item->setData(0, Qt::UserRole, i);
         item->setText(1, package.name());
         item->setText(2, package.version());
-        item->setText(3, QString::number(package.size()));
+        item->setText(3, QString::number(package.downloadSize()));
         item->setText(4, package.repo());
         if (package.isInstalled())
             item->setText(0, tr("Installed"));
@@ -178,7 +178,6 @@ void MainWindow::loadPackageInfo(const Package &package)
     // General info
     ui->archLabel->setText(package.arch());
     ui->urlLabel->setText("<a href=\"" + package.url() + "\">" + package.url() + "</a>");
-    ui->sizeLabel->setText(QString::number(package.size()));
     ui->packagerLabel->setText(package.packager());
     ui->buildDateLabel->setText(package.buildDate().toString("ddd dd MMM yyyy HH:mm:ss"));
 
@@ -214,6 +213,12 @@ void MainWindow::loadPackageInfo(const Package &package)
             ui->scriptLabel->setText(tr("Yes"));
         else
             ui->scriptLabel->setText(tr("No"));
+
+        // Do not show download size for local package
+        if (package.repo() == "local")
+            ui->downloadSizeLabel->setText("-");
+        else
+            ui->downloadSizeLabel->setText(QString::number(package.downloadSize()));
     } else {
         ui->installDateLabel->setText("-");
         ui->reasonLabel->setText("-");

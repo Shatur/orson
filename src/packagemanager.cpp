@@ -8,11 +8,39 @@ PackageManager::PackageManager()
 {
     m_handle = alpm_initialize("/", "/var/lib/pacman", &m_error);
 
-    if (m_error == ALPM_ERR_OK) {
-        loadPackages("core");
-        loadPackages("extra");
-        loadPackages("community");
-        loadPackages("multilib");
+    if (m_error != ALPM_ERR_OK)
+        return;
+
+    // Load sync packages
+    loadPackages("core");
+    loadPackages("extra");
+    loadPackages("community");
+    loadPackages("multilib");
+
+    // Load local packages
+    alpm_db_t *database = alpm_get_localdb(m_handle);
+    alpm_list_t *cache = alpm_db_get_pkgcache(database);
+    while (cache != nullptr) {
+        auto *packageData = static_cast<alpm_pkg_t *>(cache->data);
+        bool found = false;
+
+        // Search package with the same name first (to add installation information for an existing package)
+        for (Package &package : m_packages) {
+            if (package.name() == alpm_pkg_get_name(packageData)) {
+                package.setLocalData(packageData);
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            // Add local package
+            Package package;
+            package.setLocalData(packageData);
+            m_packages.append(package);
+        }
+
+        cache = cache->next;
     }
 }
 
@@ -28,20 +56,17 @@ alpm_errno_t PackageManager::error() const
 
 void PackageManager::loadPackages(const char *databaseName)
 {
-    alpm_db_t *remoteDatabase = alpm_register_syncdb(m_handle, databaseName, 0);
-    if (remoteDatabase == nullptr)
+    alpm_db_t *database = alpm_register_syncdb(m_handle, databaseName, 0);
+    if (database == nullptr)
         return;
 
-    alpm_db_t *localDatabase = alpm_get_localdb(m_handle);
-
-    alpm_list_t *packageCache = alpm_db_get_pkgcache(remoteDatabase);
-    for (int i = 0; packageCache != nullptr; ++i) {
-        auto *packageData = static_cast<alpm_pkg_t *>(packageCache->data);
-        alpm_pkg_t *localPackageData = alpm_db_get_pkg(localDatabase, alpm_pkg_get_name(packageData));
-        Package package(packageData, localPackageData);
-
+    alpm_list_t *cache = alpm_db_get_pkgcache(database);
+    while (cache != nullptr) {
+        auto *packageData = static_cast<alpm_pkg_t *>(cache->data);
+        Package package;
+        package.setSyncData(packageData);
         m_packages.append(package);
-        packageCache = packageCache->next;
+        cache = cache->next;
     }
 }
 

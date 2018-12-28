@@ -10,7 +10,9 @@
 class Package
 {
 public:
-    Package(alpm_pkg_t *syncPackageData, alpm_pkg_t *localPackageData);
+    Package();
+    void setSyncData(alpm_pkg_t *data);
+    void setLocalData(alpm_pkg_t *data);
 
     QString name() const;
     QString repo() const;
@@ -32,18 +34,17 @@ public:
     QDateTime buildDate() const;
     QDateTime installDate() const;
     alpm_pkgreason_t reason() const;
+    long downloadSize() const;
+    long installedSize() const;
     bool hasScript() const;
-    long size() const;
-
     bool isInstalled() const;
-    void setInstalled(bool installed);
 
     static QString depmodString(alpm_depmod_t mod);
 
 private:
-    alpm_pkg_t *m_syncPackageData;
-    alpm_pkg_t *m_localPackageData;
-    bool m_isInstalled;
+    alpm_pkg_t *m_syncData = nullptr;
+    alpm_pkg_t *m_localData = nullptr;
+    bool m_isInstalled = false;
 
 };
 
