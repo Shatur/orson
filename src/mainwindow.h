@@ -2,11 +2,13 @@
 #define MAINWINDOW_H
 
 #include "packagemanager.h"
+#include "files-view/filesystemmodel.h"
 
 #include <QMainWindow>
 #include <QTreeWidgetItem>
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QMenu>
 
 namespace Ui {
 class MainWindow;
@@ -37,6 +39,8 @@ private:
 
     Ui::MainWindow *ui;
     PackageManager packageManager;
+    FileSystemModel filesModel;
+    QMenu menu;
 };
 
 #endif // MAINWINDOW_H

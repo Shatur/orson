@@ -16,13 +16,17 @@ SOURCES += \
         src/mainwindow.cpp \
         src/package.cpp \
         src/packagemanager.cpp \
-        src/filestreewidget.cpp
+        src/files-view/filesystemmodel.cpp \
+        src/files-view/filesystemitem.cpp \
+        src/files-view/filestreeview.cpp
 
 HEADERS += \
         src/mainwindow.h \
         src/package.h \
         src/packagemanager.h \
-        src/filestreewidget.h
+        src/files-view/filesystemmodel.h \
+        src/files-view/filesystemitem.h \
+        src/files-view/filestreeview.h
 
 FORMS += \
         src/mainwindow.ui

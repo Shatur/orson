@@ -13,6 +13,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->packagesTreeWidget->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    ui->treeView->setModel(&filesModel);
+    ui->treeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     // Load packages list
     for (int i = 0; i < packageManager.packages().size(); ++i) {
@@ -29,8 +31,11 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->packagesTreeWidget->addTopLevelItem(item);
     }
 
-    // Select first item
+    // Select first package
     ui->packagesTreeWidget->setCurrentItem(ui->packagesTreeWidget->topLevelItem(0));
+
+    // Files context menu
+//    connect(ui->treeView, &QTreeView::customContextMenuRequested, [])
 }
 
 MainWindow::~MainWindow()
@@ -247,11 +252,7 @@ void MainWindow::loadPackageFiles(const Package &package)
     if (!package.isInstalled())
         return;
 
-    ui->filesTreeWidget->clear();
-    foreach (const QString &path, package.files())
-        ui->filesTreeWidget->addPath(path);
-    ui->filesTreeWidget->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
-
+    filesModel.setPaths(package.files());
     ui->filesTab->setProperty("loaded", true);
 }
 
