@@ -1,14 +1,26 @@
 #include "filestreewidget.h"
 
+#include <QMimeData>
+#include <QGuiApplication>
 #include <QFileInfo>
 #include <QMimeDatabase>
 #include <QDesktopServices>
+#include <QContextMenuEvent>
 #include <QUrl>
+#include <QClipboard>
 
 FilesTreeWidget::FilesTreeWidget(QWidget *parent) :
     QTreeWidget(parent)
 {
+    // Double-click to open files
     connect(this, &FilesTreeWidget::itemDoubleClicked, this, &FilesTreeWidget::open);
+
+    // Setup context menu
+    menu.addAction(QIcon::fromTheme("document-open"), tr("Open"), this, &FilesTreeWidget::open);
+    menu.addAction(QIcon::fromTheme("folder"), tr("Open if file manager"), this, &FilesTreeWidget::openInFileManager);
+    menu.addAction(QIcon::fromTheme("edit-copy"), tr("Copy"), this, &FilesTreeWidget::copyFile);
+    menu.addAction(QIcon::fromTheme("edit-copy"), tr("Copy name"), this, &FilesTreeWidget::copyName);
+    menu.addAction(QIcon::fromTheme("edit-copy"), tr("Copy path"), this, &FilesTreeWidget::copyPath);
 }
 
 void FilesTreeWidget::addPath(const QString &path)
@@ -79,7 +91,49 @@ void FilesTreeWidget::addPath(const QString &path)
     }
 }
 
-void FilesTreeWidget::open(QTreeWidgetItem *item)
+void FilesTreeWidget::open()
 {
+    QTreeWidgetItem *item = currentItem();
     QDesktopServices::openUrl(item->data(0, Qt::UserRole).toUrl());
+}
+
+void FilesTreeWidget::openInFileManager()
+{
+    QTreeWidgetItem *item = currentItem();
+    QDesktopServices::openUrl(item->parent()->data(0, Qt::UserRole).toUrl());
+}
+
+void FilesTreeWidget::copyFile()
+{
+    QTreeWidgetItem *item = currentItem();
+    QMimeData* mimeData = new QMimeData();
+    mimeData->setUrls({QUrl::fromLocalFile(item->data(0, Qt::UserRole).toString())});
+
+    QGuiApplication::clipboard()->setMimeData(mimeData);
+}
+
+void FilesTreeWidget::copyName()
+{
+    QTreeWidgetItem *item = currentItem();
+    QGuiApplication::clipboard()->setText(item->text(0));
+}
+
+void FilesTreeWidget::copyPath()
+{
+    QTreeWidgetItem *item = currentItem();
+    QGuiApplication::clipboard()->setText(item->data(0, Qt::UserRole).toString());
+}
+
+void FilesTreeWidget::contextMenuEvent(QContextMenuEvent *event)
+{
+    QTreeWidgetItem *item = itemAt(event->pos());
+    if (item != nullptr) {
+        // Hide "Copy" for folders
+        if (item->icon(0).name() == "folder")
+            menu.actions().at(2)->setEnabled(false);
+        else
+            menu.actions().at(2)->setEnabled(true);
+
+        menu.exec(event->globalPos());
+    }
 }

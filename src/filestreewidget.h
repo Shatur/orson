@@ -2,6 +2,7 @@
 #define FILESTREEWIDGET_H
 
 #include <QTreeWidget>
+#include <QMenu>
 
 class FilesTreeWidget : public QTreeWidget
 {
@@ -11,7 +12,17 @@ public:
     void addPath(const QString &path);
 
 private slots:
-    void open(QTreeWidgetItem *item);
+    // Context menu actions
+    void open();
+    void openInFileManager();
+    void copyFile();
+    void copyName();
+    void copyPath();
+
+private:
+    void contextMenuEvent(QContextMenuEvent *event) override;
+
+    QMenu menu{this};
 };
 
 #endif // FILESTREEWIDGET_H
