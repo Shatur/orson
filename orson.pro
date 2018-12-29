@@ -29,8 +29,18 @@ FORMS += \
 
 LIBS += -lalpm
 
-# Default rules for deployment.
+# Default rules for deployment
 bin.path = /usr/bin
 bin.files = $${TARGET}
-
 INSTALLS += bin
+
+# Check with PVS Studio
+#CONFIG += pvs
+CONFIG(pvs) {
+    pvs_studio.target = $${TARGET}
+    pvs_studio.sources = $${SOURCES}
+    pvs_studio.output = true
+    pvs_studio.cfg_text = "analysis-mode = 0"
+
+    include(src/third-party/pvs-studio/PVS-Studio.pri)
+}

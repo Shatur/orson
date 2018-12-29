@@ -1,0 +1,3 @@
+[submodule "src/third-party/pvs-studio"]
+	path = src/third-party/pvs-studio
+	url = https://github.com/viva64/pvs-studio-qmake-examples.git
