@@ -200,32 +200,6 @@ QList<alpm_depend_t *> Package::optdepends() const
     return optdepends;
 }
 
-QList<alpm_depend_t *> Package::checkdepends() const
-{
-    QList<alpm_depend_t*> checkdepends;
-    alpm_list_t *checkdependsList = alpm_pkg_get_checkdepends(m_syncData);
-
-    while (checkdependsList != nullptr) {
-        checkdepends.push_back(static_cast<alpm_depend_t*>(checkdependsList->data));
-        checkdependsList = checkdependsList->next;
-    }
-
-    return checkdepends;
-}
-
-QList<alpm_depend_t *> Package::makedepends() const
-{
-    QList<alpm_depend_t*> makedepends;
-    alpm_list_t *makedependsList = alpm_pkg_get_makedepends(m_syncData);
-
-    while (makedependsList != nullptr) {
-        makedepends.push_back(static_cast<alpm_depend_t*>(makedependsList->data));
-        makedependsList = makedependsList->next;
-    }
-
-    return makedepends;
-}
-
 QDateTime Package::buildDate() const
 {
     if (m_localData == nullptr)

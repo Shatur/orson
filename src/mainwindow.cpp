@@ -238,8 +238,6 @@ void MainWindow::loadPackageDeps(const Package &package)
     loadDepsButtons(2, package.conflicts());
     loadDepsButtons(3, package.depends());
     loadDepsButtons(4, package.optdepends());
-    loadDepsButtons(5, package.checkdepends());
-    loadDepsButtons(6, package.makedepends());
 
     ui->depsTab->setProperty("loaded", true);
 }
