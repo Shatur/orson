@@ -5,17 +5,18 @@
 
 FileSystemItem::FileSystemItem()
 {
+    m_parent = nullptr;
     m_nameColumn = "Name";
     m_sizeColumn = "Size";
     m_typeColumn = "Type";
     m_info.setFile("/");
 }
 
-FileSystemItem::FileSystemItem(const QString &path) :
+FileSystemItem::FileSystemItem(const QString &path, FileSystemItem *parent) :
     m_info(path)
 {
     m_nameColumn = m_info.fileName();
-    if (!m_info.exists()) {
+    if (!m_info.exists() && parent->isReadable()) {
         m_icon = QIcon::fromTheme("dialog-error");
         m_typeColumn = "Missing";
         m_backgroundColor = {255, 0, 0, 127};
@@ -28,13 +29,13 @@ FileSystemItem::FileSystemItem(const QString &path) :
         else
             m_icon = QIcon::fromTheme("lock");
 
-       m_sizeColumn = QString::number(m_info.size());
-       m_typeColumn = type.name();
+        m_sizeColumn = QString::number(m_info.size());
+        m_typeColumn = type.name();
     } else if (m_info.isDir()) {
         if (m_info.isReadable())
             m_icon = QIcon::fromTheme("folder");
         else
-           m_icon = QIcon::fromTheme("lock");
+            m_icon = QIcon::fromTheme("lock");
 
         m_typeColumn = "Folder";
     } else {
@@ -42,17 +43,19 @@ FileSystemItem::FileSystemItem(const QString &path) :
         m_typeColumn = "No access";
         m_icon = QIcon::fromTheme("lock");
     }
+
+    parent->addChild(this);
 }
 
 FileSystemItem::~FileSystemItem()
 {
-    removeChildren();
+    qDeleteAll(m_children);
 }
 
 int FileSystemItem::row() const
 {
-    if (m_parentItem)
-        return m_parentItem->m_childItems.indexOf(const_cast<FileSystemItem*>(this));
+    if (m_parent)
+        return m_parent->m_children.indexOf(const_cast<FileSystemItem*>(this));
 
     return 0;
 }
@@ -73,34 +76,34 @@ const QString &FileSystemItem::text(int column) const
 
 FileSystemItem *FileSystemItem::child(int row)
 {
-    return m_childItems.value(row);
+    return m_children.value(row);
 }
 
 void FileSystemItem::addChild(FileSystemItem *item)
 {
     item->setParent(this);
-    m_childItems.append(item);
+    m_children.append(item);
 }
 
 void FileSystemItem::removeChildren()
 {
-    qDeleteAll(m_childItems);
-    m_childItems.clear();
+    qDeleteAll(m_children);
+    m_children.clear();
 }
 
 int FileSystemItem::childCount() const
 {
-    return m_childItems.count();
+    return m_children.count();
 }
 
 FileSystemItem *FileSystemItem::parent() const
 {
-    return m_parentItem;
+    return m_parent;
 }
 
 void FileSystemItem::setParent(FileSystemItem *parentItem)
 {
-    m_parentItem = parentItem;
+    m_parent = parentItem;
 }
 
 const QString &FileSystemItem::name() const
@@ -110,7 +113,7 @@ const QString &FileSystemItem::name() const
 
 const QIcon &FileSystemItem::icon() const
 {
-   return m_icon;
+    return m_icon;
 }
 
 const QColor &FileSystemItem::backgroundColor() const
@@ -126,4 +129,9 @@ QString FileSystemItem::path() const
 bool FileSystemItem::isFile() const
 {
     return m_info.isFile();
+}
+
+bool FileSystemItem::isReadable() const
+{
+    return m_info.isReadable();
 }

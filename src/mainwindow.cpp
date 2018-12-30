@@ -33,9 +33,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Select first package
     ui->packagesTreeWidget->setCurrentItem(ui->packagesTreeWidget->topLevelItem(0));
-
-    // Files context menu
-//    connect(ui->treeView, &QTreeView::customContextMenuRequested, [])
 }
 
 MainWindow::~MainWindow()

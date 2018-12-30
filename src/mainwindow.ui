@@ -143,7 +143,7 @@
     <item>
      <widget class="QTabWidget" name="packageTabsWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="infoTab">
        <property name="loaded" stdset="0">

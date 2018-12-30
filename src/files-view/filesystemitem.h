@@ -10,7 +10,7 @@ class FileSystemItem
 {
 public:
     FileSystemItem();
-    FileSystemItem(const QString &path);
+    FileSystemItem(const QString &path, FileSystemItem *parent);
     ~FileSystemItem();
 
     // Model-specific functions
@@ -31,10 +31,11 @@ public:
     const QColor &backgroundColor() const;
     QString path() const;
     bool isFile() const;
+    bool isReadable() const;
 
 private:
-    FileSystemItem *m_parentItem;
-    QList<FileSystemItem*> m_childItems;
+    FileSystemItem *m_parent;
+    QList<FileSystemItem*> m_children;
 
     QString m_nameColumn;
     QString m_sizeColumn;

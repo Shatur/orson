@@ -64,8 +64,7 @@ Qt::ItemFlags FileSystemModel::flags(const QModelIndex &index) const
     return QAbstractItemModel::flags(index);
 }
 
-QVariant FileSystemModel::headerData(int section, Qt::Orientation orientation,
-                               int role) const
+QVariant FileSystemModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
         return rootItem->text(section);
@@ -136,15 +135,14 @@ void FileSystemModel::addPath(const QStringList &path)
             }
         }
 
-        // Add new item
+        // Add a new item
         if (!found) {
             // Get item path
             QString itemPath;
             for (int i = 0; i <= partIndex; ++i)
                 itemPath.append("/" + path.at(i));
 
-            auto *item = new FileSystemItem(itemPath);
-            lastFound->addChild(item);
+            auto *item = new FileSystemItem(itemPath, lastFound);
             lastFound = item;
         }
     }
