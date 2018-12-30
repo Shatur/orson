@@ -1,5 +1,5 @@
 #include "package.h"
-#include <QDebug>
+
 Package::Package()
 {
 }

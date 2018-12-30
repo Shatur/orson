@@ -60,7 +60,7 @@ int FileSystemItem::row() const
     return 0;
 }
 
-const QString &FileSystemItem::text(int column) const
+QString FileSystemItem::text(int column) const
 {
     switch (column) {
     case 0:
@@ -106,17 +106,17 @@ void FileSystemItem::setParent(FileSystemItem *parentItem)
     m_parent = parentItem;
 }
 
-const QString &FileSystemItem::name() const
+QString FileSystemItem::name() const
 {
     return m_nameColumn;
 }
 
-const QIcon &FileSystemItem::icon() const
+QIcon FileSystemItem::icon() const
 {
     return m_icon;
 }
 
-const QColor &FileSystemItem::backgroundColor() const
+QColor FileSystemItem::backgroundColor() const
 {
     return m_backgroundColor;
 }

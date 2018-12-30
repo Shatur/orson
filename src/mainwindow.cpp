@@ -1,10 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include "alpm.h"
-#include "alpm_list.h"
-
-#include <QDebug>
 #include <QPushButton>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -15,6 +11,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->packagesTreeWidget->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
     ui->treeView->setModel(&filesModel);
     ui->treeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+
+    // Select package when clicking on dependencies
+    connect(&depsButtonGroup, qOverload<QAbstractButton *>(&QButtonGroup::buttonClicked), this, &MainWindow::selectPackage);
 
     // Load packages list
     for (int i = 0; i < packageManager.packages().size(); ++i) {
@@ -149,9 +148,8 @@ void MainWindow::on_packageTabsWidget_currentChanged(int index)
     }
 }
 
-void MainWindow::selectPackage()
+void MainWindow::selectPackage(QAbstractButton *button)
 {
-    auto button = qobject_cast<QPushButton*>(sender());
     ui->packagesTreeWidget->clearSelection();
     ui->searchEdit->clear();
 
@@ -280,7 +278,7 @@ void MainWindow::loadDepsButtons(int row, const QList<alpm_depend_t *> &items)
             button->setText(item->name + Package::depmodString(item->mod) + item->version);
         else
             button->setText(item->name + Package::depmodString(item->mod) + item->version + QString(": ") + item->desc);
-        connect(button, &QPushButton::clicked, this, &MainWindow::selectPackage);
+        depsButtonGroup.addButton(button);
         packagesLayout->addWidget(button);
     }
     packagesLabel->show();

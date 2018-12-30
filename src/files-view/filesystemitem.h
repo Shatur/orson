@@ -15,7 +15,7 @@ public:
 
     // Model-specific functions
     int row() const;
-    const QString &text(int column) const;
+    QString text(int column) const;
 
     FileSystemItem *child(int row);
     void addChild(FileSystemItem *child);
@@ -26,9 +26,9 @@ public:
     void setParent(FileSystemItem *parent);
 
     // Item properties
-    const QString &name() const;
-    const QIcon &icon() const;
-    const QColor &backgroundColor() const;
+    QString name() const;
+    QIcon icon() const;
+    QColor backgroundColor() const;
     QString path() const;
     bool isFile() const;
     bool isReadable() const;

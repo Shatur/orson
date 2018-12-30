@@ -6,9 +6,8 @@
 
 #include <QMainWindow>
 #include <QTreeWidgetItem>
-#include <QVBoxLayout>
-#include <QLabel>
 #include <QMenu>
+#include <QButtonGroup>
 
 namespace Ui {
 class MainWindow;
@@ -27,7 +26,7 @@ private slots:
     void on_packagesTreeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
     void on_packageTabsWidget_currentChanged(int index);
 
-    void selectPackage();
+    void selectPackage(QAbstractButton* button);
 
 private:
     // Package info tabs
@@ -41,6 +40,7 @@ private:
     PackageManager packageManager;
     FileSystemModel filesModel;
     QMenu menu;
+    QButtonGroup depsButtonGroup;
 };
 
 #endif // MAINWINDOW_H

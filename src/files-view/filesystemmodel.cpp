@@ -13,21 +13,6 @@ FileSystemModel::~FileSystemModel()
     delete rootItem;
 }
 
-void FileSystemModel::setPaths(const QStringList &paths)
-{
-    beginResetModel();
-    rootItem->removeChildren();
-    foreach (const QString &path, paths)
-        addPath(path.split("/", QString::SkipEmptyParts));
-    endResetModel();
-}
-
-int FileSystemModel::columnCount(const QModelIndex &parent) const
-{
-    Q_UNUSED(parent)
-    return 3;
-}
-
 QVariant FileSystemModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
@@ -117,6 +102,21 @@ int FileSystemModel::rowCount(const QModelIndex &parent) const
         parentItem = static_cast<FileSystemItem*>(parent.internalPointer());
 
     return parentItem->childCount();
+}
+
+int FileSystemModel::columnCount(const QModelIndex &parent) const
+{
+    Q_UNUSED(parent)
+    return 3;
+}
+
+void FileSystemModel::setPaths(const QStringList &paths)
+{
+    beginResetModel();
+    rootItem->removeChildren();
+    foreach (const QString &path, paths)
+        addPath(path.split("/", QString::SkipEmptyParts));
+    endResetModel();
 }
 
 void FileSystemModel::addPath(const QStringList &path)

@@ -1,13 +1,8 @@
 #include "packagemanager.h"
 
-#include "alpm_list.h"
-
-#include <QDebug>
-
 PackageManager::PackageManager()
 {
     m_handle = alpm_initialize("/", "/var/lib/pacman", &m_error);
-
     if (m_error != ALPM_ERR_OK)
         return;
 
@@ -25,8 +20,9 @@ PackageManager::PackageManager()
         bool found = false;
 
         // Search package with the same name first (to add installation information for an existing package)
+        const char *name = alpm_pkg_get_name(packageData);
         for (Package &package : m_packages) {
-            if (package.name() == alpm_pkg_get_name(packageData)) {
+            if (package.name() == name) {
                 package.setLocalData(packageData);
                 found = true;
                 break;
@@ -70,12 +66,12 @@ void PackageManager::loadPackages(const char *databaseName)
     }
 }
 
-const QList<Package> &PackageManager::packages() const
+QList<Package> PackageManager::packages() const
 {
     return m_packages;
 }
 
-const Package &PackageManager::package(int index) const
+Package PackageManager::package(int index) const
 {
     return m_packages.at(index);
 }
