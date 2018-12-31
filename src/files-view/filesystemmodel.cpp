@@ -41,14 +41,6 @@ QVariant FileSystemModel::data(const QModelIndex &index, int role) const
     }
 }
 
-Qt::ItemFlags FileSystemModel::flags(const QModelIndex &index) const
-{
-    if (!index.isValid())
-        return nullptr;
-
-    return QAbstractItemModel::flags(index);
-}
-
 QVariant FileSystemModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
@@ -104,9 +96,8 @@ int FileSystemModel::rowCount(const QModelIndex &parent) const
     return parentItem->childCount();
 }
 
-int FileSystemModel::columnCount(const QModelIndex &parent) const
+int FileSystemModel::columnCount(const QModelIndex &) const
 {
-    Q_UNUSED(parent)
     return 3;
 }
 

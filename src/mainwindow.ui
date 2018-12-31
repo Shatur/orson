@@ -524,7 +524,7 @@
   <customwidget>
    <class>FilesTreeView</class>
    <extends>QTreeView</extends>
-   <header>src/files-view//filestreeview.h</header>
+   <header>src/files-view/filestreeview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
