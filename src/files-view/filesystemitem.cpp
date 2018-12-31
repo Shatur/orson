@@ -1,4 +1,3 @@
-#include <QStringList>
 #include <QMimeDatabase>
 
 #include "filesystemitem.h"
@@ -74,6 +73,11 @@ QString FileSystemItem::text(int column) const
     }
 }
 
+FileSystemItem *FileSystemItem::parent() const
+{
+    return m_parent;
+}
+
 FileSystemItem *FileSystemItem::child(int row)
 {
     return m_children.value(row);
@@ -81,7 +85,7 @@ FileSystemItem *FileSystemItem::child(int row)
 
 void FileSystemItem::addChild(FileSystemItem *item)
 {
-    item->setParent(this);
+    item->m_parent = this;
     m_children.append(item);
 }
 
@@ -94,16 +98,6 @@ void FileSystemItem::removeChildren()
 int FileSystemItem::childCount() const
 {
     return m_children.count();
-}
-
-FileSystemItem *FileSystemItem::parent() const
-{
-    return m_parent;
-}
-
-void FileSystemItem::setParent(FileSystemItem *parentItem)
-{
-    m_parent = parentItem;
 }
 
 QString FileSystemItem::name() const

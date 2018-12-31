@@ -1,8 +1,6 @@
 #ifndef FILESYSTEMITEM_H
 #define FILESYSTEMITEM_H
 
-#include <QList>
-#include <QVariant>
 #include <QIcon>
 #include <QFileInfo>
 
@@ -16,14 +14,12 @@ public:
     // Model-specific functions
     int row() const;
     QString text(int column) const;
+    FileSystemItem *parent() const;
 
     FileSystemItem *child(int row);
     void addChild(FileSystemItem *child);
     void removeChildren();
     int childCount() const;
-
-    FileSystemItem *parent() const;
-    void setParent(FileSystemItem *parent);
 
     // Item properties
     QString name() const;
