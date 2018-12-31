@@ -5,11 +5,15 @@
 #-------------------------------------------------
 
 QT += core gui widgets
-
 TARGET = orson
 TEMPLATE = app
 CONFIG += c++1z
-DEFINES += QT_DEPRECATED_WARNINGS
+
+include(src/third-party/singleapplication/singleapplication.pri)
+
+DEFINES += \
+    QAPPLICATION_CLASS=QApplication \
+    QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         src/main.cpp \
