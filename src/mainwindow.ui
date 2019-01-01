@@ -508,5 +508,25 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>searchComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_searchEdit_returnPressed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>665</x>
+     <y>22</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>371</x>
+     <y>292</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>on_searchEdit_returnPressed()</slot>
+ </slots>
 </ui>
