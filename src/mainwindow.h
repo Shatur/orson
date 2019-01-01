@@ -20,7 +20,7 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_searchEdit_textChanged(const QString &text);
+    void on_searchEdit_returnPressed();
     void on_packagesTreeView_currentPackageChanged(Package *package);
     void on_packageTabsWidget_currentChanged(int index);
 

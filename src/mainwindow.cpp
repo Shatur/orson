@@ -21,14 +21,16 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_searchEdit_textChanged(const QString &text)
+void MainWindow::on_searchEdit_returnPressed()
 {
+    const QString searchText = ui->searchEdit->text();
     PackagesModel *model = ui->packagesTreeView->model();
+
     switch (ui->searchComboBox->currentIndex()) {
     case 0:
         // Search by name and description
         foreach (Package *package, model->packages()) {
-            if (package->name().contains(text) || package->description().contains(text))
+            if (package->name().contains(searchText) || package->description().contains(searchText))
                 ui->packagesTreeView->setPackageHidden(package, false);
             else
                 ui->packagesTreeView->setPackageHidden(package, true);
@@ -37,7 +39,7 @@ void MainWindow::on_searchEdit_textChanged(const QString &text)
     case 1:
         // Search only by name
         foreach (Package *package, model->packages()) {
-            if (package->name().contains(text))
+            if (package->name().contains(searchText))
                 ui->packagesTreeView->setPackageHidden(package, false);
             else
                 ui->packagesTreeView->setPackageHidden(package, true);
@@ -46,13 +48,14 @@ void MainWindow::on_searchEdit_textChanged(const QString &text)
     case 2:
         // Search only by description
         foreach (Package *package, model->packages()) {
-            if (package->description().contains(text))
+            if (package->description().contains(searchText))
                 ui->packagesTreeView->setPackageHidden(package, false);
             else
                 ui->packagesTreeView->setPackageHidden(package, true);
         }
     }
 }
+
 void MainWindow::on_packagesTreeView_currentPackageChanged(Package *package)
 {
     // Reset loaded tabs information
