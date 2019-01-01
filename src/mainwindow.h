@@ -1,12 +1,10 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "packagemanager.h"
 #include "files-view/filesystemmodel.h"
+#include "packages-view/packagesmodel.h"
 
 #include <QMainWindow>
-#include <QTreeWidgetItem>
-#include <QMenu>
 #include <QButtonGroup>
 
 namespace Ui {
@@ -23,23 +21,21 @@ public:
 
 private slots:
     void on_searchEdit_textChanged(const QString &text);
-    void on_packagesTreeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
+    void on_packagesTreeView_currentPackageChanged(Package *package);
     void on_packageTabsWidget_currentChanged(int index);
 
     void selectPackage(QAbstractButton* button);
 
 private:
     // Package info tabs
-    void loadPackageInfo(const Package &package);
-    void loadPackageDeps(const Package &package);
-    void loadPackageFiles(const Package &package);
+    void loadPackageInfo(const Package *package);
+    void loadPackageDeps(const Package *package);
+    void loadPackageFiles(const Package *package);
 
-    void loadDepsButtons(int row, const QList<alpm_depend_t*> &items);
+    void loadDepsButtons(int row, const QList<alpm_depend_t*> &deps);
 
     Ui::MainWindow *ui;
-    PackageManager packageManager;
     FileSystemModel filesModel;
-    QMenu menu;
     QButtonGroup depsButtonGroup;
 };
 

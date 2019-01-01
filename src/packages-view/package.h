@@ -1,11 +1,10 @@
 #ifndef PACKAGE_H
 #define PACKAGE_H
 
-#include "alpm.h"
+#include <alpm.h>
 
-#include <QString>
+#include <QList>
 #include <QDateTime>
-#include <QUrl>
 
 class Package
 {
@@ -43,7 +42,6 @@ private:
     alpm_pkg_t *m_syncData = nullptr;
     alpm_pkg_t *m_localData = nullptr;
     bool m_isInstalled = false;
-
 };
 
 #endif // PACKAGE_H

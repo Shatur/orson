@@ -1,29 +1,31 @@
-#include "package.h"
+#include <QMimeDatabase>
 
-Package::Package()
+#include "packageitem.h"
+
+PackageItem::PackageItem()
 {
 }
 
-void Package::setSyncData(alpm_pkg_t *data)
+void PackageItem::setSyncData(alpm_pkg_t *data)
 {
     m_syncData = data;
 }
 
-void Package::setLocalData(alpm_pkg_t *data)
+void PackageItem::setLocalData(alpm_pkg_t *data)
 {
     m_localData = data;
     if (m_localData != nullptr)
         m_isInstalled = true;
 }
 
-QString Package::name() const
+QString PackageItem::name() const
 {
     if (m_localData == nullptr)
         return alpm_pkg_get_name(m_syncData);
     return alpm_pkg_get_name(m_localData);
 }
 
-QString Package::repo() const
+QString PackageItem::repo() const
 {
     // Load from sync repo first
     if (m_syncData == nullptr)
@@ -31,42 +33,42 @@ QString Package::repo() const
     return alpm_db_get_name(alpm_pkg_get_db(m_syncData));
 }
 
-QString Package::version() const
+QString PackageItem::version() const
 {
     if (m_localData == nullptr)
         return alpm_pkg_get_version(m_syncData);
     return alpm_pkg_get_version(m_localData);
 }
 
-QString Package::description() const
+QString PackageItem::description() const
 {
     if (m_localData == nullptr)
         return alpm_pkg_get_desc(m_syncData);
     return alpm_pkg_get_desc(m_localData);
 }
 
-QString Package::arch() const
+QString PackageItem::arch() const
 {
     if (m_localData == nullptr)
         return alpm_pkg_get_arch(m_syncData);
     return alpm_pkg_get_arch(m_localData);
 }
 
-QString Package::url() const
+QString PackageItem::url() const
 {
     if (m_localData == nullptr)
         return alpm_pkg_get_url(m_syncData);
     return alpm_pkg_get_url(m_localData);
 }
 
-QString Package::packager() const
+QString PackageItem::packager() const
 {
     if (m_localData == nullptr)
         return alpm_pkg_get_packager(m_syncData);
     return alpm_pkg_get_packager(m_localData);
 }
 
-QStringList Package::licenses() const
+QStringList PackageItem::licenses() const
 {
     QStringList licenses;
     alpm_list_t *licensesList;
@@ -83,7 +85,7 @@ QStringList Package::licenses() const
     return licenses;
 }
 
-QStringList Package::groups() const
+QStringList PackageItem::groups() const
 {
     QStringList groups;
     alpm_list_t *groupsList;
@@ -100,7 +102,7 @@ QStringList Package::groups() const
     return groups;
 }
 
-QStringList Package::files() const
+QStringList PackageItem::files() const
 {
     QStringList files;
     alpm_filelist_t *filesList;
@@ -115,7 +117,7 @@ QStringList Package::files() const
     return files;
 }
 
-QList<alpm_depend_t*> Package::provides() const
+QList<alpm_depend_t*> PackageItem::provides() const
 {
     QList<alpm_depend_t*> provides;
     alpm_list_t *providesList;
@@ -132,7 +134,7 @@ QList<alpm_depend_t*> Package::provides() const
     return provides;
 }
 
-QList<alpm_depend_t *> Package::replaces() const
+QList<alpm_depend_t *> PackageItem::replaces() const
 {
     QList<alpm_depend_t*> replaces;
     alpm_list_t *replacesList;
@@ -149,7 +151,7 @@ QList<alpm_depend_t *> Package::replaces() const
     return replaces;
 }
 
-QList<alpm_depend_t *> Package::conflicts() const
+QList<alpm_depend_t *> PackageItem::conflicts() const
 {
     QList<alpm_depend_t*> conflicts;
     alpm_list_t *conflictsList;
@@ -166,7 +168,7 @@ QList<alpm_depend_t *> Package::conflicts() const
     return conflicts;
 }
 
-QList<alpm_depend_t *> Package::depends() const
+QList<alpm_depend_t *> PackageItem::depends() const
 {
     QList<alpm_depend_t*> depends;
     alpm_list_t *dependsList;
@@ -183,7 +185,7 @@ QList<alpm_depend_t *> Package::depends() const
     return depends;
 }
 
-QList<alpm_depend_t *> Package::optdepends() const
+QList<alpm_depend_t *> PackageItem::optdepends() const
 {
     QList<alpm_depend_t*> optdepends;
     alpm_list_t *optdependsList;
@@ -200,7 +202,7 @@ QList<alpm_depend_t *> Package::optdepends() const
     return optdepends;
 }
 
-QDateTime Package::buildDate() const
+QDateTime PackageItem::buildDate() const
 {
     if (m_localData == nullptr)
         return QDateTime::fromSecsSinceEpoch(alpm_pkg_get_builddate(m_syncData));
@@ -208,24 +210,24 @@ QDateTime Package::buildDate() const
 }
 
 // Can be obtained only from local data
-QDateTime Package::installDate() const
+QDateTime PackageItem::installDate() const
 {
     return QDateTime::fromSecsSinceEpoch(alpm_pkg_get_installdate(m_localData));
 }
 
 // Can be obtained only from local data
-alpm_pkgreason_t Package::reason() const
+alpm_pkgreason_t PackageItem::reason() const
 {
     return alpm_pkg_get_reason(m_localData);
 }
 
 // Can be obtained only from sync data
-long Package::downloadSize() const
+long PackageItem::downloadSize() const
 {
     return alpm_pkg_get_size(m_syncData);
 }
 
-long Package::installedSize() const
+long PackageItem::installedSize() const
 {
     if (m_localData == nullptr)
         return alpm_pkg_get_isize(m_syncData);
@@ -233,18 +235,18 @@ long Package::installedSize() const
 }
 
 // Can be obtained only from local data
-bool Package::hasScript() const
+bool PackageItem::hasScript() const
 {
     return alpm_pkg_has_scriptlet(m_localData);
 }
 
-bool Package::isInstalled() const
+bool PackageItem::isInstalled() const
 {
     return m_isInstalled;
 }
 
 // String of version constraints in dependency specs
-QString Package::depmodString(alpm_depmod_t mod)
+QString PackageItem::depmodString(alpm_depmod_t mod)
 {
     switch (mod) {
     case ALPM_DEP_MOD_EQ:

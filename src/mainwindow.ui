@@ -49,41 +49,16 @@
      </layout>
     </item>
     <item>
-     <widget class="QTreeWidget" name="packagesTreeWidget">
+     <widget class="PackagesTreeView" name="packagesTreeView">
       <property name="editTriggers">
        <set>QAbstractItemView::NoEditTriggers</set>
       </property>
       <property name="rootIsDecorated">
        <bool>false</bool>
       </property>
-      <property name="sortingEnabled">
-       <bool>true</bool>
+      <property name="expandsOnDoubleClick">
+       <bool>false</bool>
       </property>
-      <column>
-       <property name="text">
-        <string>Status</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Name</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Version</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Size</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Repository</string>
-       </property>
-      </column>
      </widget>
     </item>
     <item>
@@ -510,7 +485,7 @@
        </attribute>
        <layout class="QVBoxLayout" name="filesTabLayout">
         <item>
-         <widget class="FilesTreeView" name="treeView"/>
+         <widget class="FilesTreeView" name="filesTreeView"/>
         </item>
        </layout>
       </widget>
@@ -525,6 +500,11 @@
    <class>FilesTreeView</class>
    <extends>QTreeView</extends>
    <header>src/files-view/filestreeview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>PackagesTreeView</class>
+   <extends>QTreeView</extends>
+   <header>src/packages-view/packagestreeview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

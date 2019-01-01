@@ -18,19 +18,22 @@ DEFINES += \
 SOURCES += \
         src/main.cpp \
         src/mainwindow.cpp \
-        src/package.cpp \
-        src/packagemanager.cpp \
+        src/packages-view/packagestreeview.cpp \
+        src/packages-view/packagesmodel.cpp \
+        src/packages-view/package.cpp \
+        src/files-view/filestreeview.cpp \
         src/files-view/filesystemmodel.cpp \
-        src/files-view/filesystemitem.cpp \
-        src/files-view/filestreeview.cpp
+        src/files-view/filesystemitem.cpp
 
 HEADERS += \
         src/mainwindow.h \
-        src/package.h \
         src/packagemanager.h \
+        src/packages-view/packagestreeview.h \
+        src/packages-view/packagesmodel.h \
+        src/packages-view/package.h \
+        src/files-view/filestreeview.h \
         src/files-view/filesystemmodel.h \
-        src/files-view/filesystemitem.h \
-        src/files-view/filestreeview.h
+        src/files-view/filesystemitem.h
 
 FORMS += \
         src/mainwindow.ui
