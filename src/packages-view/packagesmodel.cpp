@@ -33,6 +33,7 @@ PackagesModel::PackagesModel(QObject *parent) :
         if (!found) {
             // Add local package
             auto *package = new Package;
+            package->setIndex(m_packages.size());
             package->setLocalData(packageData);
             m_packages.append(package);
         }
@@ -141,6 +142,7 @@ void PackagesModel::loadPackages(const char *databaseName)
         auto *packageData = static_cast<alpm_pkg_t *>(cache->data);
         auto package = new Package;
         package->setSyncData(packageData);
+        package->setIndex(m_packages.size());
         m_packages.append(package);
         cache = cache->next;
     }

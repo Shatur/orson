@@ -13,6 +13,9 @@ public:
     void setSyncData(alpm_pkg_t *data);
     void setLocalData(alpm_pkg_t *data);
 
+    int index() const;
+    void setIndex(int index);
+
     QString name() const;
     QString repo() const;
     QString version() const;
@@ -41,6 +44,7 @@ public:
 private:
     alpm_pkg_t *m_syncData = nullptr;
     alpm_pkg_t *m_localData = nullptr;
+    int m_index = -1;
     bool m_isInstalled = false;
 };
 

@@ -18,14 +18,12 @@ PackagesTreeView::PackagesTreeView(QWidget *parent) :
 
 void PackagesTreeView::setPackageHidden(Package *package, bool hide)
 {
-    const int row = m_model->packages().indexOf(package);
-    setRowHidden(row, QModelIndex(), hide);
+    setRowHidden(package->index(), QModelIndex(), hide);
 }
 
 void PackagesTreeView::scrollToPackage(Package *package)
 {
-    const int row = m_model->packages().indexOf(package);
-    const QModelIndex index = m_model->index(row, 0, QModelIndex());
+    const QModelIndex index = m_model->index(package->index(), 0, QModelIndex());
     scrollTo(index);
 }
 
@@ -41,7 +39,6 @@ Package *PackagesTreeView::currentPackage() const
 
 void PackagesTreeView::setCurrentPackage(Package *package)
 {
-    const int row = m_model->packages().indexOf(package);
-    const QModelIndex index = m_model->index(row, 0, QModelIndex());
+    const QModelIndex index = m_model->index(package->index(), 0, QModelIndex());
     setCurrentIndex(index);
 }
