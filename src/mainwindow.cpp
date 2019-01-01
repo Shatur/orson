@@ -8,8 +8,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->filesTreeView->setModel(&filesModel);
-    ui->filesTreeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     // Select package when clicking on dependencies
     connect(&depsButtonGroup, qOverload<QAbstractButton *>(&QButtonGroup::buttonClicked), this, &MainWindow::selectPackage);
@@ -209,15 +207,15 @@ void MainWindow::loadPackageFiles(const Package *package)
     if (!package->isInstalled())
         return;
 
-    filesModel.setPaths(package->files());
+    ui->filesTreeView->model()->setPaths(package->files());
     ui->filesTab->setProperty("loaded", true);
 }
 
 void MainWindow::loadDepsButtons(int row, const QList<alpm_depend_t *> &deps)
 {
-    auto depsContentLayout = qobject_cast<QFormLayout*>(ui->depsContentWidget->layout());
-    auto packagesLabel = qobject_cast<QLabel*>(depsContentLayout->itemAt(row, QFormLayout::LabelRole)->widget());
-    auto packagesLayout = qobject_cast<QVBoxLayout*>(depsContentLayout->itemAt(row, QFormLayout::FieldRole)->layout());
+    auto depsContentLayout = qobject_cast<QFormLayout *>(ui->depsContentWidget->layout());
+    auto packagesLabel = qobject_cast<QLabel *>(depsContentLayout->itemAt(row, QFormLayout::LabelRole)->widget());
+    auto packagesLayout = qobject_cast<QVBoxLayout *>(depsContentLayout->itemAt(row, QFormLayout::FieldRole)->layout());
 
     // Remove old items
     while (QLayoutItem *child = packagesLayout->takeAt(0)) {

@@ -4,20 +4,20 @@
 #include <QIcon>
 #include <QFileInfo>
 
-class FileSystemItem
+class File
 {
 public:
-    FileSystemItem();
-    FileSystemItem(const QString &path, FileSystemItem *parent);
-    ~FileSystemItem();
+    File();
+    File(const QString &path, File *parent);
+    ~File();
 
     // Model-specific functions
     int row() const;
     QString text(int column) const;
-    FileSystemItem *parent() const;
+    File *parent() const;
 
-    FileSystemItem *child(int row);
-    void addChild(FileSystemItem *child);
+    File *child(int row);
+    void addChild(File *child);
     void removeChildren();
     int childCount() const;
 
@@ -30,8 +30,8 @@ public:
     bool isReadable() const;
 
 private:
-    FileSystemItem *m_parent;
-    QList<FileSystemItem*> m_children;
+    File *m_parent;
+    QVector<File *> m_children;
 
     QString m_nameColumn;
     QString m_sizeColumn;

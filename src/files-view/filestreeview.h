@@ -1,6 +1,8 @@
 #ifndef FILESTREEVIEW_H
 #define FILESTREEVIEW_H
 
+#include "filesmodel.h"
+
 #include <QTreeView>
 #include <QMenu>
 
@@ -8,6 +10,7 @@ class FilesTreeView : public QTreeView
 {
 public:
     FilesTreeView(QWidget *parent = nullptr);
+    FilesModel *model() const;
 
 private slots:
     // Context menu actions
@@ -21,7 +24,8 @@ private:
     void contextMenuEvent(QContextMenuEvent *event) override;
     void mouseDoubleClickEvent(QMouseEvent * event) override;
 
-    QMenu menu{this};
+    QMenu m_menu{this};
+    FilesModel *m_model = new FilesModel{this};
 };
 
 #endif // FILESTREEVIEW_H

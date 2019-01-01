@@ -22,8 +22,8 @@ SOURCES += \
         src/packages-view/packagesmodel.cpp \
         src/packages-view/package.cpp \
         src/files-view/filestreeview.cpp \
-        src/files-view/filesystemmodel.cpp \
-        src/files-view/filesystemitem.cpp
+        src/files-view/filesmodel.cpp \
+        src/files-view/file.cpp
 
 HEADERS += \
         src/mainwindow.h \
@@ -32,8 +32,8 @@ HEADERS += \
         src/packages-view/packagesmodel.h \
         src/packages-view/package.h \
         src/files-view/filestreeview.h \
-        src/files-view/filesystemmodel.h \
-        src/files-view/filesystemitem.h
+        src/files-view/filesmodel.h \
+        src/files-view/file.h
 
 FORMS += \
         src/mainwindow.ui

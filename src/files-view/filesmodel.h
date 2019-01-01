@@ -1,19 +1,17 @@
-#ifndef FILESYSTEMMODEL_H
-#define FILESYSTEMMODEL_H
+#ifndef FILESMODEL_H
+#define FILESMODEL_H
 
-#include "filesystemitem.h"
+#include "file.h"
 
 #include <QAbstractItemModel>
-#include <QModelIndex>
-#include <QVariant>
 
-class FileSystemModel : public QAbstractItemModel
+class FilesModel : public QAbstractItemModel
 {
     Q_OBJECT
 
 public:
-    explicit FileSystemModel(QObject *parent = nullptr);
-    ~FileSystemModel() override;
+    explicit FilesModel(QObject *parent = nullptr);
+    ~FilesModel() override;
 
     QVariant data(const QModelIndex &index, int role) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
@@ -27,7 +25,7 @@ public:
 private:
     void addPath(const QStringList &path);
 
-    FileSystemItem *rootItem = new FileSystemItem;
+    File *rootItem = new File;
 };
 
-#endif // FILESYSTEMMODEL_H
+#endif // FILESMODEL_H

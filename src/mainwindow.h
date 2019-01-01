@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "files-view/filesystemmodel.h"
+#include "files-view/filesmodel.h"
 #include "packages-view/packagesmodel.h"
 
 #include <QMainWindow>
@@ -32,10 +32,9 @@ private:
     void loadPackageDeps(const Package *package);
     void loadPackageFiles(const Package *package);
 
-    void loadDepsButtons(int row, const QList<alpm_depend_t*> &deps);
+    void loadDepsButtons(int row, const QList<alpm_depend_t *> &deps);
 
     Ui::MainWindow *ui;
-    FileSystemModel filesModel;
     QButtonGroup depsButtonGroup;
 };
 

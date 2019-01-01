@@ -1,70 +1,75 @@
 #include "filestreeview.h"
-#include "filesystemitem.h"
+#include "singleapplication.h"
 
 #include <QMimeData>
-#include <QGuiApplication>
-#include <QFileInfo>
-#include <QMimeDatabase>
 #include <QDesktopServices>
 #include <QContextMenuEvent>
-#include <QUrl>
 #include <QClipboard>
+#include <QHeaderView>
 
 FilesTreeView::FilesTreeView(QWidget *parent) :
     QTreeView(parent)
 {
+    setModel(m_model);
+    header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+
     // Setup context menu
-    menu.addAction(QIcon::fromTheme("document-open"), tr("Open"), this, &FilesTreeView::open);
-    menu.addAction(QIcon::fromTheme("folder"), tr("Open if file manager"), this, &FilesTreeView::openInFileManager);
-    menu.addAction(QIcon::fromTheme("edit-copy"), tr("Copy"), this, &FilesTreeView::copyFile);
-    menu.addAction(QIcon::fromTheme("edit-copy"), tr("Copy name"), this, &FilesTreeView::copyName);
-    menu.addAction(QIcon::fromTheme("edit-copy"), tr("Copy path"), this, &FilesTreeView::copyPath);
+    m_menu.addAction(QIcon::fromTheme("document-open"), tr("Open"), this, &FilesTreeView::open);
+    m_menu.addAction(QIcon::fromTheme("folder"), tr("Open if file manager"), this, &FilesTreeView::openInFileManager);
+    m_menu.addAction(QIcon::fromTheme("edit-copy"), tr("Copy"), this, &FilesTreeView::copyFile);
+    m_menu.addAction(QIcon::fromTheme("edit-copy"), tr("Copy name"), this, &FilesTreeView::copyName);
+    m_menu.addAction(QIcon::fromTheme("edit-copy"), tr("Copy path"), this, &FilesTreeView::copyPath);
+}
+
+FilesModel *FilesTreeView::model() const
+{
+    return m_model;
 }
 
 void FilesTreeView::open() const
 {
-    const auto item = static_cast<FileSystemItem *>(currentIndex().internalPointer());
+    const auto item = static_cast<File *>(currentIndex().internalPointer());
     QDesktopServices::openUrl(item->path());
 }
 
 void FilesTreeView::openInFileManager() const
 {
-    const auto item = static_cast<FileSystemItem *>(currentIndex().internalPointer());
+    const auto item = static_cast<File *>(currentIndex().internalPointer());
     QDesktopServices::openUrl(item->parent()->path());
 }
 
 void FilesTreeView::copyFile() const
 {
-    const auto item = static_cast<FileSystemItem *>(currentIndex().internalPointer());
+    const auto item = static_cast<File *>(currentIndex().internalPointer());
     QMimeData* mimeData = new QMimeData();
     mimeData->setUrls({QUrl::fromLocalFile(item->path())});
 
-    QGuiApplication::clipboard()->setMimeData(mimeData);
+    SingleApplication::clipboard()->setMimeData(mimeData);
 }
 
 void FilesTreeView::copyName() const
 {
-    const auto item = static_cast<FileSystemItem *>(currentIndex().internalPointer());
-    QGuiApplication::clipboard()->setText(item->name());
+    const auto item = static_cast<File *>(currentIndex().internalPointer());
+    SingleApplication::clipboard()->setText(item->name());
 }
 
 void FilesTreeView::copyPath() const
 {
-    const auto item = static_cast<FileSystemItem *>(currentIndex().internalPointer());
-    QGuiApplication::clipboard()->setText(item->path());
+    const auto item = static_cast<File *>(currentIndex().internalPointer());
+    SingleApplication::clipboard()->setText(item->path());
 }
 
 void FilesTreeView::contextMenuEvent(QContextMenuEvent *event)
 {
-    const auto item = static_cast<FileSystemItem *>(indexAt(event->pos()).internalPointer());
+    const auto item = static_cast<File *>(indexAt(event->pos()).internalPointer());
     if (item != nullptr) {
         // Enable "Copy" only for files
         if (item->isFile())
-            menu.actions().at(2)->setEnabled(true);
+            m_menu.actions().at(2)->setEnabled(true);
         else
-            menu.actions().at(2)->setEnabled(false);
+            m_menu.actions().at(2)->setEnabled(false);
 
-        menu.exec(event->globalPos());
+        m_menu.exec(event->globalPos());
     }
 }
 
@@ -72,7 +77,7 @@ void FilesTreeView::mouseDoubleClickEvent(QMouseEvent *event)
 {
     const QModelIndex index = indexAt(event->pos());
     if (index.isValid()) {
-        const auto item = static_cast<FileSystemItem *>(index.internalPointer());
+        const auto item = static_cast<File *>(index.internalPointer());
         QDesktopServices::openUrl(item->path());
     }
 }

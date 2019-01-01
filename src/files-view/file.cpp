@@ -1,8 +1,8 @@
 #include <QMimeDatabase>
 
-#include "filesystemitem.h"
+#include "file.h"
 
-FileSystemItem::FileSystemItem()
+File::File()
 {
     m_parent = nullptr;
     m_nameColumn = "Name";
@@ -11,7 +11,7 @@ FileSystemItem::FileSystemItem()
     m_info.setFile("/");
 }
 
-FileSystemItem::FileSystemItem(const QString &path, FileSystemItem *parent) :
+File::File(const QString &path, File *parent) :
     m_info(path)
 {
     m_nameColumn = m_info.fileName();
@@ -46,20 +46,20 @@ FileSystemItem::FileSystemItem(const QString &path, FileSystemItem *parent) :
     parent->addChild(this);
 }
 
-FileSystemItem::~FileSystemItem()
+File::~File()
 {
     qDeleteAll(m_children);
 }
 
-int FileSystemItem::row() const
+int File::row() const
 {
     if (m_parent)
-        return m_parent->m_children.indexOf(const_cast<FileSystemItem*>(this));
+        return m_parent->m_children.indexOf(const_cast<File *>(this));
 
     return 0;
 }
 
-QString FileSystemItem::text(int column) const
+QString File::text(int column) const
 {
     switch (column) {
     case 0:
@@ -73,59 +73,59 @@ QString FileSystemItem::text(int column) const
     }
 }
 
-FileSystemItem *FileSystemItem::parent() const
+File *File::parent() const
 {
     return m_parent;
 }
 
-FileSystemItem *FileSystemItem::child(int row)
+File *File::child(int row)
 {
     return m_children.value(row);
 }
 
-void FileSystemItem::addChild(FileSystemItem *item)
+void File::addChild(File *item)
 {
     item->m_parent = this;
     m_children.append(item);
 }
 
-void FileSystemItem::removeChildren()
+void File::removeChildren()
 {
     qDeleteAll(m_children);
     m_children.clear();
 }
 
-int FileSystemItem::childCount() const
+int File::childCount() const
 {
     return m_children.count();
 }
 
-QString FileSystemItem::name() const
+QString File::name() const
 {
     return m_nameColumn;
 }
 
-QIcon FileSystemItem::icon() const
+QIcon File::icon() const
 {
     return m_icon;
 }
 
-QColor FileSystemItem::backgroundColor() const
+QColor File::backgroundColor() const
 {
     return m_backgroundColor;
 }
 
-QString FileSystemItem::path() const
+QString File::path() const
 {
     return m_info.filePath();
 }
 
-bool FileSystemItem::isFile() const
+bool File::isFile() const
 {
     return m_info.isFile();
 }
 
-bool FileSystemItem::isReadable() const
+bool File::isReadable() const
 {
     return m_info.isReadable();
 }

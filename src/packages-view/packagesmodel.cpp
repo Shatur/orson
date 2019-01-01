@@ -55,7 +55,7 @@ QVariant PackagesModel::data(const QModelIndex &index, int role) const
     if (role != Qt::DisplayRole)
         return QVariant();
 
-    const Package *package = static_cast<Package*>(index.internalPointer());
+    const Package *package = static_cast<Package *>(index.internalPointer());
 
     switch (index.column()) {
     case 0:
