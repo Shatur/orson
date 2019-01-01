@@ -16,10 +16,10 @@ public:
     QString text(int column) const;
     File *parent() const;
 
-    File *child(int row);
+    File *child(int row) const;
+    int childCount() const;
     void addChild(File *child);
     void removeChildren();
-    int childCount() const;
 
     // Item properties
     QString name() const;

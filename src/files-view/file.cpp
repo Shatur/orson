@@ -78,9 +78,14 @@ File *File::parent() const
     return m_parent;
 }
 
-File *File::child(int row)
+File *File::child(int row) const
 {
     return m_children.value(row);
+}
+
+int File::childCount() const
+{
+    return m_children.count();
 }
 
 void File::addChild(File *item)
@@ -93,11 +98,6 @@ void File::removeChildren()
 {
     qDeleteAll(m_children);
     m_children.clear();
-}
-
-int File::childCount() const
-{
-    return m_children.count();
 }
 
 QString File::name() const
