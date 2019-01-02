@@ -74,12 +74,10 @@ void MainWindow::on_packagesTreeView_currentPackageChanged(Package *package)
     ui->descriptionLabel->setText(package->description());
 
     // Disable the tab with files for uninstalled packages
-    if (!package->isInstalled()) {
-        ui->packageTabsWidget->setTabEnabled(2, false);
-        ui->packageTabsWidget->setCurrentIndex(0);
-    } else {
+    if (package->isInstalled())
         ui->packageTabsWidget->setTabEnabled(2, true);
-    }
+    else
+        ui->packageTabsWidget->setTabEnabled(2, false);
 
     // Load only opened tab
     switch (ui->packageTabsWidget->currentIndex()) {
@@ -90,7 +88,12 @@ void MainWindow::on_packagesTreeView_currentPackageChanged(Package *package)
         loadPackageDeps(package);
         return;
     case 2:
-        loadPackageFiles(package);
+        if (package->isInstalled()) {
+            loadPackageFiles(package);
+        } else {
+            ui->packageTabsWidget->setCurrentIndex(0);
+            loadPackageInfo(package);
+        }
         return;
     default:
         return;
