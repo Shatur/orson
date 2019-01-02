@@ -19,6 +19,7 @@ public:
     QModelIndex parent(const QModelIndex &) const override;
     int rowCount(const QModelIndex &) const override;
     int columnCount(const QModelIndex &) const override;
+    void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) override;
 
     QVector<Package *> packages() const;
     alpm_errno_t error() const;

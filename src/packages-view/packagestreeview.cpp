@@ -7,6 +7,7 @@ PackagesTreeView::PackagesTreeView(QWidget *parent) :
 {
     // Setup items
     setModel(m_model);
+    sortByColumn(-1, Qt::AscendingOrder); // Show item unsorted by default
     header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     // Add current package changed signal
@@ -19,6 +20,12 @@ PackagesTreeView::PackagesTreeView(QWidget *parent) :
 void PackagesTreeView::setPackageHidden(Package *package, bool hide)
 {
     setRowHidden(package->index(), QModelIndex(), hide);
+}
+
+void PackagesTreeView::showAllPackages()
+{
+    for (int i = 0; i < m_model->packages().count(); ++i)
+        setRowHidden(i, QModelIndex(), false);
 }
 
 void PackagesTreeView::scrollToPackage(Package *package)

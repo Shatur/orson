@@ -125,8 +125,13 @@ void MainWindow::on_packageTabsWidget_currentChanged(int index)
 void MainWindow::selectPackage(QAbstractButton *button)
 {
     ui->packagesTreeView->clearSelection();
-    ui->searchEdit->clear();
     PackagesModel *model = ui->packagesTreeView->model();
+
+    // Clear previous search
+    if (!ui->searchEdit->text().isEmpty()) {
+        ui->searchEdit->clear();
+        ui->packagesTreeView->showAllPackages();
+    }
 
     // Search by text
     foreach (Package *package, model->packages()) {

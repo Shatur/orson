@@ -1,5 +1,5 @@
 #include "packagesmodel.h"
-
+#include <QDebug>
 PackagesModel::PackagesModel(QObject *parent) :
     QAbstractItemModel(parent)
 {
@@ -118,6 +118,98 @@ int PackagesModel::rowCount(const QModelIndex &) const
 int PackagesModel::columnCount(const QModelIndex &) const
 {
     return 5;
+}
+
+void PackagesModel::sort(int column, Qt::SortOrder order)
+{
+    emit layoutAboutToBeChanged();
+    switch (column) {
+    case 0:
+        switch (order) {
+        case Qt::AscendingOrder:
+            std::sort(m_packages.begin(), m_packages.end(), [&](Package *fisrt, Package *second) {
+                if (fisrt->isInstalled() == second->isInstalled())
+                    return fisrt->name() < second->name();
+               return fisrt->isInstalled() > second->isInstalled();
+            });
+            break;
+        case Qt::DescendingOrder:
+            std::sort(m_packages.begin(), m_packages.end(), [&](Package *fisrt, Package *second) {
+                if (fisrt->isInstalled() == second->isInstalled())
+                    return fisrt->name() < second->name();
+               return fisrt->isInstalled() < second->isInstalled();
+            });
+        }
+        break;
+    case 1:
+        switch (order) {
+        case Qt::AscendingOrder:
+            std::sort(m_packages.begin(), m_packages.end(), [&](Package *fisrt, Package *second) {
+               return fisrt->name() < second->name();
+            });
+            break;
+        case Qt::DescendingOrder:
+            std::sort(m_packages.begin(), m_packages.end(), [&](Package *fisrt, Package *second) {
+               return fisrt->name() > second->name();
+            });
+        }
+        break;
+    case 2:
+        switch (order) {
+        case Qt::AscendingOrder:
+            std::sort(m_packages.begin(), m_packages.end(), [&](Package *fisrt, Package *second) {
+                if (fisrt->version() == second->version())
+                    return fisrt->name() < second->name();
+               return fisrt->version() < second->version();
+            });
+            break;
+        case Qt::DescendingOrder:
+            std::sort(m_packages.begin(), m_packages.end(), [&](Package *fisrt, Package *second) {
+                if (fisrt->version() == second->version())
+                    return fisrt->name() < second->name();
+               return fisrt->version() > second->version();
+            });
+        }
+        break;
+    case 3:
+        switch (order) {
+        case Qt::AscendingOrder:
+            std::sort(m_packages.begin(), m_packages.end(), [&](Package *fisrt, Package *second) {
+                if (fisrt->installedSize() == second->installedSize())
+                    return fisrt->name() < second->name();
+               return fisrt->installedSize() < second->installedSize();
+            });
+            break;
+        case Qt::DescendingOrder:
+            std::sort(m_packages.begin(), m_packages.end(), [&](Package *fisrt, Package *second) {
+                if (fisrt->installedSize() == second->installedSize())
+                    return fisrt->name() < second->name();
+               return fisrt->installedSize() > second->installedSize();
+            });
+        }
+        break;
+    case 4:
+        switch (order) {
+        case Qt::AscendingOrder:
+            std::sort(m_packages.begin(), m_packages.end(), [&](Package *fisrt, Package *second) {
+                if (fisrt->name() == second->name())
+                    return fisrt->name() < second->name();
+               return fisrt->repo() < second->repo();
+            });
+            break;
+        case Qt::DescendingOrder:
+            std::sort(m_packages.begin(), m_packages.end(), [&](Package *fisrt, Package *second) {
+                if (fisrt->name() == second->name())
+                    return fisrt->name() < second->name();
+               return fisrt->repo() > second->repo();
+            });
+        }
+    }
+
+    // Change indexes after sorting
+    for (int i = 0; i < m_packages.count(); ++i)
+        m_packages.at(i)->setIndex(i);
+    emit layoutChanged();
 }
 
 QVector<Package *> PackagesModel::packages() const

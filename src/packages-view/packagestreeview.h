@@ -13,6 +13,7 @@ public:
     PackagesTreeView(QWidget *parent = nullptr);
 
     void setPackageHidden(Package *package, bool hide);
+    void showAllPackages();
     void scrollToPackage(Package *package);
     PackagesModel *model() const;
 
