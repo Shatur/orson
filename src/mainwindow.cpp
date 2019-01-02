@@ -171,10 +171,16 @@ void MainWindow::loadPackageInfo(const Package *package)
     else
         ui->groupslabel->setText(tr("No"));
 
+    // Do not show download size for local package
+    if (package->repo() == "local")
+        ui->downloadSizeLabel->setText("-");
+    else
+        ui->downloadSizeLabel->setText(package->formattedDownloadSize());
+
     // Install-specific info
     if (package->isInstalled()) {
         ui->installDateLabel->setText(package->installDate().toString("ddd dd MMM yyyy HH:mm:ss"));
-        ui->installedSizeLabel->setText(QString::number(package->installedSize()));
+        ui->installedSizeLabel->setText(package->formattedInstalledSize());
 
         // Reason
         if (package->reason() == ALPM_PKG_REASON_EXPLICIT)
@@ -187,12 +193,6 @@ void MainWindow::loadPackageInfo(const Package *package)
             ui->scriptLabel->setText(tr("Yes"));
         else
             ui->scriptLabel->setText(tr("No"));
-
-        // Do not show download size for local package
-        if (package->repo() == "local")
-            ui->downloadSizeLabel->setText("-");
-        else
-            ui->downloadSizeLabel->setText(QString::number(package->downloadSize()));
     } else {
         ui->installDateLabel->setText("-");
         ui->installedSizeLabel->setText("-");

@@ -23,6 +23,8 @@ public:
     QString arch() const;
     QString url() const;
     QString packager() const;
+    QString formattedInstalledSize() const;
+    QString formattedDownloadSize() const;
     QStringList licenses() const;
     QStringList groups() const;
     QStringList files() const;

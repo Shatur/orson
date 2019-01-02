@@ -67,7 +67,7 @@ QVariant PackagesModel::data(const QModelIndex &index, int role) const
     case 2:
         return package->version();
     case 3:
-        return QString::number(package->installedSize());
+        return package->formattedInstalledSize();
     case 4:
         return package->repo();
     default:

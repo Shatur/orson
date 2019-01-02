@@ -1,4 +1,5 @@
 #include <QMimeDatabase>
+#include <QLocale>
 
 #include "package.h"
 
@@ -76,6 +77,18 @@ QString Package::packager() const
     if (m_localData == nullptr)
         return alpm_pkg_get_packager(m_syncData);
     return alpm_pkg_get_packager(m_localData);
+}
+
+QString Package::formattedInstalledSize() const
+{
+    QLocale locale;
+    return locale.formattedDataSize(installedSize(), 2, QLocale::DataSizeTraditionalFormat);
+}
+
+QString Package::formattedDownloadSize() const
+{
+    QLocale locale;
+    return locale.formattedDataSize(downloadSize(), 2, QLocale::DataSizeTraditionalFormat);
 }
 
 QStringList Package::licenses() const
