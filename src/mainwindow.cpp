@@ -150,6 +150,7 @@ void MainWindow::loadPackageInfo(const Package *package)
 {
     // General info
     ui->archLabel->setText(package->arch());
+    ui->repoLabel->setText(package->repo());
     ui->urlLabel->setText("<a href=\"" + package->url() + "\">" + package->url() + "</a>");
     ui->packagerLabel->setText(package->packager());
     ui->buildDateLabel->setText(package->buildDate().toString("ddd dd MMM yyyy HH:mm:ss"));
