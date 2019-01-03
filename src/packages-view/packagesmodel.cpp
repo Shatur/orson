@@ -127,81 +127,81 @@ void PackagesModel::sort(int column, Qt::SortOrder order)
     case 0:
         switch (order) {
         case Qt::AscendingOrder:
-            std::sort(m_packages.begin(), m_packages.end(), [&](Package *fisrt, Package *second) {
-                if (fisrt->isInstalled() == second->isInstalled())
-                    return fisrt->name() < second->name();
-               return fisrt->isInstalled() > second->isInstalled();
+            std::sort(m_packages.begin(), m_packages.end(), [&](Package *first, Package *second) {
+                if (first->isInstalled() == second->isInstalled())
+                    return first->name() < second->name();
+               return first->isInstalled() > second->isInstalled();
             });
             break;
         case Qt::DescendingOrder:
-            std::sort(m_packages.begin(), m_packages.end(), [&](Package *fisrt, Package *second) {
-                if (fisrt->isInstalled() == second->isInstalled())
-                    return fisrt->name() < second->name();
-               return fisrt->isInstalled() < second->isInstalled();
+            std::sort(m_packages.begin(), m_packages.end(), [&](Package *first, Package *second) {
+                if (first->isInstalled() == second->isInstalled())
+                    return first->name() < second->name();
+               return first->isInstalled() < second->isInstalled();
             });
         }
         break;
     case 1:
         switch (order) {
         case Qt::AscendingOrder:
-            std::sort(m_packages.begin(), m_packages.end(), [&](Package *fisrt, Package *second) {
-               return fisrt->name() < second->name();
+            std::sort(m_packages.begin(), m_packages.end(), [&](Package *first, Package *second) {
+               return first->name() < second->name();
             });
             break;
         case Qt::DescendingOrder:
-            std::sort(m_packages.begin(), m_packages.end(), [&](Package *fisrt, Package *second) {
-               return fisrt->name() > second->name();
+            std::sort(m_packages.begin(), m_packages.end(), [&](Package *first, Package *second) {
+               return first->name() > second->name();
             });
         }
         break;
     case 2:
         switch (order) {
         case Qt::AscendingOrder:
-            std::sort(m_packages.begin(), m_packages.end(), [&](Package *fisrt, Package *second) {
-                if (fisrt->version() == second->version())
-                    return fisrt->name() < second->name();
-               return fisrt->version() < second->version();
+            std::sort(m_packages.begin(), m_packages.end(), [&](Package *first, Package *second) {
+                if (first->version() == second->version())
+                    return first->name() < second->name();
+               return first->version() < second->version();
             });
             break;
         case Qt::DescendingOrder:
-            std::sort(m_packages.begin(), m_packages.end(), [&](Package *fisrt, Package *second) {
-                if (fisrt->version() == second->version())
-                    return fisrt->name() < second->name();
-               return fisrt->version() > second->version();
+            std::sort(m_packages.begin(), m_packages.end(), [&](Package *first, Package *second) {
+                if (first->version() == second->version())
+                    return first->name() < second->name();
+               return first->version() > second->version();
             });
         }
         break;
     case 3:
         switch (order) {
         case Qt::AscendingOrder:
-            std::sort(m_packages.begin(), m_packages.end(), [&](Package *fisrt, Package *second) {
-                if (fisrt->installedSize() == second->installedSize())
-                    return fisrt->name() < second->name();
-               return fisrt->installedSize() < second->installedSize();
+            std::sort(m_packages.begin(), m_packages.end(), [&](Package *first, Package *second) {
+                if (first->installedSize() == second->installedSize())
+                    return first->name() < second->name();
+               return first->installedSize() < second->installedSize();
             });
             break;
         case Qt::DescendingOrder:
-            std::sort(m_packages.begin(), m_packages.end(), [&](Package *fisrt, Package *second) {
-                if (fisrt->installedSize() == second->installedSize())
-                    return fisrt->name() < second->name();
-               return fisrt->installedSize() > second->installedSize();
+            std::sort(m_packages.begin(), m_packages.end(), [&](Package *first, Package *second) {
+                if (first->installedSize() == second->installedSize())
+                    return first->name() < second->name();
+               return first->installedSize() > second->installedSize();
             });
         }
         break;
     case 4:
         switch (order) {
         case Qt::AscendingOrder:
-            std::sort(m_packages.begin(), m_packages.end(), [&](Package *fisrt, Package *second) {
-                if (fisrt->name() == second->name())
-                    return fisrt->name() < second->name();
-               return fisrt->repo() < second->repo();
+            std::sort(m_packages.begin(), m_packages.end(), [&](Package *first, Package *second) {
+                if (first->name() == second->name())
+                    return first->name() < second->name();
+               return first->repo() < second->repo();
             });
             break;
         case Qt::DescendingOrder:
-            std::sort(m_packages.begin(), m_packages.end(), [&](Package *fisrt, Package *second) {
-                if (fisrt->name() == second->name())
-                    return fisrt->name() < second->name();
-               return fisrt->repo() > second->repo();
+            std::sort(m_packages.begin(), m_packages.end(), [&](Package *first, Package *second) {
+                if (first->name() == second->name())
+                    return first->name() < second->name();
+               return first->repo() > second->repo();
             });
         }
     }
