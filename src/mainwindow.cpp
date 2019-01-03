@@ -50,7 +50,7 @@ void MainWindow::on_packagesTreeView_currentPackageChanged(Package *package)
     else
         ui->packageTabsWidget->setTabEnabled(2, false);
 
-    // Load only opened tab
+    // Reload opened tab
     switch (ui->packageTabsWidget->currentIndex()) {
     case 0:
         loadPackageInfo(package);
@@ -59,12 +59,10 @@ void MainWindow::on_packagesTreeView_currentPackageChanged(Package *package)
         loadPackageDeps(package);
         return;
     case 2:
-        if (package->isInstalled()) {
+        if (package->isInstalled())
             loadPackageFiles(package);
-        } else {
+        else
             ui->packageTabsWidget->setCurrentIndex(0);
-            loadPackageInfo(package);
-        }
         return;
     default:
         return;
@@ -167,9 +165,6 @@ void MainWindow::loadPackageDeps(const Package *package)
 
 void MainWindow::loadPackageFiles(const Package *package)
 {
-    if (!package->isInstalled())
-        return;
-
     ui->filesTreeView->model()->setPaths(package->files());
     ui->filesTab->setProperty("loaded", true);
 }
