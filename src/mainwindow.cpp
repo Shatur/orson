@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&depsButtonGroup, qOverload<QAbstractButton *>(&QButtonGroup::buttonClicked), this, &MainWindow::selectPackage);
 
     // Select first package
-    ui->packagesTreeView->setCurrentPackage(ui->packagesTreeView->model()->packages().at(0));
+    ui->packagesTreeView->selectRow(0);
 }
 
 MainWindow::~MainWindow()
@@ -23,37 +23,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_searchEdit_returnPressed()
 {
-    const QString searchText = ui->searchEdit->text();
-    PackagesModel *model = ui->packagesTreeView->model();
-
-    switch (ui->searchComboBox->currentIndex()) {
-    case 0:
-        // Search by name and description
-        foreach (Package *package, model->packages()) {
-            if (package->name().contains(searchText) || package->description().contains(searchText))
-                ui->packagesTreeView->setPackageHidden(package, false);
-            else
-                ui->packagesTreeView->setPackageHidden(package, true);
-        }
-        break;
-    case 1:
-        // Search only by name
-        foreach (Package *package, model->packages()) {
-            if (package->name().contains(searchText))
-                ui->packagesTreeView->setPackageHidden(package, false);
-            else
-                ui->packagesTreeView->setPackageHidden(package, true);
-        }
-        break;
-    case 2:
-        // Search only by description
-        foreach (Package *package, model->packages()) {
-            if (package->description().contains(searchText))
-                ui->packagesTreeView->setPackageHidden(package, false);
-            else
-                ui->packagesTreeView->setPackageHidden(package, true);
-        }
-    }
+    auto searchType = static_cast<PackagesTreeView::SearchType>(ui->searchComboBox->currentIndex());
+    ui->packagesTreeView->filter(ui->searchEdit->text(), searchType);
 }
 
 void MainWindow::on_packagesTreeView_currentPackageChanged(Package *package)
@@ -124,34 +95,14 @@ void MainWindow::on_packageTabsWidget_currentChanged(int index)
 
 void MainWindow::selectPackage(QAbstractButton *button)
 {
-    ui->packagesTreeView->clearSelection();
-    PackagesModel *model = ui->packagesTreeView->model();
-
     // Clear previous search
     if (!ui->searchEdit->text().isEmpty()) {
         ui->searchEdit->clear();
-        ui->packagesTreeView->showAllPackages();
+        ui->packagesTreeView->filter("");
     }
 
-    // Search by text
-    foreach (Package *package, model->packages()) {
-        if (package->name() == button->toolTip()) {
-            ui->packagesTreeView->setCurrentPackage(package);
-            ui->packagesTreeView->scrollToPackage(package);
-            return;
-        }
-    }
-
-    // Search by providing
-    foreach (Package *package, model->packages()) {
-        foreach (const alpm_depend_t *dependency, package->provides()) {
-            if (dependency->name == button->toolTip()) {
-                ui->packagesTreeView->setCurrentPackage(package);
-                ui->packagesTreeView->scrollToPackage(package);
-                return;
-            }
-        }
-    }
+    // Search package
+    ui->packagesTreeView->find(button->toolTip());
 }
 
 void MainWindow::loadPackageInfo(const Package *package)

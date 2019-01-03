@@ -26,7 +26,6 @@ public:
 
 private:
     void loadPackages(const char *databaseName);
-    void addPackage(Package *package);
 
     alpm_handle_t *m_handle;
     alpm_errno_t m_error = ALPM_ERR_OK;

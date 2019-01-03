@@ -10,15 +10,19 @@ class PackagesTreeView : public QTreeView
     Q_OBJECT
 
 public:
+    enum SearchType {
+        Name,
+        NameDescription,
+        Description
+    };
+
     PackagesTreeView(QWidget *parent = nullptr);
 
-    void setPackageHidden(Package *package, bool hide);
-    void showAllPackages();
-    void scrollToPackage(Package *package);
-    PackagesModel *model() const;
-
+    void filter(const QString &text, SearchType type = Name);
+    void find(const QString &packageName);
+    void selectRow(int row);
     Package *currentPackage() const;
-    void setCurrentPackage(Package *package);
+    PackagesModel *model() const;
 
 signals:
     void currentPackageChanged(Package *package);

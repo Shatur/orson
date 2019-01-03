@@ -34,7 +34,7 @@ PackagesModel::PackagesModel(QObject *parent) :
             // Add local package
             auto *package = new Package;
             package->setLocalData(packageData);
-            addPackage(package);
+            m_packages.append(package);
         }
 
         cache = cache->next;
@@ -205,10 +205,6 @@ void PackagesModel::sort(int column, Qt::SortOrder order)
             });
         }
     }
-
-    // Change indexes after sorting
-    for (int i = 0; i < m_packages.count(); ++i)
-        m_packages.at(i)->setIndex(i);
     emit layoutChanged();
 }
 
@@ -233,13 +229,7 @@ void PackagesModel::loadPackages(const char *databaseName)
         auto *packageData = static_cast<alpm_pkg_t *>(cache->data);
         auto package = new Package;
         package->setSyncData(packageData);
-        addPackage(package);
+        m_packages.append(package);
         cache = cache->next;
     }
-}
-
-void PackagesModel::addPackage(Package *package)
-{
-    package->setIndex(m_packages.size());
-    m_packages.append(package);
 }

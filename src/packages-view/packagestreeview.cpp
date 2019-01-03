@@ -17,26 +17,78 @@ PackagesTreeView::PackagesTreeView(QWidget *parent) :
     });
 }
 
-void PackagesTreeView::setPackageHidden(Package *package, bool hide)
+void PackagesTreeView::filter(const QString &text, PackagesTreeView::SearchType type)
 {
-    setRowHidden(package->index(), QModelIndex(), hide);
+    if (text.isEmpty()) {
+        for (int i = 0; i < m_model->packages().count(); ++i)
+            setRowHidden(i, QModelIndex(), false);
+        return;
+    }
+
+    switch (type) {
+    case Name:
+        // Search by name and description
+        for (int i = 0; i < m_model->packages().size(); ++i) {
+            const Package *package = m_model->packages().at(i);
+            if (package->name().contains(text))
+                setRowHidden(i, QModelIndex(), false);
+            else
+                setRowHidden(i, QModelIndex(), true);
+        }
+        break;
+    case NameDescription:
+        // Search only by name
+        for (int i = 0; i < m_model->packages().size(); ++i) {
+            const Package *package = m_model->packages().at(i);
+            if (package->name().contains(text) || package->description().contains(text))
+                setRowHidden(i, QModelIndex(), false);
+            else
+                setRowHidden(i, QModelIndex(), true);
+        }
+        break;
+    case Description:
+        // Search only by description
+        for (int i = 0; i < m_model->packages().size(); ++i) {
+            const Package *package = m_model->packages().at(i);
+            if (package->description().contains(text))
+                setRowHidden(i, QModelIndex(), false);
+            else
+                setRowHidden(i, QModelIndex(), true);
+        }
+    }
 }
 
-void PackagesTreeView::showAllPackages()
+void PackagesTreeView::find(const QString &packageName)
 {
-    for (int i = 0; i < m_model->packages().count(); ++i)
-        setRowHidden(i, QModelIndex(), false);
+    clearSelection();
+
+    // Search by name
+    for (int i = 0; i < m_model->packages().count(); ++i) {
+        if (m_model->packages().at(i)->name() == packageName) {
+            const QModelIndex index = m_model->index(i, 0, QModelIndex());
+            setCurrentIndex(index);
+            scrollTo(index);
+            return;
+        }
+    }
+
+    // If not dound, then search by providing
+    for (int i = 0; i < m_model->packages().count(); ++i) {
+        foreach (const alpm_depend_t *dependency, m_model->packages().at(i)->provides()) {
+            if (dependency->name == packageName) {
+                const QModelIndex index = m_model->index(i, 0, QModelIndex());
+                setCurrentIndex(index);
+                scrollTo(index);
+                return;
+            }
+        }
+    }
 }
 
-void PackagesTreeView::scrollToPackage(Package *package)
+void PackagesTreeView::selectRow(int row)
 {
-    const QModelIndex index = m_model->index(package->index(), 0, QModelIndex());
-    scrollTo(index);
-}
-
-PackagesModel *PackagesTreeView::model() const
-{
-    return m_model;
+    const QModelIndex index = m_model->index(row, 0, QModelIndex());
+    setCurrentIndex(index);
 }
 
 Package *PackagesTreeView::currentPackage() const
@@ -44,8 +96,7 @@ Package *PackagesTreeView::currentPackage() const
     return static_cast<Package *>(currentIndex().internalPointer());
 }
 
-void PackagesTreeView::setCurrentPackage(Package *package)
+PackagesModel *PackagesTreeView::model() const
 {
-    const QModelIndex index = m_model->index(package->index(), 0, QModelIndex());
-    setCurrentIndex(index);
+    return m_model;
 }

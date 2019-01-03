@@ -19,16 +19,6 @@ void Package::setLocalData(alpm_pkg_t *data)
         m_isInstalled = true;
 }
 
-int Package::index() const
-{
-    return m_index;
-}
-
-void Package::setIndex(int index)
-{
-    m_index = index;
-}
-
 QString Package::name() const
 {
     if (m_localData == nullptr)
