@@ -10,17 +10,17 @@ class PackagesView : public QTreeView
     Q_OBJECT
 
 public:
-    enum SearchType {
-        Name,
+    enum FilterType {
         NameDescription,
+        Name,
         Description
     };
 
     PackagesView(QWidget *parent = nullptr);
 
-    void filter(const QString &text, SearchType type = Name);
+    void filter(const QString &text, FilterType type = NameDescription);
     void find(const QString &packageName);
-    void selectRow(int row);
+
     Package *currentPackage() const;
     PackagesModel *model() const;
 

@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&depsButtonGroup, qOverload<QAbstractButton *>(&QButtonGroup::buttonClicked), this, &MainWindow::selectPackage);
 
     // Select first package
-    ui->packagesView->selectRow(0);
+    ui->packagesView->setCurrentIndex(ui->packagesView->model()->index(0, 0));
 }
 
 MainWindow::~MainWindow()
@@ -23,8 +23,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_searchEdit_returnPressed()
 {
-    auto searchType = static_cast<PackagesView::SearchType>(ui->searchComboBox->currentIndex());
-    ui->packagesView->filter(ui->searchEdit->text(), searchType);
+    const auto filterType = static_cast<PackagesView::FilterType>(ui->searchComboBox->currentIndex());
+    ui->packagesView->filter(ui->searchEdit->text(), filterType);
 }
 
 void MainWindow::on_packagesView_currentPackageChanged(Package *package)

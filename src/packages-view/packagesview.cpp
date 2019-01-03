@@ -6,8 +6,8 @@ PackagesView::PackagesView(QWidget *parent) :
     QTreeView(parent)
 {
     // Setup items
-    setModel(m_model);
     sortByColumn(-1, Qt::AscendingOrder); // Show item unsorted by default
+    setModel(m_model);
     header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     // Add current package changed signal
@@ -17,9 +17,10 @@ PackagesView::PackagesView(QWidget *parent) :
     });
 }
 
-void PackagesView::filter(const QString &text, PackagesView::SearchType type)
+void PackagesView::filter(const QString &text, PackagesView::FilterType type)
 {
     if (text.isEmpty()) {
+        // Reset filter
         for (int i = 0; i < m_model->packages().count(); ++i)
             setRowHidden(i, QModelIndex(), false);
         return;
@@ -65,7 +66,7 @@ void PackagesView::find(const QString &packageName)
     // Search by name
     for (int i = 0; i < m_model->packages().count(); ++i) {
         if (m_model->packages().at(i)->name() == packageName) {
-            const QModelIndex index = m_model->index(i, 0, QModelIndex());
+            const QModelIndex index = m_model->index(i, 0);
             setCurrentIndex(index);
             scrollTo(index);
             return;
@@ -76,19 +77,13 @@ void PackagesView::find(const QString &packageName)
     for (int i = 0; i < m_model->packages().count(); ++i) {
         foreach (const alpm_depend_t *dependency, m_model->packages().at(i)->provides()) {
             if (dependency->name == packageName) {
-                const QModelIndex index = m_model->index(i, 0, QModelIndex());
+                const QModelIndex index = m_model->index(i, 0);
                 setCurrentIndex(index);
                 scrollTo(index);
                 return;
             }
         }
     }
-}
-
-void PackagesView::selectRow(int row)
-{
-    const QModelIndex index = m_model->index(row, 0, QModelIndex());
-    setCurrentIndex(index);
 }
 
 Package *PackagesView::currentPackage() const

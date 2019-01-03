@@ -1,5 +1,5 @@
 #include "packagesmodel.h"
-
+#include <QDebug>
 PackagesModel::PackagesModel(QObject *parent) :
     QAbstractItemModel(parent)
 {
@@ -123,6 +123,10 @@ int PackagesModel::columnCount(const QModelIndex &) const
 void PackagesModel::sort(int column, Qt::SortOrder order)
 {
     emit layoutAboutToBeChanged();
+
+    // Save persistent indexes according to docs: https://doc.qt.io/qt-5/qabstractitemmodel.html#layoutChanged
+    QModelIndexList oldIndexes = persistentIndexList();
+
     switch (column) {
     case 0:
         switch (order) {
@@ -205,6 +209,19 @@ void PackagesModel::sort(int column, Qt::SortOrder order)
             });
         }
     }
+
+    // Update indexes
+    QModelIndexList newIndexes;
+    foreach (auto oldIndex, oldIndexes) {
+        const auto package = static_cast<Package *>(oldIndex.internalPointer()); // Get package from old index
+        const int row = m_packages.indexOf(package); // Find new package position
+
+        // Save index
+        const QModelIndex newIndex = index(row, oldIndex.column());
+        newIndexes.append(newIndex);
+    }
+    changePersistentIndexList(oldIndexes, newIndexes);
+
     emit layoutChanged();
 }
 
