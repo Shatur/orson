@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&depsButtonGroup, qOverload<QAbstractButton *>(&QButtonGroup::buttonClicked), this, &MainWindow::selectPackage);
 
     // Select first package
-    ui->packagesTreeView->selectRow(0);
+    ui->packagesView->selectRow(0);
 }
 
 MainWindow::~MainWindow()
@@ -23,11 +23,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_searchEdit_returnPressed()
 {
-    auto searchType = static_cast<PackagesTreeView::SearchType>(ui->searchComboBox->currentIndex());
-    ui->packagesTreeView->filter(ui->searchEdit->text(), searchType);
+    auto searchType = static_cast<PackagesView::SearchType>(ui->searchComboBox->currentIndex());
+    ui->packagesView->filter(ui->searchEdit->text(), searchType);
 }
 
-void MainWindow::on_packagesTreeView_currentPackageChanged(Package *package)
+void MainWindow::on_packagesView_currentPackageChanged(Package *package)
 {
     // Reset loaded tabs information
     ui->infoTab->setProperty("loaded", false);
@@ -71,7 +71,7 @@ void MainWindow::on_packagesTreeView_currentPackageChanged(Package *package)
 
 void MainWindow::on_packageTabsWidget_currentChanged(int index)
 {
-    const Package *package = ui->packagesTreeView->currentPackage();
+    const Package *package = ui->packagesView->currentPackage();
 
     switch (index) {
     case 0:
@@ -96,11 +96,11 @@ void MainWindow::selectPackage(QAbstractButton *button)
     // Clear previous search
     if (!ui->searchEdit->text().isEmpty()) {
         ui->searchEdit->clear();
-        ui->packagesTreeView->filter("");
+        ui->packagesView->filter("");
     }
 
     // Search package
-    ui->packagesTreeView->find(button->toolTip());
+    ui->packagesView->find(button->toolTip());
 }
 
 void MainWindow::loadPackageInfo(const Package *package)
@@ -165,7 +165,7 @@ void MainWindow::loadPackageDeps(const Package *package)
 
 void MainWindow::loadPackageFiles(const Package *package)
 {
-    ui->filesTreeView->model()->setPaths(package->files());
+    ui->filesView->model()->setPaths(package->files());
     ui->filesTab->setProperty("loaded", true);
 }
 

@@ -49,7 +49,7 @@
      </layout>
     </item>
     <item>
-     <widget class="PackagesTreeView" name="packagesTreeView">
+     <widget class="PackagesView" name="packagesView">
       <property name="editTriggers">
        <set>QAbstractItemView::NoEditTriggers</set>
       </property>
@@ -505,7 +505,7 @@
        </attribute>
        <layout class="QVBoxLayout" name="filesTabLayout">
         <item>
-         <widget class="FilesTreeView" name="filesTreeView"/>
+         <widget class="FilesView" name="filesView"/>
         </item>
        </layout>
       </widget>
@@ -517,14 +517,14 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>FilesTreeView</class>
+   <class>FilesView</class>
    <extends>QTreeView</extends>
-   <header>src/files-view/filestreeview.h</header>
+   <header>src/files-view/filesview.h</header>
   </customwidget>
   <customwidget>
-   <class>PackagesTreeView</class>
+   <class>PackagesView</class>
    <extends>QTreeView</extends>
-   <header>src/packages-view/packagestreeview.h</header>
+   <header>src/packages-view/packagesview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

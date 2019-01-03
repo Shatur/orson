@@ -1,8 +1,8 @@
-#include "packagestreeview.h"
+#include "packagesview.h"
 
 #include <QHeaderView>
 
-PackagesTreeView::PackagesTreeView(QWidget *parent) :
+PackagesView::PackagesView(QWidget *parent) :
     QTreeView(parent)
 {
     // Setup items
@@ -17,7 +17,7 @@ PackagesTreeView::PackagesTreeView(QWidget *parent) :
     });
 }
 
-void PackagesTreeView::filter(const QString &text, PackagesTreeView::SearchType type)
+void PackagesView::filter(const QString &text, PackagesView::SearchType type)
 {
     if (text.isEmpty()) {
         for (int i = 0; i < m_model->packages().count(); ++i)
@@ -58,7 +58,7 @@ void PackagesTreeView::filter(const QString &text, PackagesTreeView::SearchType 
     }
 }
 
-void PackagesTreeView::find(const QString &packageName)
+void PackagesView::find(const QString &packageName)
 {
     clearSelection();
 
@@ -85,18 +85,18 @@ void PackagesTreeView::find(const QString &packageName)
     }
 }
 
-void PackagesTreeView::selectRow(int row)
+void PackagesView::selectRow(int row)
 {
     const QModelIndex index = m_model->index(row, 0, QModelIndex());
     setCurrentIndex(index);
 }
 
-Package *PackagesTreeView::currentPackage() const
+Package *PackagesView::currentPackage() const
 {
     return static_cast<Package *>(currentIndex().internalPointer());
 }
 
-PackagesModel *PackagesTreeView::model() const
+PackagesModel *PackagesView::model() const
 {
     return m_model;
 }

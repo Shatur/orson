@@ -1,5 +1,5 @@
 #include "packagesmodel.h"
-#include <QDebug>
+
 PackagesModel::PackagesModel(QObject *parent) :
     QAbstractItemModel(parent)
 {

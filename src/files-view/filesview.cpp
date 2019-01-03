@@ -1,44 +1,44 @@
-#include "filestreeview.h"
+#include "filesview.h"
 #include "singleapplication.h"
 
-#include <QMimeData>
 #include <QDesktopServices>
 #include <QContextMenuEvent>
 #include <QClipboard>
+#include <QMimeData>
 #include <QHeaderView>
 
-FilesTreeView::FilesTreeView(QWidget *parent) :
+FilesView::FilesView(QWidget *parent) :
     QTreeView(parent)
 {
     setModel(m_model);
     header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     // Setup context menu
-    m_menu.addAction(QIcon::fromTheme("document-open"), tr("Open"), this, &FilesTreeView::open);
-    m_menu.addAction(QIcon::fromTheme("folder"), tr("Open if file manager"), this, &FilesTreeView::openInFileManager);
-    m_menu.addAction(QIcon::fromTheme("edit-copy"), tr("Copy"), this, &FilesTreeView::copyFile);
-    m_menu.addAction(QIcon::fromTheme("edit-copy"), tr("Copy name"), this, &FilesTreeView::copyName);
-    m_menu.addAction(QIcon::fromTheme("edit-copy"), tr("Copy path"), this, &FilesTreeView::copyPath);
+    m_menu.addAction(QIcon::fromTheme("document-open"), tr("Open"), this, &FilesView::open);
+    m_menu.addAction(QIcon::fromTheme("folder"), tr("Open if file manager"), this, &FilesView::openInFileManager);
+    m_menu.addAction(QIcon::fromTheme("edit-copy"), tr("Copy"), this, &FilesView::copyFile);
+    m_menu.addAction(QIcon::fromTheme("edit-copy"), tr("Copy name"), this, &FilesView::copyName);
+    m_menu.addAction(QIcon::fromTheme("edit-copy"), tr("Copy path"), this, &FilesView::copyPath);
 }
 
-FilesModel *FilesTreeView::model() const
+FilesModel *FilesView::model() const
 {
     return m_model;
 }
 
-void FilesTreeView::open() const
+void FilesView::open() const
 {
     const auto item = static_cast<File *>(currentIndex().internalPointer());
     QDesktopServices::openUrl(item->path());
 }
 
-void FilesTreeView::openInFileManager() const
+void FilesView::openInFileManager() const
 {
     const auto item = static_cast<File *>(currentIndex().internalPointer());
     QDesktopServices::openUrl(item->parent()->path());
 }
 
-void FilesTreeView::copyFile() const
+void FilesView::copyFile() const
 {
     const auto item = static_cast<File *>(currentIndex().internalPointer());
     QMimeData* mimeData = new QMimeData();
@@ -47,19 +47,19 @@ void FilesTreeView::copyFile() const
     SingleApplication::clipboard()->setMimeData(mimeData);
 }
 
-void FilesTreeView::copyName() const
+void FilesView::copyName() const
 {
     const auto item = static_cast<File *>(currentIndex().internalPointer());
     SingleApplication::clipboard()->setText(item->name());
 }
 
-void FilesTreeView::copyPath() const
+void FilesView::copyPath() const
 {
     const auto item = static_cast<File *>(currentIndex().internalPointer());
     SingleApplication::clipboard()->setText(item->path());
 }
 
-void FilesTreeView::contextMenuEvent(QContextMenuEvent *event)
+void FilesView::contextMenuEvent(QContextMenuEvent *event)
 {
     const auto item = static_cast<File *>(indexAt(event->pos()).internalPointer());
     if (item != nullptr) {
@@ -73,7 +73,7 @@ void FilesTreeView::contextMenuEvent(QContextMenuEvent *event)
     }
 }
 
-void FilesTreeView::mouseDoubleClickEvent(QMouseEvent *event)
+void FilesView::mouseDoubleClickEvent(QMouseEvent *event)
 {
     const QModelIndex index = indexAt(event->pos());
     if (index.isValid()) {

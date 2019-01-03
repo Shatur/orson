@@ -21,7 +21,7 @@ public:
 
 private slots:
     void on_searchEdit_returnPressed();
-    void on_packagesTreeView_currentPackageChanged(Package *package);
+    void on_packagesView_currentPackageChanged(Package *package);
     void on_packageTabsWidget_currentChanged(int index);
 
     void selectPackage(QAbstractButton* button);

@@ -1,15 +1,15 @@
-#ifndef FILESTREEVIEW_H
-#define FILESTREEVIEW_H
+#ifndef FILESVIEW_H
+#define FILESVIEW_H
 
 #include "filesmodel.h"
 
 #include <QTreeView>
 #include <QMenu>
 
-class FilesTreeView : public QTreeView
+class FilesView : public QTreeView
 {
 public:
-    FilesTreeView(QWidget *parent = nullptr);
+    FilesView(QWidget *parent = nullptr);
     FilesModel *model() const;
 
 private slots:
@@ -28,4 +28,4 @@ private:
     FilesModel *m_model = new FilesModel{this};
 };
 
-#endif // FILESTREEVIEW_H
+#endif // FILESVIEW_H

@@ -1,11 +1,11 @@
-#ifndef PACKAGESTREEVIEW_H
-#define PACKAGESTREEVIEW_H
+#ifndef PACKAGESVIEW_H
+#define PACKAGESVIEW_H
 
 #include "packagesmodel.h"
 
 #include <QTreeView>
 
-class PackagesTreeView : public QTreeView
+class PackagesView : public QTreeView
 {
     Q_OBJECT
 
@@ -16,7 +16,7 @@ public:
         Description
     };
 
-    PackagesTreeView(QWidget *parent = nullptr);
+    PackagesView(QWidget *parent = nullptr);
 
     void filter(const QString &text, SearchType type = Name);
     void find(const QString &packageName);
@@ -31,4 +31,4 @@ private:
     PackagesModel *m_model = new PackagesModel{this};
 };
 
-#endif // PACKAGESTREEVIEW_H
+#endif // PACKAGESVIEW_H
