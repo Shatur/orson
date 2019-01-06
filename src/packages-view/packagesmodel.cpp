@@ -208,94 +208,59 @@ void PackagesModel::sort(int column, Qt::SortOrder order)
     // Save persistent indexes according to docs: https://doc.qt.io/qt-5/qabstractitemmodel.html#layoutChanged
     QModelIndexList oldIndexes = persistentIndexList();
 
-    switch (column) {
-    case 0:
-        switch (order) {
-        case Qt::AscendingOrder:
-            std::sort(m_repoPackages.begin(), m_repoPackages.end(), [&](Package *first, Package *second) {
-                if (first->isInstalled() == second->isInstalled())
-                    return first->name() < second->name();
-               return first->isInstalled() > second->isInstalled();
-            });
+    switch (m_mode) {
+    case Repo:
+        switch (column) {
+        case 0:
+            sortPackages(m_repoPackages, order, &Package::isInstalled, &Package::name);
             break;
-        case Qt::DescendingOrder:
-            std::sort(m_repoPackages.begin(), m_repoPackages.end(), [&](Package *first, Package *second) {
-                if (first->isInstalled() == second->isInstalled())
-                    return first->name() < second->name();
-               return first->isInstalled() < second->isInstalled();
-            });
+        case 1:
+            sortPackages(m_repoPackages, order, &Package::name);
+            break;
+        case 2:
+            sortPackages(m_repoPackages, order, &Package::version, &Package::name);
+            break;
+        case 3:
+            sortPackages(m_repoPackages, order, &Package::installedSize);
+            break;
+        case 4:
+            sortPackages(m_repoPackages, order, &Package::repo, &Package::name);
+            break;
         }
         break;
-    case 1:
-        switch (order) {
-        case Qt::AscendingOrder:
-            std::sort(m_repoPackages.begin(), m_repoPackages.end(), [&](Package *first, Package *second) {
-               return first->name() < second->name();
-            });
+    case AUR:
+        switch (column) {
+        case 0:
+            sortPackages(m_aurPackages, order, &Package::isInstalled, &Package::name);
             break;
-        case Qt::DescendingOrder:
-            std::sort(m_repoPackages.begin(), m_repoPackages.end(), [&](Package *first, Package *second) {
-               return first->name() > second->name();
-            });
+        case 1:
+            sortPackages(m_aurPackages, order, &Package::name);
+            break;
+        case 2:
+            sortPackages(m_aurPackages, order, &Package::version, &Package::name);
+            break;
+        case 3:
+            sortPackages(m_aurPackages, order, &Package::popularity);
+            break;
         }
         break;
-    case 2:
-        switch (order) {
-        case Qt::AscendingOrder:
-            std::sort(m_repoPackages.begin(), m_repoPackages.end(), [&](Package *first, Package *second) {
-                if (first->version() == second->version())
-                    return first->name() < second->name();
-               return first->version() < second->version();
-            });
-            break;
-        case Qt::DescendingOrder:
-            std::sort(m_repoPackages.begin(), m_repoPackages.end(), [&](Package *first, Package *second) {
-                if (first->version() == second->version())
-                    return first->name() < second->name();
-               return first->version() > second->version();
-            });
-        }
-        break;
-    case 3:
-        switch (order) {
-        case Qt::AscendingOrder:
-            std::sort(m_repoPackages.begin(), m_repoPackages.end(), [&](Package *first, Package *second) {
-                if (first->installedSize() == second->installedSize())
-                    return first->name() < second->name();
-               return first->installedSize() < second->installedSize();
-            });
-            break;
-        case Qt::DescendingOrder:
-            std::sort(m_repoPackages.begin(), m_repoPackages.end(), [&](Package *first, Package *second) {
-                if (first->installedSize() == second->installedSize())
-                    return first->name() < second->name();
-               return first->installedSize() > second->installedSize();
-            });
-        }
-        break;
-    case 4:
-        switch (order) {
-        case Qt::AscendingOrder:
-            std::sort(m_repoPackages.begin(), m_repoPackages.end(), [&](Package *first, Package *second) {
-                if (first->name() == second->name())
-                    return first->name() < second->name();
-               return first->repo() < second->repo();
-            });
-            break;
-        case Qt::DescendingOrder:
-            std::sort(m_repoPackages.begin(), m_repoPackages.end(), [&](Package *first, Package *second) {
-                if (first->name() == second->name())
-                    return first->name() < second->name();
-               return first->repo() > second->repo();
-            });
-        }
     }
 
     // Update indexes
     QModelIndexList newIndexes;
     foreach (auto oldIndex, oldIndexes) {
         const auto package = static_cast<Package *>(oldIndex.internalPointer()); // Get package from old index
-        const int row = m_repoPackages.indexOf(package); // Find new package position
+
+        // Find new package position
+        int row = 0;
+        switch (m_mode) {
+        case Repo:
+            row = m_repoPackages.indexOf(package);
+            break;
+        case AUR:
+            row = m_aurPackages.indexOf(package);
+            break;
+        }
 
         // Save index
         const QModelIndex newIndex = index(row, oldIndex.column());
@@ -387,5 +352,44 @@ void PackagesModel::loadDatabase(const char *databaseName)
         package->setSyncData(packageData);
         m_repoPackages.append(package);
         cache = cache->next;
+    }
+}
+
+template<typename T1, typename T2>
+void PackagesModel::sortPackages(QVector<Package *> &container, Qt::SortOrder order,
+                                 Comparator<T1> firstMember, Comparator<T2> secondMember)
+{
+    switch (order) {
+    case Qt::AscendingOrder:
+        std::sort(container.begin(), container.end(), [&](Package *first, Package *second) {
+            if ((first->*firstMember)() == (second->*firstMember)())
+                return (first->*secondMember)() < (second->*secondMember)();
+           return (first->*firstMember)() > (second->*firstMember)();
+        });
+        break;
+    case Qt::DescendingOrder:
+        std::sort(container.begin(), container.end(), [&](Package *first, Package *second) {
+            if ((first->*firstMember)() == (second->*firstMember)())
+                return (first->*secondMember)() < (second->*secondMember)();
+           return (first->*firstMember)() < (second->*firstMember)();
+        });
+        break;
+    }
+}
+
+template<typename T>
+void PackagesModel::sortPackages(QVector<Package *> &container, Qt::SortOrder order, Comparator<T> member)
+{
+    switch (order) {
+    case Qt::AscendingOrder:
+        std::sort(container.begin(), container.end(), [&](Package *first, Package *second) {
+           return (first->*member)() > (second->*member)();
+        });
+        break;
+    case Qt::DescendingOrder:
+        std::sort(container.begin(), container.end(), [&](Package *first, Package *second) {
+           return (first->*member)() < (second->*member)();
+        });
+        break;
     }
 }

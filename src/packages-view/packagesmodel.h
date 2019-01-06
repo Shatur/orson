@@ -38,7 +38,16 @@ public:
     void aurSearch(const QString &text, const QString &queryType);
 
 private:
+    template<typename T>
+    using Comparator = T (Package::*)() const;
+
     void loadDatabase(const char *databaseName);
+
+    template<typename T1, typename T2>
+    void sortPackages(QVector<Package *> &container, Qt::SortOrder order, Comparator<T1> firstMember, Comparator<T2> secondMember);
+
+    template<typename T>
+    void sortPackages(QVector<Package *> &container, Qt::SortOrder order, Comparator<T> member);
 
     // Repo ALPM specific members
     alpm_handle_t *m_handle;
