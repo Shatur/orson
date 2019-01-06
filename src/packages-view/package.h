@@ -20,7 +20,7 @@ public:
     QString description() const;
     QString arch() const;
     QString url() const;
-    QString packager() const;
+    QString maintainer() const;
     QString formattedInstalledSize() const;
     QString formattedDownloadSize() const;
     QStringList licenses() const;

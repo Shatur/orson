@@ -337,6 +337,8 @@ alpm_errno_t PackagesModel::error() const
 
 void PackagesModel::aurSearch(const QString &text, const QString &queryType)
 {
+    alpm_db_t *localDatabase = alpm_get_localdb(m_handle);
+
     // Generate API URL
     QUrl url(AUR_API_URL);
     url.setQuery("v=5&type=search&by=" + queryType + "&arg=" + text);
@@ -358,9 +360,15 @@ void PackagesModel::aurSearch(const QString &text, const QString &queryType)
 
     beginResetModel();
     m_aurPackages.clear();
-    foreach (const QJsonValue &packageData, jsonData.value("results").toArray()) {
+    foreach (const QJsonValue &aurPackageData, jsonData.value("results").toArray()) {
+        // Get AUR data
         const auto package = new Package;
-        package->setAurData(packageData);
+        package->setAurData(aurPackageData);
+
+        // Get local data
+        alpm_pkg_t *localPackageData = alpm_db_get_pkg(localDatabase, qPrintable(package->name()));
+        package->setLocalData(localPackageData);
+
         m_aurPackages.append(package);
     }
     endResetModel();

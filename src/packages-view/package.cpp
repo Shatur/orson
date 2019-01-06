@@ -1,9 +1,8 @@
+#include "package.h"
+
 #include <QMimeDatabase>
 #include <QLocale>
 #include <QVector>
-
-#include "package.h"
-
 #include <QDateTime>
 
 Package::Package()
@@ -62,9 +61,13 @@ QString Package::version() const
 
 QString Package::description() const
 {
-    if (m_localData == nullptr)
+    if (m_localData != nullptr)
+        return alpm_pkg_get_desc(m_localData);
+
+    if (m_syncData != nullptr)
         return alpm_pkg_get_desc(m_syncData);
-    return alpm_pkg_get_desc(m_localData);
+
+    return m_aurData.value("Description").toString();
 }
 
 QString Package::arch() const
@@ -76,16 +79,24 @@ QString Package::arch() const
 
 QString Package::url() const
 {
-    if (m_localData == nullptr)
+    if (m_localData != nullptr)
+        return alpm_pkg_get_url(m_localData);
+
+    if (m_syncData != nullptr)
         return alpm_pkg_get_url(m_syncData);
-    return alpm_pkg_get_url(m_localData);
+
+    return m_aurData.value("URL").toString();
 }
 
-QString Package::packager() const
+QString Package::maintainer() const
 {
-    if (m_localData == nullptr)
+    if (m_localData != nullptr)
+        return alpm_pkg_get_packager(m_localData);
+
+    if (m_syncData != nullptr)
         return alpm_pkg_get_packager(m_syncData);
-    return alpm_pkg_get_packager(m_localData);
+
+    return m_aurData.value("Maintainer").toString();
 }
 
 QString Package::formattedInstalledSize() const
