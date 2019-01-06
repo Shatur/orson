@@ -81,3 +81,8 @@ void FilesView::mouseDoubleClickEvent(QMouseEvent *event)
         QDesktopServices::openUrl(item->path());
     }
 }
+
+void FilesView::setModel(QAbstractItemModel *model)
+{
+    QTreeView::setModel(model);
+}

@@ -116,3 +116,8 @@ PackagesModel *PackagesView::model() const
 {
     return static_cast<PackagesModel *>(QTreeView::model());
 }
+
+void PackagesView::setModel(QAbstractItemModel *model)
+{
+    QTreeView::setModel(model);
+}

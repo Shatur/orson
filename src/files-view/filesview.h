@@ -23,6 +23,7 @@ private slots:
 private:
     void contextMenuEvent(QContextMenuEvent *event) override;
     void mouseDoubleClickEvent(QMouseEvent * event) override;
+    void setModel(QAbstractItemModel *model) override;
 
     QMenu m_menu{this};
     FilesModel *m_model = new FilesModel{this};

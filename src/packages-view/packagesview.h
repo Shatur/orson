@@ -25,6 +25,9 @@ public:
 
 signals:
     void currentPackageChanged(Package *package);
+
+private:
+    void setModel(QAbstractItemModel *model) override;
 };
 
 #endif // PACKAGESVIEW_H
