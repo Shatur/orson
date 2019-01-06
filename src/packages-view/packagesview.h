@@ -2,7 +2,6 @@
 #define PACKAGESVIEW_H
 
 #include "packagesmodel.h"
-
 #include <QTreeView>
 
 class PackagesView : public QTreeView
@@ -16,7 +15,7 @@ public:
         Description
     };
 
-    PackagesView(QWidget *parent = nullptr);
+    explicit PackagesView(QWidget *parent = nullptr);
 
     void filter(const QString &text, FilterType type = NameDescription);
     void find(const QString &packageName);
@@ -26,9 +25,6 @@ public:
 
 signals:
     void currentPackageChanged(Package *package);
-
-private:
-    PackagesModel *m_model = new PackagesModel{this};
 };
 
 #endif // PACKAGESVIEW_H

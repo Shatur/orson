@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     // Select package when clicking on dependencies
-    connect(&depsButtonGroup, qOverload<QAbstractButton *>(&QButtonGroup::buttonClicked), this, &MainWindow::selectPackage);
+    connect(&depsButtonGroup, qOverload<QAbstractButton *>(&QButtonGroup::buttonClicked), this, &MainWindow::findDepend);
 
     // Select first package
     ui->packagesView->setCurrentIndex(ui->packagesView->model()->index(0, 0));
@@ -91,7 +91,16 @@ void MainWindow::on_packageTabsWidget_currentChanged(int index)
     }
 }
 
-void MainWindow::selectPackage(QAbstractButton *button)
+void MainWindow::on_searchByComboBox_currentIndexChanged(int index)
+{
+    const auto filterType = static_cast<PackagesView::FilterType>(ui->searchByComboBox->currentIndex());
+    const auto mode = static_cast<PackagesModel::Mode>(index);
+
+    ui->packagesView->model()->setMode(mode);
+    ui->packagesView->filter(ui->searchEdit->text(), filterType);
+}
+
+void MainWindow::findDepend(QAbstractButton *button)
 {
     // Clear previous search
     if (!ui->searchEdit->text().isEmpty()) {
@@ -169,7 +178,7 @@ void MainWindow::loadPackageFiles(const Package *package)
     ui->filesTab->setProperty("loaded", true);
 }
 
-void MainWindow::loadDepsButtons(int row, const QList<alpm_depend_t *> &deps)
+void MainWindow::loadDepsButtons(int row, const QVector<alpm_depend_t *> &deps)
 {
     auto depsContentLayout = qobject_cast<QFormLayout *>(ui->depsContentWidget->layout());
     auto packagesLabel = qobject_cast<QLabel *>(depsContentLayout->itemAt(row, QFormLayout::LabelRole)->widget());

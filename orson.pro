@@ -16,27 +16,27 @@ DEFINES += \
     QT_DEPRECATED_WARNINGS
 
 SOURCES += \
-        src/main.cpp \
-        src/mainwindow.cpp \
-        src/packages-view/packagesmodel.cpp \
-        src/packages-view/package.cpp \
-        src/files-view/filesmodel.cpp \
-        src/files-view/file.cpp \
-    src/files-view/filesview.cpp \
-    src/packages-view/packagesview.cpp
+    src/main.cpp \
+    src/mainwindow.cpp \
+    src/packages-view/package.cpp \
+    src/packages-view/packagesmodel.cpp \
+    src/packages-view/packagesview.cpp \
+    src/files-view/file.cpp \
+    src/files-view/filesmodel.cpp \
+    src/files-view/filesview.cpp
 
 HEADERS += \
-        src/mainwindow.h \
-        src/packagemanager.h \
-        src/packages-view/packagesmodel.h \
-        src/packages-view/package.h \
-        src/files-view/filesmodel.h \
-        src/files-view/file.h \
-    src/files-view/filesview.h \
-    src/packages-view/packagesview.h
+    src/mainwindow.h \
+    src/packagemanager.h \
+    src/packages-view/package.h \
+    src/packages-view/packagesmodel.h \
+    src/packages-view/packagesview.h \
+    src/files-view/file.h \
+    src/files-view/filesmodel.h \
+    src/files-view/filesview.h
 
 FORMS += \
-        src/mainwindow.ui
+    src/mainwindow.ui
 
 LIBS += -lalpm
 

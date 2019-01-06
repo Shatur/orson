@@ -28,6 +28,20 @@
        </widget>
       </item>
       <item>
+       <widget class="QComboBox" name="searchByComboBox">
+        <item>
+         <property name="text">
+          <string>Repo</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>AUR</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
        <widget class="QComboBox" name="searchComboBox">
         <item>
          <property name="text">

@@ -3,8 +3,8 @@
 
 #include <alpm.h>
 
-#include <QList>
 #include <QDateTime>
+#include <QJsonObject>
 
 class Package
 {
@@ -12,6 +12,7 @@ public:
     Package();
     void setSyncData(alpm_pkg_t *data);
     void setLocalData(alpm_pkg_t *data);
+    void setAurData(const QJsonValue &value);
 
     QString name() const;
     QString repo() const;
@@ -25,16 +26,17 @@ public:
     QStringList licenses() const;
     QStringList groups() const;
     QStringList files() const;
-    QList<alpm_depend_t *> provides() const;
-    QList<alpm_depend_t *> replaces() const;
-    QList<alpm_depend_t *> conflicts() const;
-    QList<alpm_depend_t *> depends() const;
-    QList<alpm_depend_t *> optdepends() const;
+    QVector<alpm_depend_t *> provides() const;
+    QVector<alpm_depend_t *> replaces() const;
+    QVector<alpm_depend_t *> conflicts() const;
+    QVector<alpm_depend_t *> depends() const;
+    QVector<alpm_depend_t *> optdepends() const;
     QDateTime buildDate() const;
     QDateTime installDate() const;
     alpm_pkgreason_t reason() const;
     long downloadSize() const;
     long installedSize() const;
+    double popularity() const;
     bool hasScript() const;
     bool isInstalled() const;
 
@@ -43,7 +45,8 @@ public:
 private:
     alpm_pkg_t *m_syncData = nullptr;
     alpm_pkg_t *m_localData = nullptr;
-    bool m_isInstalled = false;
+    QJsonObject m_aurData;
+    bool m_installed = false;
 };
 
 #endif // PACKAGE_H

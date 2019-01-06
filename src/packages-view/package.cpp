@@ -1,5 +1,6 @@
 #include <QMimeDatabase>
 #include <QLocale>
+#include <QVector>
 
 #include "package.h"
 
@@ -16,29 +17,45 @@ void Package::setLocalData(alpm_pkg_t *data)
 {
     m_localData = data;
     if (m_localData != nullptr)
-        m_isInstalled = true;
+        m_installed = true;
+}
+
+void Package::setAurData(const QJsonValue &value)
+{
+    m_aurData = value.toObject();
 }
 
 QString Package::name() const
 {
-    if (m_localData == nullptr)
+    if (m_localData != nullptr)
+        return alpm_pkg_get_name(m_localData);
+
+    if (m_syncData != nullptr)
         return alpm_pkg_get_name(m_syncData);
-    return alpm_pkg_get_name(m_localData);
+
+    return m_aurData.value("Name").toString();
 }
 
 QString Package::repo() const
 {
-    // Load from sync repo first
-    if (m_syncData == nullptr)
-        return alpm_db_get_name(alpm_pkg_get_db(m_localData));
-    return alpm_db_get_name(alpm_pkg_get_db(m_syncData));
+    if (m_syncData != nullptr)
+        return alpm_db_get_name(alpm_pkg_get_db(m_syncData));
+
+    if (!m_aurData.isEmpty())
+        return "aur";
+
+    return "local";
 }
 
 QString Package::version() const
 {
-    if (m_localData == nullptr)
+    if (m_localData != nullptr)
+        return alpm_pkg_get_version(m_localData);
+
+    if (m_syncData != nullptr)
         return alpm_pkg_get_version(m_syncData);
-    return alpm_pkg_get_version(m_localData);
+
+    return m_aurData.value("Version").toString();
 }
 
 QString Package::description() const
@@ -130,9 +147,9 @@ QStringList Package::files() const
     return files;
 }
 
-QList<alpm_depend_t *> Package::provides() const
+QVector<alpm_depend_t *> Package::provides() const
 {
-    QList<alpm_depend_t *> provides;
+    QVector<alpm_depend_t *> provides;
     alpm_list_t *providesList;
     if (m_localData == nullptr)
         providesList = alpm_pkg_get_provides(m_syncData);
@@ -147,9 +164,9 @@ QList<alpm_depend_t *> Package::provides() const
     return provides;
 }
 
-QList<alpm_depend_t *> Package::replaces() const
+QVector<alpm_depend_t *> Package::replaces() const
 {
-    QList<alpm_depend_t *> replaces;
+    QVector<alpm_depend_t *> replaces;
     alpm_list_t *replacesList;
     if (m_localData == nullptr)
         replacesList = alpm_pkg_get_replaces(m_syncData);
@@ -164,9 +181,9 @@ QList<alpm_depend_t *> Package::replaces() const
     return replaces;
 }
 
-QList<alpm_depend_t *> Package::conflicts() const
+QVector<alpm_depend_t *> Package::conflicts() const
 {
-    QList<alpm_depend_t *> conflicts;
+    QVector<alpm_depend_t *> conflicts;
     alpm_list_t *conflictsList;
     if (m_localData == nullptr)
         conflictsList = alpm_pkg_get_conflicts(m_syncData);
@@ -181,9 +198,9 @@ QList<alpm_depend_t *> Package::conflicts() const
     return conflicts;
 }
 
-QList<alpm_depend_t *> Package::depends() const
+QVector<alpm_depend_t *> Package::depends() const
 {
-    QList<alpm_depend_t *> depends;
+    QVector<alpm_depend_t *> depends;
     alpm_list_t *dependsList;
     if (m_localData == nullptr)
         dependsList = alpm_pkg_get_depends(m_syncData);
@@ -198,9 +215,9 @@ QList<alpm_depend_t *> Package::depends() const
     return depends;
 }
 
-QList<alpm_depend_t *> Package::optdepends() const
+QVector<alpm_depend_t *> Package::optdepends() const
 {
-    QList<alpm_depend_t *> optdepends;
+    QVector<alpm_depend_t *> optdepends;
     alpm_list_t *optdependsList;
     if (m_localData == nullptr)
         optdependsList = alpm_pkg_get_optdepends(m_syncData);
@@ -247,6 +264,11 @@ long Package::installedSize() const
     return alpm_pkg_get_isize(m_localData);
 }
 
+double Package::popularity() const
+{
+    return m_aurData.value("Popularity").toDouble();
+}
+
 // Can be obtained only from local data
 bool Package::hasScript() const
 {
@@ -255,7 +277,7 @@ bool Package::hasScript() const
 
 bool Package::isInstalled() const
 {
-    return m_isInstalled;
+    return m_installed;
 }
 
 // String of version constraints in dependency specs

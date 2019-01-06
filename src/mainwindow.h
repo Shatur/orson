@@ -23,8 +23,9 @@ private slots:
     void on_searchEdit_returnPressed();
     void on_packagesView_currentPackageChanged(Package *package);
     void on_packageTabsWidget_currentChanged(int index);
+    void on_searchByComboBox_currentIndexChanged(int index);
 
-    void selectPackage(QAbstractButton* button);
+    void findDepend(QAbstractButton* button);
 
 private:
     // Package info tabs
@@ -32,7 +33,7 @@ private:
     void loadPackageDeps(const Package *package);
     void loadPackageFiles(const Package *package);
 
-    void loadDepsButtons(int row, const QList<alpm_depend_t *> &deps);
+    void loadDepsButtons(int row, const QVector<alpm_depend_t *> &deps);
 
     Ui::MainWindow *ui;
     QButtonGroup depsButtonGroup;
