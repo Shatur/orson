@@ -4,6 +4,8 @@
 
 #include "package.h"
 
+#include <QDateTime>
+
 Package::Package()
 {
 }

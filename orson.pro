@@ -27,7 +27,6 @@ SOURCES += \
 
 HEADERS += \
     src/mainwindow.h \
-    src/packagemanager.h \
     src/packages-view/package.h \
     src/packages-view/packagesmodel.h \
     src/packages-view/packagesview.h \

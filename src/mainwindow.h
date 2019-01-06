@@ -23,7 +23,7 @@ private slots:
     void on_searchEdit_returnPressed();
     void on_packagesView_currentPackageChanged(Package *package);
     void on_packageTabsWidget_currentChanged(int index);
-    void on_searchByComboBox_currentIndexChanged(int index);
+    void on_searchModeComboBox_currentIndexChanged(int index);
 
     void findDepend(QAbstractButton* button);
 
@@ -36,7 +36,7 @@ private:
     void loadDepsButtons(int row, const QVector<alpm_depend_t *> &deps);
 
     Ui::MainWindow *ui;
-    QButtonGroup depsButtonGroup;
+    QButtonGroup *depsButtonGroup;
 };
 
 #endif // MAINWINDOW_H

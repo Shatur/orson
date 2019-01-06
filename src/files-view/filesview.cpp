@@ -10,20 +10,21 @@
 FilesView::FilesView(QWidget *parent) :
     QTreeView(parent)
 {
-    setModel(m_model);
+    setModel(new FilesModel(this));
     header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     // Setup context menu
-    m_menu.addAction(QIcon::fromTheme("document-open"), tr("Open"), this, &FilesView::open);
-    m_menu.addAction(QIcon::fromTheme("folder"), tr("Open if file manager"), this, &FilesView::openInFileManager);
-    m_menu.addAction(QIcon::fromTheme("edit-copy"), tr("Copy"), this, &FilesView::copyFile);
-    m_menu.addAction(QIcon::fromTheme("edit-copy"), tr("Copy name"), this, &FilesView::copyName);
-    m_menu.addAction(QIcon::fromTheme("edit-copy"), tr("Copy path"), this, &FilesView::copyPath);
+    m_menu = new QMenu(this);
+    m_menu->addAction(QIcon::fromTheme("document-open"), tr("Open"), this, &FilesView::open);
+    m_menu->addAction(QIcon::fromTheme("folder"), tr("Open if file manager"), this, &FilesView::openInFileManager);
+    m_menu->addAction(QIcon::fromTheme("edit-copy"), tr("Copy"), this, &FilesView::copyFile);
+    m_menu->addAction(QIcon::fromTheme("edit-copy"), tr("Copy name"), this, &FilesView::copyName);
+    m_menu->addAction(QIcon::fromTheme("edit-copy"), tr("Copy path"), this, &FilesView::copyPath);
 }
 
 FilesModel *FilesView::model() const
 {
-    return m_model;
+    return static_cast<FilesModel *>(QTreeView::model());
 }
 
 void FilesView::open() const
@@ -65,11 +66,11 @@ void FilesView::contextMenuEvent(QContextMenuEvent *event)
     if (item != nullptr) {
         // Enable "Copy" only for files
         if (item->isFile())
-            m_menu.actions().at(2)->setEnabled(true);
+            m_menu->actions().at(2)->setEnabled(true);
         else
-            m_menu.actions().at(2)->setEnabled(false);
+            m_menu->actions().at(2)->setEnabled(false);
 
-        m_menu.exec(event->globalPos());
+        m_menu->exec(event->globalPos());
     }
 }
 

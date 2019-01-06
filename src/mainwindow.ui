@@ -28,7 +28,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="searchByComboBox">
+       <widget class="QComboBox" name="searchModeComboBox">
         <item>
          <property name="text">
           <string>Repo</string>
@@ -42,7 +42,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="searchComboBox">
+       <widget class="QComboBox" name="searchByComboBox">
         <item>
          <property name="text">
           <string>Name, description</string>
@@ -544,7 +544,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>searchComboBox</sender>
+   <sender>searchByComboBox</sender>
    <signal>currentIndexChanged(int)</signal>
    <receiver>MainWindow</receiver>
    <slot>on_searchEdit_returnPressed()</slot>

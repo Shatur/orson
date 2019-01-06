@@ -25,8 +25,7 @@ private:
     void mouseDoubleClickEvent(QMouseEvent * event) override;
     void setModel(QAbstractItemModel *model) override;
 
-    QMenu m_menu{this};
-    FilesModel *m_model = new FilesModel{this};
+    QMenu *m_menu;
 };
 
 #endif // FILESVIEW_H

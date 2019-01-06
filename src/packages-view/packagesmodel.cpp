@@ -10,6 +10,7 @@ constexpr char AUR_API_URL[] = "https://aur.archlinux.org/rpc/";
 PackagesModel::PackagesModel(QObject *parent) :
     QAbstractItemModel(parent)
 {
+    m_manager = new QNetworkAccessManager(this);
     m_handle = alpm_initialize("/", "/var/lib/pacman", &m_error);
     if (m_error != ALPM_ERR_OK)
         return;
@@ -305,6 +306,18 @@ void PackagesModel::sort(int column, Qt::SortOrder order)
     emit layoutChanged();
 }
 
+PackagesModel::Mode PackagesModel::mode() const
+{
+    return m_mode;
+}
+
+void PackagesModel::setMode(Mode mode)
+{
+    beginResetModel();
+    m_mode = mode;
+    endResetModel();
+}
+
 QVector<Package *> PackagesModel::packages() const
 {
     switch (m_mode) {
@@ -329,7 +342,7 @@ void PackagesModel::aurSearch(const QString &text, const QString &queryType)
     url.setQuery("v=5&type=search&by=" + queryType + "&arg=" + text);
 
     // Get request
-    QNetworkReply *reply = m_manager.get(QNetworkRequest(url));
+    QNetworkReply *reply = m_manager->get(QNetworkRequest(url));
     QEventLoop waitForReply;
     connect(reply, &QNetworkReply::finished, &waitForReply, &QEventLoop::quit);
     waitForReply.exec();
@@ -350,18 +363,6 @@ void PackagesModel::aurSearch(const QString &text, const QString &queryType)
         package->setAurData(packageData);
         m_aurPackages.append(package);
     }
-    endResetModel();
-}
-
-PackagesModel::Mode PackagesModel::mode() const
-{
-    return m_mode;
-}
-
-void PackagesModel::setMode(Mode mode)
-{
-    beginResetModel();
-    m_mode = mode;
     endResetModel();
 }
 

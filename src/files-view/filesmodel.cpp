@@ -3,6 +3,7 @@
 FilesModel::FilesModel(QObject *parent) :
     QAbstractItemModel(parent)
 {
+    rootItem = new File;
 }
 
 FilesModel::~FilesModel()

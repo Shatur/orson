@@ -10,7 +10,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     // Select package when clicking on dependencies
-    connect(&depsButtonGroup, qOverload<QAbstractButton *>(&QButtonGroup::buttonClicked), this, &MainWindow::findDepend);
+    depsButtonGroup = new QButtonGroup(this);
+    connect(depsButtonGroup, qOverload<QAbstractButton *>(&QButtonGroup::buttonClicked), this, &MainWindow::findDepend);
 
     // Select first package
     ui->packagesView->setCurrentIndex(ui->packagesView->model()->index(0, 0));
@@ -23,7 +24,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_searchEdit_returnPressed()
 {
-    const auto filterType = static_cast<PackagesView::FilterType>(ui->searchComboBox->currentIndex());
+    const auto filterType = static_cast<PackagesView::FilterType>(ui->searchByComboBox->currentIndex());
     ui->packagesView->filter(ui->searchEdit->text(), filterType);
 }
 
@@ -91,10 +92,10 @@ void MainWindow::on_packageTabsWidget_currentChanged(int index)
     }
 }
 
-void MainWindow::on_searchByComboBox_currentIndexChanged(int index)
+void MainWindow::on_searchModeComboBox_currentIndexChanged(int index)
 {
-    const auto filterType = static_cast<PackagesView::FilterType>(ui->searchByComboBox->currentIndex());
     const auto mode = static_cast<PackagesModel::Mode>(index);
+    const auto filterType = static_cast<PackagesView::FilterType>(ui->searchByComboBox->currentIndex());
 
     ui->packagesView->model()->setMode(mode);
     ui->packagesView->filter(ui->searchEdit->text(), filterType);
@@ -207,7 +208,7 @@ void MainWindow::loadDepsButtons(int row, const QVector<alpm_depend_t *> &deps)
             button->setText(dep->name + Package::depmodString(dep->mod) + dep->version);
         else
             button->setText(dep->name + Package::depmodString(dep->mod) + dep->version + QString(": ") + dep->desc);
-        depsButtonGroup.addButton(button);
+        depsButtonGroup->addButton(button);
         packagesLayout->addWidget(button);
     }
     packagesLabel->show();
