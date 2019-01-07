@@ -1,7 +1,7 @@
 #ifndef PACKAGE_H
 #define PACKAGE_H
 
-#include <alpm.h>
+#include "depend.h"
 
 #include <QDateTime>
 #include <QJsonObject>
@@ -26,11 +26,11 @@ public:
     QStringList licenses() const;
     QStringList groups() const;
     QStringList files() const;
-    QVector<alpm_depend_t *> provides() const;
-    QVector<alpm_depend_t *> replaces() const;
-    QVector<alpm_depend_t *> conflicts() const;
-    QVector<alpm_depend_t *> depends() const;
-    QVector<alpm_depend_t *> optdepends() const;
+    QVector<Depend> provides() const;
+    QVector<Depend> replaces() const;
+    QVector<Depend> conflicts() const;
+    QVector<Depend> depends() const;
+    QVector<Depend> optdepends() const;
     QDateTime buildDate() const;
     QDateTime installDate() const;
     alpm_pkgreason_t reason() const;
@@ -43,6 +43,8 @@ public:
     static QString depmodString(alpm_depmod_t mod);
 
 private:
+    static QVector<Depend> generateDeps(alpm_list_t *list);
+
     alpm_pkg_t *m_syncData = nullptr;
     alpm_pkg_t *m_localData = nullptr;
     QJsonObject m_aurData;

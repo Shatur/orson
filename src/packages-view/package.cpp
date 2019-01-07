@@ -167,89 +167,44 @@ QStringList Package::files() const
     return files;
 }
 
-QVector<alpm_depend_t *> Package::provides() const
+QVector<Depend> Package::provides() const
 {
-    QVector<alpm_depend_t *> provides;
-    alpm_list_t *providesList;
-    if (m_localData == nullptr)
-        providesList = alpm_pkg_get_provides(m_syncData);
-    else
-        providesList = alpm_pkg_get_provides(m_localData);
+    if (m_localData != nullptr)
+        return generateDeps(alpm_pkg_get_provides(m_localData));
 
-    while (providesList != nullptr) {
-        provides.push_back(static_cast<alpm_depend_t *>(providesList->data));
-        providesList = providesList->next;
-    }
-
-    return provides;
+    return generateDeps(alpm_pkg_get_provides(m_syncData));
 }
 
-QVector<alpm_depend_t *> Package::replaces() const
+QVector<Depend> Package::replaces() const
 {
-    QVector<alpm_depend_t *> replaces;
-    alpm_list_t *replacesList;
-    if (m_localData == nullptr)
-        replacesList = alpm_pkg_get_replaces(m_syncData);
-    else
-        replacesList = alpm_pkg_get_replaces(m_localData);
+    if (m_localData != nullptr)
+        return generateDeps(alpm_pkg_get_replaces(m_localData));
 
-    while (replacesList != nullptr) {
-        replaces.push_back(static_cast<alpm_depend_t *>(replacesList->data));
-        replacesList = replacesList->next;
-    }
-
-    return replaces;
+    return generateDeps(alpm_pkg_get_replaces(m_syncData));
 }
 
-QVector<alpm_depend_t *> Package::conflicts() const
+QVector<Depend> Package::conflicts() const
 {
-    QVector<alpm_depend_t *> conflicts;
-    alpm_list_t *conflictsList;
-    if (m_localData == nullptr)
-        conflictsList = alpm_pkg_get_conflicts(m_syncData);
-    else
-        conflictsList = alpm_pkg_get_conflicts(m_localData);
+    if (m_localData != nullptr)
+        return generateDeps(alpm_pkg_get_conflicts(m_localData));
 
-    while (conflictsList != nullptr) {
-        conflicts.push_back(static_cast<alpm_depend_t *>(conflictsList->data));
-        conflictsList = conflictsList->next;
-    }
-
-    return conflicts;
+    return generateDeps(alpm_pkg_get_conflicts(m_syncData));
 }
 
-QVector<alpm_depend_t *> Package::depends() const
+QVector<Depend> Package::depends() const
 {
-    QVector<alpm_depend_t *> depends;
-    alpm_list_t *dependsList;
-    if (m_localData == nullptr)
-        dependsList = alpm_pkg_get_depends(m_syncData);
-    else
-        dependsList = alpm_pkg_get_depends(m_localData);
+    if (m_localData != nullptr)
+        return generateDeps(alpm_pkg_get_depends(m_localData));
 
-    while (dependsList != nullptr) {
-        depends.push_back(static_cast<alpm_depend_t *>(dependsList->data));
-        dependsList = dependsList->next;
-    }
-
-    return depends;
+    return generateDeps(alpm_pkg_get_depends(m_syncData));
 }
 
-QVector<alpm_depend_t *> Package::optdepends() const
+QVector<Depend> Package::optdepends() const
 {
-    QVector<alpm_depend_t *> optdepends;
-    alpm_list_t *optdependsList;
-    if (m_localData == nullptr)
-        optdependsList = alpm_pkg_get_optdepends(m_syncData);
-    else
-        optdependsList = alpm_pkg_get_optdepends(m_localData);
+    if (m_localData != nullptr)
+        return generateDeps(alpm_pkg_get_optdepends(m_localData));
 
-    while (optdependsList != nullptr) {
-        optdepends.push_back(static_cast<alpm_depend_t *>(optdependsList->data));
-        optdependsList = optdependsList->next;
-    }
-
-    return optdepends;
+    return generateDeps(alpm_pkg_get_optdepends(m_syncData));
 }
 
 QDateTime Package::buildDate() const
@@ -309,21 +264,13 @@ bool Package::isInstalled() const
     return m_installed;
 }
 
-// String of version constraints in dependency specs
-QString Package::depmodString(alpm_depmod_t mod)
+// Generate QVector from alpm list
+QVector<Depend> Package::generateDeps(alpm_list_t *list)
 {
-    switch (mod) {
-    case ALPM_DEP_MOD_EQ:
-        return " = ";
-    case ALPM_DEP_MOD_GE:
-        return " >= ";
-    case ALPM_DEP_MOD_LE:
-        return " <= ";
-    case ALPM_DEP_MOD_GT:
-        return " > ";
-    case ALPM_DEP_MOD_LT:
-        return " < ";
-    default:
-        return "";
+    QVector<Depend> deps;
+    while (list != nullptr) {
+        deps.append(Depend(static_cast<alpm_depend_t *>(list->data)));
+        list = list->next;
     }
+    return deps;
 }

@@ -197,7 +197,7 @@ void MainWindow::loadPackageFiles(const Package *package)
     ui->filesTab->setProperty("loaded", true);
 }
 
-void MainWindow::loadDepsButtons(int row, const QVector<alpm_depend_t *> &deps)
+void MainWindow::loadDepsButtons(int row, const QVector<Depend> &deps)
 {
     auto depsContentLayout = qobject_cast<QFormLayout *>(ui->depsContentWidget->layout());
     auto packagesLabel = qobject_cast<QLabel *>(depsContentLayout->itemAt(row, QFormLayout::LabelRole)->widget());
@@ -216,16 +216,16 @@ void MainWindow::loadDepsButtons(int row, const QVector<alpm_depend_t *> &deps)
     }
 
     // Add new
-    foreach (alpm_depend_t *dep, deps) {
+    foreach (const Depend &depend, deps) {
         auto button = new QPushButton;
         button->setFlat(true);
         button->setStyleSheet("padding: 6px");
         button->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
-        button->setToolTip(dep->name);
-        if (dep->desc == nullptr)
-            button->setText(dep->name + Package::depmodString(dep->mod) + dep->version);
+        button->setToolTip(depend.name());
+        if (depend.description().isEmpty())
+            button->setText(depend.name() + depend.mod() + depend.version());
         else
-            button->setText(dep->name + Package::depmodString(dep->mod) + dep->version + QString(": ") + dep->desc);
+            button->setText(depend.name() + depend.mod() + depend.version() + ": " + depend.description());
         depsButtonGroup->addButton(button);
         packagesLayout->addWidget(button);
     }

@@ -18,6 +18,7 @@ DEFINES += \
 SOURCES += \
     src/main.cpp \
     src/mainwindow.cpp \
+    src/packages-view/depend.cpp \
     src/packages-view/package.cpp \
     src/packages-view/packagesmodel.cpp \
     src/packages-view/packagesview.cpp \
@@ -27,6 +28,7 @@ SOURCES += \
 
 HEADERS += \
     src/mainwindow.h \
+    src/packages-view/depend.h \
     src/packages-view/package.h \
     src/packages-view/packagesmodel.h \
     src/packages-view/packagesview.h \

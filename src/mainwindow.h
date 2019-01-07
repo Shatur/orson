@@ -33,7 +33,7 @@ private:
     void loadPackageDeps(const Package *package);
     void loadPackageFiles(const Package *package);
 
-    void loadDepsButtons(int row, const QVector<alpm_depend_t *> &deps);
+    void loadDepsButtons(int row, const QVector<Depend> &deps);
 
     Ui::MainWindow *ui;
     QButtonGroup *depsButtonGroup;

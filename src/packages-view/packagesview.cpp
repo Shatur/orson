@@ -98,8 +98,8 @@ void PackagesView::find(const QString &packageName)
 
     // If not dound, then search by providing
     for (int i = 0; i < model()->packages().count(); ++i) {
-        foreach (const alpm_depend_t *depend, model()->packages().at(i)->provides()) {
-            if (depend->name == packageName) {
+        foreach (const Depend &depend, model()->packages().at(i)->provides()) {
+            if (depend.name() == packageName) {
                 const QModelIndex index = model()->index(i, 0);
                 setCurrentIndex(index);
                 scrollTo(index);
