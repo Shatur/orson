@@ -170,41 +170,51 @@ QStringList Package::files() const
 QVector<Depend> Package::provides() const
 {
     if (m_localData != nullptr)
-        return generateDeps(alpm_pkg_get_provides(m_localData));
+        return alpmDeps(alpm_pkg_get_provides(m_localData));
+    else if (m_syncData != nullptr)
+        return alpmDeps(alpm_pkg_get_provides(m_syncData));
 
-    return generateDeps(alpm_pkg_get_provides(m_syncData));
+    return aurDeps(m_aurData.value("Provides"));
 }
 
 QVector<Depend> Package::replaces() const
 {
     if (m_localData != nullptr)
-        return generateDeps(alpm_pkg_get_replaces(m_localData));
+        return alpmDeps(alpm_pkg_get_replaces(m_localData));
+    else if (m_syncData != nullptr)
+        return alpmDeps(alpm_pkg_get_replaces(m_syncData));
 
-    return generateDeps(alpm_pkg_get_replaces(m_syncData));
+    return aurDeps(m_aurData.value("Replaces"));
 }
 
 QVector<Depend> Package::conflicts() const
 {
     if (m_localData != nullptr)
-        return generateDeps(alpm_pkg_get_conflicts(m_localData));
+        return alpmDeps(alpm_pkg_get_conflicts(m_localData));
+    else if (m_syncData != nullptr)
+        return alpmDeps(alpm_pkg_get_conflicts(m_syncData));
 
-    return generateDeps(alpm_pkg_get_conflicts(m_syncData));
+    return aurDeps(m_aurData.value("Conflicts"));
 }
 
 QVector<Depend> Package::depends() const
 {
     if (m_localData != nullptr)
-        return generateDeps(alpm_pkg_get_depends(m_localData));
+        return alpmDeps(alpm_pkg_get_depends(m_localData));
+    else if (m_syncData != nullptr)
+        return alpmDeps(alpm_pkg_get_depends(m_syncData));
 
-    return generateDeps(alpm_pkg_get_depends(m_syncData));
+    return aurDeps(m_aurData.value("Depends"));
 }
 
 QVector<Depend> Package::optdepends() const
 {
     if (m_localData != nullptr)
-        return generateDeps(alpm_pkg_get_optdepends(m_localData));
+        return alpmDeps(alpm_pkg_get_optdepends(m_localData));
+    else if (m_syncData != nullptr)
+        return alpmDeps(alpm_pkg_get_optdepends(m_syncData));
 
-    return generateDeps(alpm_pkg_get_optdepends(m_syncData));
+    return aurDeps(m_aurData.value("OptDepends"));
 }
 
 QDateTime Package::buildDate() const
@@ -265,12 +275,20 @@ bool Package::isInstalled() const
 }
 
 // Generate QVector from alpm list
-QVector<Depend> Package::generateDeps(alpm_list_t *list)
+QVector<Depend> Package::alpmDeps(alpm_list_t *list)
 {
     QVector<Depend> deps;
     while (list != nullptr) {
         deps.append(Depend(static_cast<alpm_depend_t *>(list->data)));
         list = list->next;
     }
+    return deps;
+}
+
+QVector<Depend> Package::aurDeps(const QJsonValue &array)
+{
+    QVector<Depend> deps;
+    foreach(const QJsonValue &value, array.toArray())
+        deps.append(Depend(value.toString()));
     return deps;
 }

@@ -43,7 +43,8 @@ public:
     static QString depmodString(alpm_depmod_t mod);
 
 private:
-    static QVector<Depend> generateDeps(alpm_list_t *list);
+    static QVector<Depend> alpmDeps(alpm_list_t *list);
+    static QVector<Depend> aurDeps(const QJsonValue &value);
 
     alpm_pkg_t *m_syncData = nullptr;
     alpm_pkg_t *m_localData = nullptr;
