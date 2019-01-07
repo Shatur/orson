@@ -14,6 +14,8 @@ PackagesView::PackagesView(QWidget *parent) :
     // Add current package changed signal
     connect(selectionModel(), &QItemSelectionModel::currentChanged, [&](const QModelIndex &current) {
         auto package = static_cast<Package *>(current.internalPointer());
+        if (model()->mode() == PackagesModel::AUR)
+            model()->loadMoreAurInfo(package);
         emit currentPackageChanged(package);
     });
 }

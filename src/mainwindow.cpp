@@ -116,12 +116,23 @@ void MainWindow::findDepend(QAbstractButton *button)
 void MainWindow::loadPackageInfo(const Package *package)
 {
     // General info
-    ui->archLabel->setText(package->arch());
     ui->repoLabel->setText(package->repo());
-    ui->urlLabel->setText("<a href=\"" + package->url() + "\">" + package->url() + "</a>");
     ui->maintainerLabel->setText(package->maintainer());
-    ui->buildDateLabel->setText(package->buildDate().toString("ddd dd MMM yyyy HH:mm:ss"));
     ui->licensesLabel->setText(package->licenses().join(", "));
+
+    // URL
+    const QString url = package->url();
+    if (!url.isEmpty())
+        ui->urlLabel->setText("<a href=\"" + url + "\">" + url + "</a>");
+    else
+        ui->urlLabel->setText("-");
+
+    // Arch
+    const QString arch = package->arch();
+    if (!arch.isEmpty())
+        ui->archLabel->setText(arch);
+    else
+        ui->archLabel->setText("-");
 
     // Groups
     const QStringList groups = package->groups();
@@ -130,11 +141,18 @@ void MainWindow::loadPackageInfo(const Package *package)
     else
         ui->groupslabel->setText(tr("No"));
 
-    // Do not show download size for local package
-    if (package->repo() == "local")
-        ui->downloadSizeLabel->setText("-");
-    else
+    // Download size
+    if (package->downloadSize() != -1)
         ui->downloadSizeLabel->setText(package->formattedDownloadSize());
+    else
+        ui->downloadSizeLabel->setText("-");
+
+    // Build date
+    const QDateTime buildDate = package->installDate();
+    if (buildDate.isValid())
+        ui->buildDateLabel->setText(buildDate.toString("ddd dd MMM yyyy HH:mm:ss"));
+    else
+        ui->buildDateLabel->setText("-");
 
     // Install-specific info
     if (package->isInstalled()) {

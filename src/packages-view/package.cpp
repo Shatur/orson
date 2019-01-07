@@ -4,6 +4,7 @@
 #include <QLocale>
 #include <QVector>
 #include <QDateTime>
+#include <QJsonArray>
 
 Package::Package()
 {
@@ -72,9 +73,9 @@ QString Package::description() const
 
 QString Package::arch() const
 {
-    if (m_localData == nullptr)
-        return alpm_pkg_get_arch(m_syncData);
-    return alpm_pkg_get_arch(m_localData);
+    if (m_localData != nullptr)
+        return alpm_pkg_get_arch(m_localData);
+    return alpm_pkg_get_arch(m_syncData);
 }
 
 QString Package::url() const
@@ -115,10 +116,16 @@ QStringList Package::licenses() const
 {
     QStringList licenses;
     alpm_list_t *licensesList;
-    if (m_localData == nullptr)
-        licensesList = alpm_pkg_get_licenses(m_syncData);
-    else
+    if (m_localData != nullptr)
         licensesList = alpm_pkg_get_licenses(m_localData);
+    else if (m_syncData != nullptr)
+        licensesList = alpm_pkg_get_licenses(m_syncData);
+    else {
+        // Load AUR info
+        foreach (const QJsonValue &value, m_aurData.value("License").toArray())
+            licenses.append(value.toString());
+        return licenses;
+    }
 
     while (licensesList != nullptr) {
         licenses.append(static_cast<const char *>(licensesList->data));
@@ -247,15 +254,21 @@ QVector<alpm_depend_t *> Package::optdepends() const
 
 QDateTime Package::buildDate() const
 {
-    if (m_localData == nullptr)
+    if (m_localData != nullptr)
+        return QDateTime::fromSecsSinceEpoch(alpm_pkg_get_builddate(m_localData));
+    else if (m_syncData != nullptr)
         return QDateTime::fromSecsSinceEpoch(alpm_pkg_get_builddate(m_syncData));
-    return QDateTime::fromSecsSinceEpoch(alpm_pkg_get_builddate(m_localData));
+    else
+        return QDateTime();
 }
 
 // Can be obtained only from local data
 QDateTime Package::installDate() const
 {
-    return QDateTime::fromSecsSinceEpoch(alpm_pkg_get_installdate(m_localData));
+    if (m_localData != nullptr)
+        return QDateTime::fromSecsSinceEpoch(alpm_pkg_get_installdate(m_localData));
+    else
+        return QDateTime();
 }
 
 // Can be obtained only from local data
@@ -272,9 +285,12 @@ long Package::downloadSize() const
 
 long Package::installedSize() const
 {
-    if (m_localData == nullptr)
+    if (m_localData != nullptr)
+        return alpm_pkg_get_isize(m_localData);
+    else if (m_syncData != nullptr)
         return alpm_pkg_get_isize(m_syncData);
-    return alpm_pkg_get_isize(m_localData);
+    else
+        return -1;
 }
 
 double Package::popularity() const

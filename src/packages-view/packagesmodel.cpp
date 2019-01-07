@@ -339,6 +339,27 @@ void PackagesModel::aurSearch(const QString &text, const QString &queryType)
     endResetModel();
 }
 
+void PackagesModel::loadMoreAurInfo(Package *package)
+{
+    QUrl url(AUR_API_URL);
+    url.setQuery("v=5&type=info&arg[]=" + package->name());
+
+    QNetworkReply *reply = m_manager->get(QNetworkRequest(url));
+    QEventLoop waitForReply;
+    connect(reply, &QNetworkReply::finished, &waitForReply, &QEventLoop::quit);
+    waitForReply.exec();
+
+    if (reply->error() != QNetworkReply::NoError) {
+        qDebug() << reply->errorString();
+        return;
+    }
+
+    // Parse data
+    const QJsonObject jsonData = QJsonDocument::fromJson(reply->readAll()).object();
+    const QJsonObject packageData = jsonData.value("results").toArray().at(0).toObject();
+    package->setAurData(packageData);
+}
+
 void PackagesModel::loadDatabase(const char *databaseName)
 {
     alpm_db_t *database = alpm_register_syncdb(m_handle, databaseName, 0);

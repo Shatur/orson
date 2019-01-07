@@ -36,6 +36,7 @@ public:
     QVector<Package *> packages() const;
     alpm_errno_t error() const;
     void aurSearch(const QString &text, const QString &queryType);
+    void loadMoreAurInfo(Package *package);
 
 private:
     template<typename T>
