@@ -22,6 +22,14 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::on_searchModeComboBox_currentIndexChanged(int index)
+{
+    const auto mode = static_cast<PackagesModel::Mode>(index);
+
+    ui->packagesView->model()->setMode(mode);
+    on_searchEdit_returnPressed(); // Search packages
+}
+
 void MainWindow::on_searchEdit_returnPressed()
 {
     const auto filterType = static_cast<PackagesView::FilterType>(ui->searchByComboBox->currentIndex());
@@ -92,25 +100,19 @@ void MainWindow::on_packageTabsWidget_currentChanged(int index)
     }
 }
 
-void MainWindow::on_searchModeComboBox_currentIndexChanged(int index)
-{
-    const auto mode = static_cast<PackagesModel::Mode>(index);
-    const auto filterType = static_cast<PackagesView::FilterType>(ui->searchByComboBox->currentIndex());
-
-    ui->packagesView->model()->setMode(mode);
-    ui->packagesView->filter(ui->searchEdit->text(), filterType);
-}
-
 void MainWindow::findDepend(QAbstractButton *button)
 {
-    // Clear previous search
-    if (!ui->searchEdit->text().isEmpty()) {
-        ui->searchEdit->clear();
-        ui->packagesView->filter("");
-    }
+    // Search in repo first
+    ui->searchEdit->clear();
+    ui->searchModeComboBox->setCurrentIndex(PackagesModel::Repo);
 
     // Search package
-    ui->packagesView->find(button->toolTip());
+    const bool found = ui->packagesView->find(button->toolTip());
+    if (!found) {
+        // Search in AUR
+        ui->searchEdit->setText(button->toolTip());
+        ui->searchModeComboBox->setCurrentIndex(PackagesModel::AUR);
+    }
 }
 
 void MainWindow::loadPackageInfo(const Package *package)

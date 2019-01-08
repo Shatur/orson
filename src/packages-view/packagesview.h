@@ -18,7 +18,7 @@ public:
     explicit PackagesView(QWidget *parent = nullptr);
 
     void filter(const QString &text, FilterType type = NameDescription);
-    void find(const QString &packageName);
+    bool find(const QString &packageName);
 
     Package *currentPackage() const;
     PackagesModel *model() const;
@@ -28,6 +28,7 @@ signals:
 
 private:
     void setModel(QAbstractItemModel *model) override;
+    bool m_filtered = false;
 };
 
 #endif // PACKAGESVIEW_H

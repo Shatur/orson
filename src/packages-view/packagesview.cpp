@@ -45,9 +45,13 @@ void PackagesView::filter(const QString &text, PackagesView::FilterType type)
     }
 
     if (text.isEmpty()) {
+        if (m_filtered == false)
+            return;
+
         // Show all repo packages
         for (int i = 0; i < model()->packages().count(); ++i)
             setRowHidden(i, QModelIndex(), false);
+        m_filtered = false;
         return;
     }
 
@@ -83,9 +87,11 @@ void PackagesView::filter(const QString &text, PackagesView::FilterType type)
                 setRowHidden(i, QModelIndex(), true);
         }
     }
+
+    m_filtered = true;
 }
 
-void PackagesView::find(const QString &packageName)
+bool PackagesView::find(const QString &packageName)
 {
     clearSelection();
 
@@ -95,7 +101,7 @@ void PackagesView::find(const QString &packageName)
             const QModelIndex index = model()->index(i, 0);
             setCurrentIndex(index);
             scrollTo(index);
-            return;
+            return true;
         }
     }
 
@@ -106,10 +112,12 @@ void PackagesView::find(const QString &packageName)
                 const QModelIndex index = model()->index(i, 0);
                 setCurrentIndex(index);
                 scrollTo(index);
-                return;
+                return true;
             }
         }
     }
+
+    return false;
 }
 
 Package *PackagesView::currentPackage() const
