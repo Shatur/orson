@@ -26,6 +26,7 @@ public:
     QStringList licenses() const;
     QStringList groups() const;
     QStringList files() const;
+    QStringList keywords() const;
     QVector<Depend> provides() const;
     QVector<Depend> replaces() const;
     QVector<Depend> conflicts() const;
@@ -33,6 +34,9 @@ public:
     QVector<Depend> optdepends() const;
     QDateTime buildDate() const;
     QDateTime installDate() const;
+    QDateTime firstSubmitted() const;
+    QDateTime lastModified() const;
+    QDateTime outOfDate() const;
     alpm_pkgreason_t reason() const;
     double popularity() const;
     long downloadSize() const;

@@ -117,10 +117,6 @@ void MainWindow::findDepend(QAbstractButton *button)
 
 void MainWindow::loadPackageInfo(const Package *package)
 {
-    // General info
-    ui->repoLabel->setText(package->repo());
-    ui->maintainerLabel->setText(package->maintainer());
-
     // Licenses
     const QStringList licenses = package->licenses();
     displayInfo(!licenses.isEmpty(), licenses.join(", "), ui->licensesTitleLabel, ui->licensesLabel);
@@ -129,13 +125,17 @@ void MainWindow::loadPackageInfo(const Package *package)
     const QString url = package->url();
     displayInfo(!url.isEmpty(), QString("<a href=\"" + url + "\">" + url + "</a>"), ui->urlTitleLabel, ui->urlLabel);
 
+    // Keywords (AUR)
+    const QStringList keywords = package->keywords();
+    displayInfo(!keywords.isEmpty(), keywords.join(", "), ui->keywordsTitleLabel, ui->keywordsLabel);
+
     // Arch
     const QString arch = package->arch();
     displayInfo(!arch.isEmpty(), arch, ui->archTitleLabel, ui->archLabel);
 
     // Groups
     const QStringList groups = package->groups();
-    displayInfo(!groups.isEmpty(), groups.join(", "), ui->groupsTitlelabel, ui->groupslabel);
+    displayInfo(!groups.isEmpty(), groups.join(", "), ui->groupsTitlelabel, ui->groupsLabel);
 
     // Sizes
     displayInfo(package->downloadSize() != -1, package->formattedDownloadSize(), ui->downloadSizeTitleLabel, ui->downloadSizeLabel);
@@ -148,6 +148,25 @@ void MainWindow::loadPackageInfo(const Package *package)
     // Install date
     const QDateTime installDate = package->installDate();
     displayInfo(installDate.isValid(), installDate.toString("ddd dd MMM yyyy HH:mm:ss"), ui->installDateTitleLabel, ui->installDateLabel);
+
+    // First submitted date (AUR)
+    const QDateTime firstSubmitted = package->firstSubmitted();
+    displayInfo(firstSubmitted.isValid(), firstSubmitted.toString("ddd dd MMM yyyy HH:mm:ss"), ui->firstSubmittedTitleLabel, ui->firstSubmittedLabel);
+
+    // Last submitted date (AUR)
+    const QDateTime lastSubmitted = package->lastModified();
+    displayInfo(lastSubmitted.isValid(), lastSubmitted.toString("ddd dd MMM yyyy HH:mm:ss"), ui->lastModifiedTitleLabel, ui->lastModifiedLabel);
+
+    // Out of date (AUR)
+    const QDateTime outOfDate = package->outOfDate();
+    displayInfo(outOfDate.isValid(), outOfDate.toString("ddd dd MMM yyyy HH:mm:ss"), ui->outOfDateTitleLabel, ui->outOfDateLabel);
+
+    // Maintainer
+    const QString maintainer = package->maintainer();
+    if (!maintainer.isEmpty())
+        ui->maintainerLabel->setText(package->maintainer());
+    else
+        ui->maintainerLabel->setText("None");
 
     // Other install-specific info
     if (package->isInstalled()) {

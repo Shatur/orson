@@ -167,6 +167,15 @@ QStringList Package::files() const
     return files;
 }
 
+QStringList Package::keywords() const
+{
+    QStringList keywords;
+    foreach(const QJsonValue &word, m_aurData.value("Keywords").toArray())
+        keywords.append(word.toString());
+
+    return keywords;
+}
+
 QVector<Depend> Package::provides() const
 {
     if (m_localData != nullptr)
@@ -232,6 +241,30 @@ QDateTime Package::installDate() const
 {
     if (m_localData != nullptr)
         return QDateTime::fromSecsSinceEpoch(alpm_pkg_get_installdate(m_localData));
+    else
+        return QDateTime();
+}
+
+QDateTime Package::firstSubmitted() const
+{
+    if (!m_aurData.isEmpty())
+        return QDateTime::fromSecsSinceEpoch(m_aurData.value("FirstSubmitted").toInt());
+    else
+        return QDateTime();
+}
+
+QDateTime Package::lastModified() const
+{
+    if (!m_aurData.isEmpty())
+        return QDateTime::fromSecsSinceEpoch(m_aurData.value("LastModified").toInt());
+    else
+        return QDateTime();
+}
+
+QDateTime Package::outOfDate() const
+{
+    if (!m_aurData.isEmpty() && !m_aurData.value("OutOfDate").isNull())
+        return QDateTime::fromSecsSinceEpoch(m_aurData.value("OutOfDate").toInt());
     else
         return QDateTime();
 }
