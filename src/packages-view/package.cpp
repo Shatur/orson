@@ -22,9 +22,10 @@ void Package::setLocalData(alpm_pkg_t *data)
         m_installed = true;
 }
 
-void Package::setAurData(const QJsonValue &value)
+void Package::setAurData(const QJsonValue &value, bool full)
 {
     m_aurData = value.toObject();
+    m_fullAurInfo = full;
 }
 
 QString Package::name() const
@@ -310,6 +311,11 @@ bool Package::hasScript() const
 bool Package::isInstalled() const
 {
     return m_installed;
+}
+
+bool Package::fullAurInfo() const
+{
+    return m_fullAurInfo;
 }
 
 // Generate QVector from alpm list

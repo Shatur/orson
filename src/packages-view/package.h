@@ -12,7 +12,7 @@ public:
     Package();
     void setSyncData(alpm_pkg_t *data);
     void setLocalData(alpm_pkg_t *data);
-    void setAurData(const QJsonValue &value);
+    void setAurData(const QJsonValue &value, bool full = false);
 
     QString name() const;
     QString repo() const;
@@ -44,6 +44,7 @@ public:
     int votes() const;
     bool hasScript() const;
     bool isInstalled() const;
+    bool fullAurInfo() const;
 
 private:
     static QVector<Depend> alpmDeps(alpm_list_t *list);
@@ -53,6 +54,7 @@ private:
     alpm_pkg_t *m_localData = nullptr;
     QJsonObject m_aurData;
     bool m_installed = false;
+    bool m_fullAurInfo = false;
 };
 
 #endif // PACKAGE_H

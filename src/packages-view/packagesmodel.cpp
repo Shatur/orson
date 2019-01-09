@@ -338,6 +338,10 @@ void PackagesModel::aurSearch(const QString &text, const QString &queryType)
 
 void PackagesModel::loadMoreAurInfo(Package *package)
 {
+    // Check if full AUR info already loaded
+    if (package->fullAurInfo())
+        return;
+
     QUrl url(AUR_API_URL);
     url.setQuery("v=5&type=info&arg[]=" + package->name());
 
@@ -354,7 +358,7 @@ void PackagesModel::loadMoreAurInfo(Package *package)
     // Parse data
     const QJsonObject jsonData = QJsonDocument::fromJson(reply->readAll()).object();
     const QJsonObject packageData = jsonData.value("results").toArray().at(0).toObject();
-    package->setAurData(packageData);
+    package->setAurData(packageData, true);
 }
 
 void PackagesModel::loadDatabase(const char *databaseName)
