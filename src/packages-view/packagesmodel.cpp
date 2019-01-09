@@ -110,6 +110,8 @@ QVariant PackagesModel::data(const QModelIndex &index, int role) const
         case 2:
             return package->version();
         case 3:
+            return package->votes();
+        case 4:
             return package->popularity();
         }
         break;
@@ -148,6 +150,8 @@ QVariant PackagesModel::headerData(int section, Qt::Orientation orientation, int
         case 2:
             return "Version";
         case 3:
+            return "Votes";
+        case 4:
             return "Popularity";
         }
         break;
@@ -191,14 +195,7 @@ int PackagesModel::rowCount(const QModelIndex &) const
 
 int PackagesModel::columnCount(const QModelIndex &) const
 {
-    switch (m_mode) {
-    case Repo:
-        return 5;
-    case AUR:
-        return 4;
-    }
-
-    qFatal("Unknown mode");
+    return 5;
 }
 
 void PackagesModel::sort(int column, Qt::SortOrder order)

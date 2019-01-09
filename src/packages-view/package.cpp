@@ -242,6 +242,11 @@ alpm_pkgreason_t Package::reason() const
     return alpm_pkg_get_reason(m_localData);
 }
 
+double Package::popularity() const
+{
+    return m_aurData.value("Popularity").toDouble();
+}
+
 // Can be obtained only from sync data
 long Package::downloadSize() const
 {
@@ -258,9 +263,9 @@ long Package::installedSize() const
         return -1;
 }
 
-double Package::popularity() const
+int Package::votes() const
 {
-    return m_aurData.value("Popularity").toDouble();
+    return m_aurData.value("NumVotes").toInt();
 }
 
 // Can be obtained only from local data

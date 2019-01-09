@@ -149,9 +149,6 @@ void MainWindow::loadPackageInfo(const Package *package)
     const QDateTime installDate = package->installDate();
     displayInfo(installDate.isValid(), installDate.toString("ddd dd MMM yyyy HH:mm:ss"), ui->installDateTitleLabel, ui->installDateLabel);
 
-    // Reason
-    displayInfo(buildDate.isValid(), buildDate.toString("ddd dd MMM yyyy HH:mm:ss"), ui->buildDateTitleLabel, ui->buildDateLabel);
-
     // Other install-specific info
     if (package->isInstalled()) {
         // Reason

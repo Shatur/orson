@@ -34,13 +34,12 @@ public:
     QDateTime buildDate() const;
     QDateTime installDate() const;
     alpm_pkgreason_t reason() const;
+    double popularity() const;
     long downloadSize() const;
     long installedSize() const;
-    double popularity() const;
+    int votes() const;
     bool hasScript() const;
     bool isInstalled() const;
-
-    static QString depmodString(alpm_depmod_t mod);
 
 private:
     static QVector<Depend> alpmDeps(alpm_list_t *list);
