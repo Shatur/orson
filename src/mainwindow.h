@@ -6,6 +6,7 @@
 
 #include <QMainWindow>
 #include <QButtonGroup>
+#include <QLabel>
 
 namespace Ui {
 class MainWindow;
@@ -33,6 +34,7 @@ private:
     void loadPackageDeps(const Package *package);
     void loadPackageFiles(const Package *package);
 
+    void displayInfo(bool display, const QString &text, QLabel *titleLabel, QLabel *label);
     void loadDepsButtons(int row, const QVector<Depend> &deps);
 
     Ui::MainWindow *ui;

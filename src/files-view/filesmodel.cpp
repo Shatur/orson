@@ -24,7 +24,7 @@ QVariant FilesModel::data(const QModelIndex &index, int role) const
     }
     case Qt::DisplayRole:
     {
-        File *item = static_cast<File*>(index.internalPointer());
+        File *item = static_cast<File *>(index.internalPointer());
         return item->text(index.column());
     }
     case Qt::DecorationRole:
@@ -131,7 +131,7 @@ void FilesModel::addPath(const QStringList &path)
             for (int i = 0; i <= partIndex; ++i)
                 itemPath.append("/" + path.at(i));
 
-            auto *item = new File(itemPath, lastFound);
+            auto item = new File(itemPath, lastFound);
             lastFound = item;
         }
     }

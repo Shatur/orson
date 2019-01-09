@@ -120,63 +120,60 @@ void MainWindow::loadPackageInfo(const Package *package)
     // General info
     ui->repoLabel->setText(package->repo());
     ui->maintainerLabel->setText(package->maintainer());
-    ui->licensesLabel->setText(package->licenses().join(", "));
+
+    // Licenses
+    const QStringList licenses = package->licenses();
+    displayInfo(!licenses.isEmpty(), licenses.join(", "), ui->licensesTitleLabel, ui->licensesLabel);
 
     // URL
     const QString url = package->url();
-    if (!url.isEmpty())
-        ui->urlLabel->setText("<a href=\"" + url + "\">" + url + "</a>");
-    else
-        ui->urlLabel->setText("-");
+    displayInfo(!url.isEmpty(), QString("<a href=\"" + url + "\">" + url + "</a>"), ui->urlTitleLabel, ui->urlLabel);
 
     // Arch
     const QString arch = package->arch();
-    if (!arch.isEmpty())
-        ui->archLabel->setText(arch);
-    else
-        ui->archLabel->setText("-");
+    displayInfo(!arch.isEmpty(), arch, ui->archTitleLabel, ui->archLabel);
 
     // Groups
     const QStringList groups = package->groups();
-    if (!groups.isEmpty())
-        ui->groupslabel->setText(groups.join(", "));
-    else
-        ui->groupslabel->setText(tr("No"));
+    displayInfo(!groups.isEmpty(), groups.join(", "), ui->groupsTitlelabel, ui->groupslabel);
 
-    // Download size
-    if (package->downloadSize() != -1)
-        ui->downloadSizeLabel->setText(package->formattedDownloadSize());
-    else
-        ui->downloadSizeLabel->setText("-");
+    // Sizes
+    displayInfo(package->downloadSize() != -1, package->formattedDownloadSize(), ui->downloadSizeTitleLabel, ui->downloadSizeLabel);
+    displayInfo(package->installedSize() != -1, package->formattedInstalledSize(), ui->installedSizeTitleLabel, ui->installedSizeLabel);
 
     // Build date
-    const QDateTime buildDate = package->installDate();
-    if (buildDate.isValid())
-        ui->buildDateLabel->setText(buildDate.toString("ddd dd MMM yyyy HH:mm:ss"));
-    else
-        ui->buildDateLabel->setText("-");
+    const QDateTime buildDate = package->buildDate();
+    displayInfo(buildDate.isValid(), buildDate.toString("ddd dd MMM yyyy HH:mm:ss"), ui->buildDateTitleLabel, ui->buildDateLabel);
 
-    // Install-specific info
+    // Install date
+    const QDateTime installDate = package->installDate();
+    displayInfo(installDate.isValid(), installDate.toString("ddd dd MMM yyyy HH:mm:ss"), ui->installDateTitleLabel, ui->installDateLabel);
+
+    // Reason
+    displayInfo(buildDate.isValid(), buildDate.toString("ddd dd MMM yyyy HH:mm:ss"), ui->buildDateTitleLabel, ui->buildDateLabel);
+
+    // Other install-specific info
     if (package->isInstalled()) {
-        ui->installDateLabel->setText(package->installDate().toString("ddd dd MMM yyyy HH:mm:ss"));
-        ui->installedSizeLabel->setText(package->formattedInstalledSize());
-
         // Reason
+        ui->reasonLabel->setVisible(true);
+        ui->reasonTitleLabel->setVisible(true);
         if (package->reason() == ALPM_PKG_REASON_EXPLICIT)
             ui->reasonLabel->setText(tr("Installed explicitly"));
         else
             ui->reasonLabel->setText(tr("Installed as dependency"));
 
         // Install script
+        ui->scriptLabel->setVisible(true);
+        ui->scriptTitleLabel->setVisible(true);
         if (package->hasScript())
             ui->scriptLabel->setText(tr("Yes"));
         else
             ui->scriptLabel->setText(tr("No"));
     } else {
-        ui->installDateLabel->setText("-");
-        ui->installedSizeLabel->setText("-");
-        ui->reasonLabel->setText("-");
-        ui->scriptLabel->setText("-");
+        ui->reasonLabel->setVisible(false);
+        ui->reasonTitleLabel->setVisible(false);
+        ui->scriptLabel->setVisible(false);
+        ui->scriptTitleLabel->setVisible(false);
     }
 
     ui->infoTab->setProperty("loaded", true);
@@ -197,6 +194,26 @@ void MainWindow::loadPackageFiles(const Package *package)
 {
     ui->filesView->model()->setPaths(package->files());
     ui->filesTab->setProperty("loaded", true);
+}
+
+void MainWindow::displayInfo(bool display, const QString &text, QLabel *titleLabel, QLabel *label)
+{
+    if (display) {
+        // Spacing in layout must be disabled to hide elements without empty space.
+        // So need to add spacing between items dynamically
+        label->setMargin(6);
+        titleLabel->setMargin(6);
+
+        label->setText(text);
+        label->setVisible(true);
+        titleLabel->setVisible(true);
+    } else {
+        label->setMargin(0);
+        titleLabel->setMargin(0);
+
+        label->setVisible(false);
+        titleLabel->setVisible(false);
+    }
 }
 
 void MainWindow::loadDepsButtons(int row, const QVector<Depend> &deps)

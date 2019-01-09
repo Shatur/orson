@@ -25,7 +25,7 @@ PackagesModel::PackagesModel(QObject *parent) :
     alpm_db_t *database = alpm_get_localdb(m_handle);
     alpm_list_t *cache = alpm_db_get_pkgcache(database);
     while (cache != nullptr) {
-        auto *packageData = static_cast<alpm_pkg_t *>(cache->data);
+        auto packageData = static_cast<alpm_pkg_t *>(cache->data);
         bool found = false;
 
         // Search package with the same name first (to add installation information for an existing package)
@@ -40,7 +40,7 @@ PackagesModel::PackagesModel(QObject *parent) :
 
         if (!found) {
             // Add local package
-            auto *package = new Package;
+            auto package = new Package;
             package->setLocalData(packageData);
 
             // Try to load info from AUR (temporary disabled)
@@ -368,7 +368,7 @@ void PackagesModel::loadDatabase(const char *databaseName)
 
     alpm_list_t *cache = alpm_db_get_pkgcache(database);
     while (cache != nullptr) {
-        auto *packageData = static_cast<alpm_pkg_t *>(cache->data);
+        auto packageData = static_cast<alpm_pkg_t *>(cache->data);
         auto package = new Package;
         package->setSyncData(packageData);
         m_repoPackages.append(package);
