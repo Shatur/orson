@@ -321,7 +321,11 @@ void PackagesModel::aurSearch(const QString &text, const QString &queryType)
     const QJsonObject packageData = jsonData.value("results").toArray().at(0).toObject();
 
     beginResetModel();
+
+    // Clear old data
+    qDeleteAll(m_aurPackages);
     m_aurPackages.clear();
+
     foreach (const QJsonValue &aurPackageData, jsonData.value("results").toArray()) {
         // Get AUR data
         const auto package = new Package;
@@ -333,6 +337,7 @@ void PackagesModel::aurSearch(const QString &text, const QString &queryType)
 
         m_aurPackages.append(package);
     }
+
     endResetModel();
 }
 
