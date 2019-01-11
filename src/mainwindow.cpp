@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include <QPushButton>
+#include <QStandardItemModel>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -25,6 +26,15 @@ MainWindow::~MainWindow()
 void MainWindow::on_searchModeComboBox_currentIndexChanged(int index)
 {
     const auto mode = static_cast<PackagesModel::Mode>(index);
+
+    // Disable search by description for AUR
+    if (mode == PackagesModel::AUR) {
+        qobject_cast<QStandardItemModel *>(ui->searchByComboBox->model())->item(3)->setEnabled(false);
+        if (ui->searchByComboBox->currentIndex() == 3)
+            ui->searchByComboBox->setCurrentIndex(0);
+    } else {
+        qobject_cast<QStandardItemModel *>(ui->searchByComboBox->model())->item(3)->setEnabled(true);
+    }
 
     ui->packagesView->model()->setMode(mode);
     on_searchEdit_returnPressed(); // Search packages

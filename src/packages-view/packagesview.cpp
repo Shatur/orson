@@ -36,6 +36,9 @@ void PackagesView::filter(const QString &text, PackagesView::FilterType type)
         case Name:
             queryType = "name";
             break;
+        case Maintainer:
+            queryType = "maintainer";
+            break;
         default:
             qFatal("Unsupported search type for AUR");
         }
@@ -72,6 +75,16 @@ void PackagesView::filter(const QString &text, PackagesView::FilterType type)
         for (int i = 0; i < model()->packages().size(); ++i) {
             const Package *package = model()->packages().at(i);
             if (package->name().contains(text) || package->description().contains(text))
+                setRowHidden(i, QModelIndex(), false);
+            else
+                setRowHidden(i, QModelIndex(), true);
+        }
+        break;
+    case Maintainer:
+        // Search only by name
+        for (int i = 0; i < model()->packages().size(); ++i) {
+            const Package *package = model()->packages().at(i);
+            if (package->maintainer().contains(text))
                 setRowHidden(i, QModelIndex(), false);
             else
                 setRowHidden(i, QModelIndex(), true);

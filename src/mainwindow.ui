@@ -55,6 +55,11 @@
         </item>
         <item>
          <property name="text">
+          <string>Maintainer</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
           <string>Description</string>
          </property>
         </item>
@@ -593,7 +598,7 @@
              <x>0</x>
              <y>0</y>
              <width>707</width>
-             <height>365</height>
+             <height>397</height>
             </rect>
            </property>
            <layout class="QFormLayout" name="depsContentLayout">

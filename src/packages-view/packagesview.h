@@ -12,6 +12,7 @@ public:
     enum FilterType {
         NameDescription,
         Name,
+        Maintainer,
         Description
     };
 
