@@ -14,241 +14,138 @@
    <string>Orson</string>
   </property>
   <property name="windowIcon">
-   <iconset theme="system-software-installer"/>
+   <iconset theme="system-software-installer">
+    <normaloff>.</normaloff>.</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QHBoxLayout" name="searchLayout">
-      <item>
-       <widget class="QLineEdit" name="searchEdit">
-        <property name="placeholderText">
-         <string>Search packages</string>
-        </property>
-        <property name="clearButtonEnabled">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QComboBox" name="searchModeComboBox">
-        <item>
-         <property name="text">
-          <string>Repo</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>AUR</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item>
-       <widget class="QComboBox" name="searchByComboBox">
-        <item>
-         <property name="text">
-          <string>Name, description</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Name</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Maintainer</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Description</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="PackagesView" name="packagesView">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>0</number>
       </property>
-      <property name="editTriggers">
-       <set>QAbstractItemView::NoEditTriggers</set>
-      </property>
-      <property name="rootIsDecorated">
-       <bool>false</bool>
-      </property>
-      <property name="sortingEnabled">
-       <bool>true</bool>
-      </property>
-      <property name="expandsOnDoubleClick">
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="packageHeadLayout">
-      <item>
-       <widget class="QLabel" name="iconLabel">
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="packageTitleLayout">
+      <widget class="QWidget" name="packagesWidget">
+       <attribute name="title">
+        <string>Packages</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
-         <widget class="QLabel" name="nameLabel">
+         <layout class="QHBoxLayout" name="searchPackagesLayout">
+          <item>
+           <widget class="QLineEdit" name="searchPackagesEdit">
+            <property name="placeholderText">
+             <string>Search packages</string>
+            </property>
+            <property name="clearButtonEnabled">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="searchModeComboBox">
+            <item>
+             <property name="text">
+              <string>Repo</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>AUR</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="searchByComboBox">
+            <item>
+             <property name="text">
+              <string>Name, description</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Name</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Maintainer</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Description</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="PackagesView" name="packagesView">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="font">
-           <font>
-            <pointsize>12</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
           </property>
-          <property name="styleSheet">
-           <string notr="true">font-weight: bold;</string>
+          <property name="rootIsDecorated">
+           <bool>false</bool>
           </property>
-          <property name="text">
-           <string/>
+          <property name="sortingEnabled">
+           <bool>true</bool>
           </property>
-          <property name="textInteractionFlags">
-           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+          <property name="expandsOnDoubleClick">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="descriptionLabel">
-          <property name="text">
-           <string/>
-          </property>
-          <property name="wordWrap">
-           <bool>true</bool>
-          </property>
-          <property name="textInteractionFlags">
-           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="QTabWidget" name="packageTabsWidget">
-      <property name="currentIndex">
-       <number>0</number>
-      </property>
-      <widget class="QWidget" name="infoTab">
-       <property name="loaded" stdset="0">
-        <bool>false</bool>
-       </property>
-       <attribute name="title">
-        <string>Info</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <item>
-         <widget class="QScrollArea" name="infoScrollArea">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="widgetResizable">
-           <bool>true</bool>
-          </property>
-          <widget class="QWidget" name="infoContentWidget">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>687</width>
-             <height>450</height>
-            </rect>
-           </property>
-           <layout class="QFormLayout" name="infoContentLayout">
-            <property name="labelAlignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         <layout class="QHBoxLayout" name="packageHeadLayout">
+          <item>
+           <widget class="QLabel" name="iconLabel">
+            <property name="text">
+             <string/>
             </property>
-            <property name="horizontalSpacing">
-             <number>0</number>
-            </property>
-            <property name="verticalSpacing">
-             <number>0</number>
-            </property>
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item row="0" column="0">
-             <widget class="QLabel" name="archTitleLabel">
+           </widget>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="packageTitleLayout">
+            <item>
+             <widget class="QLabel" name="nameLabel">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
               <property name="styleSheet">
                <string notr="true">font-weight: bold;</string>
               </property>
               <property name="text">
-               <string>Architecture:</string>
-              </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QLabel" name="archLabel">
-              <property name="text">
                <string/>
-              </property>
-              <property name="margin">
-               <number>6</number>
               </property>
               <property name="textInteractionFlags">
                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="urlTitleLabel">
-              <property name="styleSheet">
-               <string notr="true">font-weight: bold;</string>
-              </property>
-              <property name="text">
-               <string>URL:</string>
-              </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QLabel" name="urlLabel">
+            <item>
+             <widget class="QLabel" name="descriptionLabel">
               <property name="text">
                <string/>
               </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
-              <property name="openExternalLinks">
+              <property name="wordWrap">
                <bool>true</bool>
               </property>
               <property name="textInteractionFlags">
@@ -256,325 +153,582 @@
               </property>
              </widget>
             </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="licensesTitleLabel">
-              <property name="styleSheet">
-               <string notr="true">font-weight: bold;</string>
+           </layout>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QTabWidget" name="packageTabsWidget">
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <widget class="QWidget" name="infoTab">
+           <property name="loaded" stdset="0">
+            <bool>false</bool>
+           </property>
+           <attribute name="title">
+            <string>Info</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <item>
+             <widget class="QScrollArea" name="infoScrollArea">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
               </property>
-              <property name="text">
-               <string>Licenses:</string>
+              <property name="widgetResizable">
+               <bool>true</bool>
               </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
+              <widget class="QWidget" name="infoContentWidget">
+               <property name="geometry">
+                <rect>
+                 <x>0</x>
+                 <y>0</y>
+                 <width>667</width>
+                 <height>450</height>
+                </rect>
+               </property>
+               <layout class="QFormLayout" name="infoContentLayout">
+                <property name="labelAlignment">
+                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                </property>
+                <property name="horizontalSpacing">
+                 <number>0</number>
+                </property>
+                <property name="verticalSpacing">
+                 <number>0</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item row="0" column="0">
+                 <widget class="QLabel" name="archTitleLabel">
+                  <property name="styleSheet">
+                   <string notr="true">font-weight: bold;</string>
+                  </property>
+                  <property name="text">
+                   <string>Architecture:</string>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QLabel" name="archLabel">
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                  <property name="textInteractionFlags">
+                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="urlTitleLabel">
+                  <property name="styleSheet">
+                   <string notr="true">font-weight: bold;</string>
+                  </property>
+                  <property name="text">
+                   <string>URL:</string>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QLabel" name="urlLabel">
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                  <property name="openExternalLinks">
+                   <bool>true</bool>
+                  </property>
+                  <property name="textInteractionFlags">
+                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="0">
+                 <widget class="QLabel" name="licensesTitleLabel">
+                  <property name="styleSheet">
+                   <string notr="true">font-weight: bold;</string>
+                  </property>
+                  <property name="text">
+                   <string>Licenses:</string>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QLabel" name="licensesLabel">
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                  <property name="textInteractionFlags">
+                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="0">
+                 <widget class="QLabel" name="groupsTitlelabel">
+                  <property name="styleSheet">
+                   <string notr="true">font-weight: bold;</string>
+                  </property>
+                  <property name="text">
+                   <string>Groups:</string>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="1">
+                 <widget class="QLabel" name="groupsLabel">
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                  <property name="textInteractionFlags">
+                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="0">
+                 <widget class="QLabel" name="downloadSizeTitleLabel">
+                  <property name="styleSheet">
+                   <string notr="true">font-weight: bold;</string>
+                  </property>
+                  <property name="text">
+                   <string>Download size:</string>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="1">
+                 <widget class="QLabel" name="downloadSizeLabel">
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                  <property name="textInteractionFlags">
+                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="6" column="0">
+                 <widget class="QLabel" name="installedSizeTitleLabel">
+                  <property name="styleSheet">
+                   <string notr="true">font-weight: bold;</string>
+                  </property>
+                  <property name="text">
+                   <string>Installed size:</string>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="6" column="1">
+                 <widget class="QLabel" name="installedSizeLabel">
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="7" column="0">
+                 <widget class="QLabel" name="maintainerTitleLabel">
+                  <property name="styleSheet">
+                   <string notr="true">font-weight: bold;</string>
+                  </property>
+                  <property name="text">
+                   <string>Maintainer:</string>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="7" column="1">
+                 <widget class="QLabel" name="maintainerLabel">
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                  <property name="textInteractionFlags">
+                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="8" column="0">
+                 <widget class="QLabel" name="buildDateTitleLabel">
+                  <property name="styleSheet">
+                   <string notr="true">font-weight: bold;</string>
+                  </property>
+                  <property name="text">
+                   <string>Build date:</string>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="8" column="1">
+                 <widget class="QLabel" name="buildDateLabel">
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                  <property name="textInteractionFlags">
+                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="9" column="0">
+                 <widget class="QLabel" name="installDateTitleLabel">
+                  <property name="styleSheet">
+                   <string notr="true">font-weight: bold;</string>
+                  </property>
+                  <property name="text">
+                   <string>Install date:</string>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="9" column="1">
+                 <widget class="QLabel" name="installDateLabel">
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                  <property name="textInteractionFlags">
+                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="10" column="0">
+                 <widget class="QLabel" name="firstSubmittedTitleLabel">
+                  <property name="styleSheet">
+                   <string notr="true">font-weight: bold;</string>
+                  </property>
+                  <property name="text">
+                   <string>First submitted:</string>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="10" column="1">
+                 <widget class="QLabel" name="firstSubmittedLabel">
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="11" column="0">
+                 <widget class="QLabel" name="lastModifiedTitleLabel">
+                  <property name="styleSheet">
+                   <string notr="true">font-weight: bold;</string>
+                  </property>
+                  <property name="text">
+                   <string>Last modified:</string>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="11" column="1">
+                 <widget class="QLabel" name="lastModifiedLabel">
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="12" column="0">
+                 <widget class="QLabel" name="outOfDateTitleLabel">
+                  <property name="styleSheet">
+                   <string notr="true">font-weight: bold;</string>
+                  </property>
+                  <property name="text">
+                   <string>Out of date:</string>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="12" column="1">
+                 <widget class="QLabel" name="outOfDateLabel">
+                  <property name="styleSheet">
+                   <string notr="true">color: red;</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="13" column="0">
+                 <widget class="QLabel" name="reasonTitleLabel">
+                  <property name="styleSheet">
+                   <string notr="true">font-weight: bold;</string>
+                  </property>
+                  <property name="text">
+                   <string>Installation reason:</string>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="13" column="1">
+                 <widget class="QLabel" name="reasonLabel">
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="14" column="0">
+                 <widget class="QLabel" name="scriptTitleLabel">
+                  <property name="styleSheet">
+                   <string notr="true">font-weight: bold;</string>
+                  </property>
+                  <property name="text">
+                   <string>Installation script:</string>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="14" column="1">
+                 <widget class="QLabel" name="scriptLabel">
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QLabel" name="keywordsTitleLabel">
+                  <property name="styleSheet">
+                   <string notr="true">font-weight: bold;</string>
+                  </property>
+                  <property name="text">
+                   <string>Keywords</string>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QLabel" name="keywordsLabel">
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="margin">
+                   <number>6</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
              </widget>
             </item>
-            <item row="3" column="1">
-             <widget class="QLabel" name="licensesLabel">
-              <property name="text">
-               <string/>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="depsTab">
+           <property name="loaded" stdset="0">
+            <bool>false</bool>
+           </property>
+           <attribute name="title">
+            <string>Dependencies</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="depsTabLayout">
+            <item>
+             <widget class="QScrollArea" name="depsScrollArea">
+              <property name="widgetResizable">
+               <bool>true</bool>
               </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-              </property>
+              <widget class="QWidget" name="depsContentWidget">
+               <property name="geometry">
+                <rect>
+                 <x>0</x>
+                 <y>0</y>
+                 <width>687</width>
+                 <height>374</height>
+                </rect>
+               </property>
+               <layout class="QFormLayout" name="depsContentLayout">
+                <property name="labelAlignment">
+                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                </property>
+                <property name="horizontalSpacing">
+                 <number>0</number>
+                </property>
+                <property name="verticalSpacing">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <item row="0" column="0">
+                 <widget class="QLabel" name="providesTitleLabel">
+                  <property name="styleSheet">
+                   <string notr="true">font-weight: bold;</string>
+                  </property>
+                  <property name="text">
+                   <string>Provides:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <layout class="QVBoxLayout" name="providesLayout">
+                  <property name="spacing">
+                   <number>0</number>
+                  </property>
+                 </layout>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="replacesTitleLabel">
+                  <property name="styleSheet">
+                   <string notr="true">font-weight: bold;</string>
+                  </property>
+                  <property name="text">
+                   <string>Replaces:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <layout class="QVBoxLayout" name="replacesLayout">
+                  <property name="spacing">
+                   <number>0</number>
+                  </property>
+                 </layout>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QLabel" name="conflictsTitleLabel">
+                  <property name="styleSheet">
+                   <string notr="true">font-weight: bold;</string>
+                  </property>
+                  <property name="text">
+                   <string>Conflicts:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <layout class="QVBoxLayout" name="conflictsLayout">
+                  <property name="spacing">
+                   <number>0</number>
+                  </property>
+                 </layout>
+                </item>
+                <item row="3" column="0">
+                 <widget class="QLabel" name="dependsTitleLabel">
+                  <property name="styleSheet">
+                   <string notr="true">font-weight: bold;</string>
+                  </property>
+                  <property name="text">
+                   <string>Depends:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <layout class="QVBoxLayout" name="dependsLayout">
+                  <property name="spacing">
+                   <number>0</number>
+                  </property>
+                 </layout>
+                </item>
+                <item row="4" column="0">
+                 <widget class="QLabel" name="optdependsTitleLabel">
+                  <property name="styleSheet">
+                   <string notr="true">font-weight: bold;</string>
+                  </property>
+                  <property name="text">
+                   <string>Optdepends:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="1">
+                 <layout class="QVBoxLayout" name="optdependsLayout">
+                  <property name="spacing">
+                   <number>0</number>
+                  </property>
+                 </layout>
+                </item>
+               </layout>
+              </widget>
              </widget>
             </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="groupsTitlelabel">
-              <property name="styleSheet">
-               <string notr="true">font-weight: bold;</string>
-              </property>
-              <property name="text">
-               <string>Groups:</string>
-              </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="1">
-             <widget class="QLabel" name="groupsLabel">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="0">
-             <widget class="QLabel" name="downloadSizeTitleLabel">
-              <property name="styleSheet">
-               <string notr="true">font-weight: bold;</string>
-              </property>
-              <property name="text">
-               <string>Download size:</string>
-              </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="1">
-             <widget class="QLabel" name="downloadSizeLabel">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="0">
-             <widget class="QLabel" name="installedSizeTitleLabel">
-              <property name="styleSheet">
-               <string notr="true">font-weight: bold;</string>
-              </property>
-              <property name="text">
-               <string>Installed size:</string>
-              </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="1">
-             <widget class="QLabel" name="installedSizeLabel">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="0">
-             <widget class="QLabel" name="maintainerTitleLabel">
-              <property name="styleSheet">
-               <string notr="true">font-weight: bold;</string>
-              </property>
-              <property name="text">
-               <string>Maintainer:</string>
-              </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="1">
-             <widget class="QLabel" name="maintainerLabel">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-              </property>
-             </widget>
-            </item>
-            <item row="8" column="0">
-             <widget class="QLabel" name="buildDateTitleLabel">
-              <property name="styleSheet">
-               <string notr="true">font-weight: bold;</string>
-              </property>
-              <property name="text">
-               <string>Build date:</string>
-              </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
-             </widget>
-            </item>
-            <item row="8" column="1">
-             <widget class="QLabel" name="buildDateLabel">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-              </property>
-             </widget>
-            </item>
-            <item row="9" column="0">
-             <widget class="QLabel" name="installDateTitleLabel">
-              <property name="styleSheet">
-               <string notr="true">font-weight: bold;</string>
-              </property>
-              <property name="text">
-               <string>Install date:</string>
-              </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
-             </widget>
-            </item>
-            <item row="9" column="1">
-             <widget class="QLabel" name="installDateLabel">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-              </property>
-             </widget>
-            </item>
-            <item row="10" column="0">
-             <widget class="QLabel" name="firstSubmittedTitleLabel">
-              <property name="styleSheet">
-               <string notr="true">font-weight: bold;</string>
-              </property>
-              <property name="text">
-               <string>First submitted:</string>
-              </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
-             </widget>
-            </item>
-            <item row="10" column="1">
-             <widget class="QLabel" name="firstSubmittedLabel">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
-             </widget>
-            </item>
-            <item row="11" column="0">
-             <widget class="QLabel" name="lastModifiedTitleLabel">
-              <property name="styleSheet">
-               <string notr="true">font-weight: bold;</string>
-              </property>
-              <property name="text">
-               <string>Last modified:</string>
-              </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
-             </widget>
-            </item>
-            <item row="11" column="1">
-             <widget class="QLabel" name="lastModifiedLabel">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
-             </widget>
-            </item>
-            <item row="12" column="0">
-             <widget class="QLabel" name="outOfDateTitleLabel">
-              <property name="styleSheet">
-               <string notr="true">font-weight: bold;</string>
-              </property>
-              <property name="text">
-               <string>Out of date:</string>
-              </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
-             </widget>
-            </item>
-            <item row="12" column="1">
-             <widget class="QLabel" name="outOfDateLabel">
-              <property name="styleSheet">
-               <string notr="true">color: red;</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
-             </widget>
-            </item>
-            <item row="13" column="0">
-             <widget class="QLabel" name="reasonTitleLabel">
-              <property name="styleSheet">
-               <string notr="true">font-weight: bold;</string>
-              </property>
-              <property name="text">
-               <string>Installation reason:</string>
-              </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
-             </widget>
-            </item>
-            <item row="13" column="1">
-             <widget class="QLabel" name="reasonLabel">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
-             </widget>
-            </item>
-            <item row="14" column="0">
-             <widget class="QLabel" name="scriptTitleLabel">
-              <property name="styleSheet">
-               <string notr="true">font-weight: bold;</string>
-              </property>
-              <property name="text">
-               <string>Installation script:</string>
-              </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
-             </widget>
-            </item>
-            <item row="14" column="1">
-             <widget class="QLabel" name="scriptLabel">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="keywordsTitleLabel">
-              <property name="styleSheet">
-               <string notr="true">font-weight: bold;</string>
-              </property>
-              <property name="text">
-               <string>Keywords</string>
-              </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QLabel" name="keywordsLabel">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
-             </widget>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="filesTab">
+           <property name="loaded" stdset="0">
+            <bool>false</bool>
+           </property>
+           <attribute name="title">
+            <string>Files</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="filesTabLayout">
+            <item>
+             <widget class="FilesView" name="filesView"/>
             </item>
            </layout>
           </widget>
@@ -582,142 +736,121 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="depsTab">
-       <property name="loaded" stdset="0">
-        <bool>false</bool>
-       </property>
+      <widget class="QWidget" name="historyWidget">
        <attribute name="title">
-        <string>Dependencies</string>
+        <string>History</string>
        </attribute>
-       <layout class="QVBoxLayout" name="depsTabLayout">
+       <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
-         <widget class="QScrollArea" name="depsScrollArea">
-          <property name="widgetResizable">
+         <widget class="QPlainTextEdit" name="historyEdit">
+          <property name="readOnly">
            <bool>true</bool>
           </property>
-          <widget class="QWidget" name="depsContentWidget">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>707</width>
-             <height>397</height>
-            </rect>
-           </property>
-           <layout class="QFormLayout" name="depsContentLayout">
-            <property name="labelAlignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
-            <property name="horizontalSpacing">
-             <number>0</number>
-            </property>
-            <property name="verticalSpacing">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <item row="0" column="0">
-             <widget class="QLabel" name="providesTitleLabel">
-              <property name="styleSheet">
-               <string notr="true">font-weight: bold;</string>
-              </property>
-              <property name="text">
-               <string>Provides:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <layout class="QVBoxLayout" name="providesLayout">
-              <property name="spacing">
-               <number>0</number>
-              </property>
-             </layout>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="replacesTitleLabel">
-              <property name="styleSheet">
-               <string notr="true">font-weight: bold;</string>
-              </property>
-              <property name="text">
-               <string>Replaces:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <layout class="QVBoxLayout" name="replacesLayout">
-              <property name="spacing">
-               <number>0</number>
-              </property>
-             </layout>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="conflictsTitleLabel">
-              <property name="styleSheet">
-               <string notr="true">font-weight: bold;</string>
-              </property>
-              <property name="text">
-               <string>Conflicts:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <layout class="QVBoxLayout" name="conflictsLayout">
-              <property name="spacing">
-               <number>0</number>
-              </property>
-             </layout>
-            </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="dependsTitleLabel">
-              <property name="styleSheet">
-               <string notr="true">font-weight: bold;</string>
-              </property>
-              <property name="text">
-               <string>Depends:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <layout class="QVBoxLayout" name="dependsLayout">
-              <property name="spacing">
-               <number>0</number>
-              </property>
-             </layout>
-            </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="optdependsTitleLabel">
-              <property name="styleSheet">
-               <string notr="true">font-weight: bold;</string>
-              </property>
-              <property name="text">
-               <string>Optdepends:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="1">
-             <layout class="QVBoxLayout" name="optdependsLayout">
-              <property name="spacing">
-               <number>0</number>
-              </property>
-             </layout>
-            </item>
-           </layout>
-          </widget>
          </widget>
         </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="filesTab">
-       <property name="loaded" stdset="0">
-        <bool>false</bool>
-       </property>
-       <attribute name="title">
-        <string>Files</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="filesTabLayout">
         <item>
-         <widget class="FilesView" name="filesView"/>
+         <layout class="QHBoxLayout" name="historySearchLayout">
+          <item>
+           <widget class="QLineEdit" name="searchHistoryEdit">
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="findPreviousButton">
+            <property name="toolTip">
+             <string>Go to the next entry</string>
+            </property>
+            <property name="text">
+             <string>Previous</string>
+            </property>
+            <property name="icon">
+             <iconset theme="go-up">
+              <normaloff>.</normaloff>.</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="findNextButton">
+            <property name="toolTip">
+             <string>Go to previous entry</string>
+            </property>
+            <property name="text">
+             <string>Next</string>
+            </property>
+            <property name="icon">
+             <iconset theme="go-down">
+              <normaloff>.</normaloff>.</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="searchExactButton">
+            <property name="toolTip">
+             <string>Makes find match only complete words</string>
+            </property>
+            <property name="text">
+             <string>Exact</string>
+            </property>
+            <property name="icon">
+             <iconset theme="xapp-search-entire-word-symbolic"/>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="searchCaseButton">
+            <property name="toolTip">
+             <string>Case sensitive</string>
+            </property>
+            <property name="text">
+             <string>Case</string>
+            </property>
+            <property name="icon">
+             <iconset theme="format-text-superscript">
+              <normaloff>.</normaloff>.</iconset>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="reloadHistoryButton">
+            <property name="toolTip">
+             <string>Reload pacman.log</string>
+            </property>
+            <property name="text">
+             <string>Reload</string>
+            </property>
+            <property name="icon">
+             <iconset theme="reload"/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="openHistoryFolderButton">
+            <property name="toolTip">
+             <string>Open folder with pacman.log</string>
+            </property>
+            <property name="text">
+             <string>Folder</string>
+            </property>
+            <property name="icon">
+             <iconset theme="folder"/>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
@@ -739,26 +872,41 @@
    <header>src/packages-view/packagesview.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>searchPackagesEdit</tabstop>
+  <tabstop>searchModeComboBox</tabstop>
+  <tabstop>searchByComboBox</tabstop>
+  <tabstop>packagesView</tabstop>
+  <tabstop>packageTabsWidget</tabstop>
+  <tabstop>infoScrollArea</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>depsScrollArea</tabstop>
+  <tabstop>filesView</tabstop>
+  <tabstop>searchHistoryEdit</tabstop>
+  <tabstop>findPreviousButton</tabstop>
+  <tabstop>findNextButton</tabstop>
+  <tabstop>searchExactButton</tabstop>
+  <tabstop>searchCaseButton</tabstop>
+  <tabstop>historyEdit</tabstop>
+  <tabstop>openHistoryFolderButton</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
-   <sender>searchByComboBox</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>on_searchEdit_returnPressed()</slot>
+   <sender>searchHistoryEdit</sender>
+   <signal>returnPressed()</signal>
+   <receiver>findPreviousButton</receiver>
+   <slot>click()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>665</x>
-     <y>22</y>
+     <x>295</x>
+     <y>59</y>
     </hint>
     <hint type="destinationlabel">
-     <x>371</x>
-     <y>292</y>
+     <x>595</x>
+     <y>59</y>
     </hint>
    </hints>
   </connection>
  </connections>
- <slots>
-  <slot>on_searchEdit_returnPressed()</slot>
- </slots>
 </ui>

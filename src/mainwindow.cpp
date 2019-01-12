@@ -3,6 +3,8 @@
 
 #include <QPushButton>
 #include <QStandardItemModel>
+#include <QDesktopServices>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -37,13 +39,13 @@ void MainWindow::on_searchModeComboBox_currentIndexChanged(int index)
     }
 
     ui->packagesView->model()->setMode(mode);
-    on_searchEdit_returnPressed(); // Search packages
+    on_searchPackagesEdit_returnPressed(); // Search packages
 }
 
-void MainWindow::on_searchEdit_returnPressed()
+void MainWindow::on_searchPackagesEdit_returnPressed()
 {
     const auto filterType = static_cast<PackagesView::FilterType>(ui->searchByComboBox->currentIndex());
-    ui->packagesView->filter(ui->searchEdit->text(), filterType);
+    ui->packagesView->filter(ui->searchPackagesEdit->text(), filterType);
 }
 
 void MainWindow::on_packagesView_currentPackageChanged(Package *package)
@@ -88,6 +90,21 @@ void MainWindow::on_packagesView_currentPackageChanged(Package *package)
     }
 }
 
+void MainWindow::findDepend(QAbstractButton *button)
+{
+    // Search in repo first
+    ui->searchPackagesEdit->clear();
+    ui->searchModeComboBox->setCurrentIndex(PackagesModel::Repo);
+
+    // Search package
+    const bool found = ui->packagesView->find(button->toolTip());
+    if (!found) {
+        // Search in AUR
+        ui->searchPackagesEdit->setText(button->toolTip());
+        ui->searchModeComboBox->setCurrentIndex(PackagesModel::AUR);
+    }
+}
+
 void MainWindow::on_packageTabsWidget_currentChanged(int index)
 {
     const Package *package = ui->packagesView->currentPackage();
@@ -110,18 +127,46 @@ void MainWindow::on_packageTabsWidget_currentChanged(int index)
     }
 }
 
-void MainWindow::findDepend(QAbstractButton *button)
+void MainWindow::on_reloadHistoryButton_clicked()
 {
-    // Search in repo first
-    ui->searchEdit->clear();
-    ui->searchModeComboBox->setCurrentIndex(PackagesModel::Repo);
+    QFile historyFile("/var/log/pacman.log");
+    if (!historyFile.exists()) {
+        QMessageBox errorBox(QMessageBox::Critical, "Error", "File /var/log/pacman.log does not exist");
+        errorBox.exec();
+        return;
+    }
+    if (!historyFile.open(QIODevice::ReadOnly)) {
+        QMessageBox errorBox(QMessageBox::Critical, "Error", "Unable to read /var/log/pacman.log");
+        errorBox.exec();
+        return;
+    }
 
-    // Search package
-    const bool found = ui->packagesView->find(button->toolTip());
-    if (!found) {
-        // Search in AUR
-        ui->searchEdit->setText(button->toolTip());
-        ui->searchModeComboBox->setCurrentIndex(PackagesModel::AUR);
+    ui->historyEdit->setPlainText(historyFile.readAll());
+    ui->historyEdit->moveCursor(QTextCursor::End);
+}
+
+void MainWindow::on_findNextButton_clicked()
+{
+    searchHistory();
+}
+
+void MainWindow::on_findPreviousButton_clicked()
+{
+
+    searchHistory(true);
+}
+
+void MainWindow::on_openHistoryFolderButton_clicked()
+{
+    QDesktopServices::openUrl(QUrl("/var/log/"));
+}
+
+void MainWindow::on_tabWidget_currentChanged(int index)
+{
+    // Load history dynamically
+    if (index == 1 && !ui->historyEdit->property("loaded").toBool()) {
+        on_reloadHistoryButton_clicked();
+        ui->historyEdit->setProperty("loaded", true);
     }
 }
 
@@ -275,4 +320,27 @@ void MainWindow::loadDepsButtons(int row, const QVector<Depend> &deps)
         packagesLayout->addWidget(button);
     }
     packagesLabel->show();
+}
+
+void MainWindow::searchHistory(bool backward)
+{
+    if (ui->searchHistoryEdit->text().isEmpty()) {
+        ui->searchHistoryEdit->setStyleSheet("");
+        return;
+    }
+
+    QTextDocument::FindFlags flags;
+    if (backward)
+        flags |= QTextDocument::FindBackward;
+
+    // Check pressed buttons
+    if (ui->searchCaseButton->isChecked())
+        flags |= QTextDocument::FindCaseSensitively;
+    if (ui->searchExactButton->isChecked())
+        flags |= QTextDocument::FindWholeWords;
+
+    if (ui->historyEdit->find(ui->searchHistoryEdit->text(), flags))
+        ui->searchHistoryEdit->setStyleSheet("");
+    else
+        ui->searchHistoryEdit->setStyleSheet("color:red");
 }
