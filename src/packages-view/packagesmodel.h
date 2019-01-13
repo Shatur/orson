@@ -5,6 +5,7 @@
 
 #include <QAbstractItemModel>
 #include <QNetworkAccessManager>
+#include <QtConcurrent>
 
 class PackagesModel : public QAbstractItemModel
 {
@@ -38,10 +39,14 @@ public:
     void aurSearch(const QString &text, const QString &queryType);
     void loadMoreAurInfo(Package *package);
 
+signals:
+    void databaseStatusChanged(const QString &text);
+
 private:
     template<typename T>
     using Comparator = T (Package::*)() const;
 
+    void loadDatabases();
     void loadDatabase(const char *databaseName);
 
     template<typename T1, typename T2>
@@ -51,13 +56,14 @@ private:
     void sortPackages(QVector<Package *> &container, Qt::SortOrder order, Comparator<T> member);
 
     // Repo ALPM specific members
-    alpm_handle_t *m_handle;
+    alpm_handle_t *m_handle = nullptr;
     alpm_errno_t m_error = ALPM_ERR_OK;
 
     Mode m_mode = Repo;
     QVector<Package *> m_repoPackages;
     QVector<Package *> m_aurPackages;
     QNetworkAccessManager *m_manager;
+    QFuture<void> m_loadingDatabases;
 };
 
 #endif // PACKAGESMODEL_H

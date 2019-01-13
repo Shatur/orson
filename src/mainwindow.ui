@@ -611,8 +611,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>687</width>
-                 <height>374</height>
+                 <width>97</width>
+                 <height>96</height>
                 </rect>
                </property>
                <layout class="QFormLayout" name="depsContentLayout">
@@ -797,7 +797,8 @@
              <string>Exact</string>
             </property>
             <property name="icon">
-             <iconset theme="xapp-search-entire-word-symbolic"/>
+             <iconset theme="xapp-search-entire-word-symbolic">
+              <normaloff>.</normaloff>.</iconset>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -833,7 +834,8 @@
              <string>Reload</string>
             </property>
             <property name="icon">
-             <iconset theme="reload"/>
+             <iconset theme="reload">
+              <normaloff>.</normaloff>.</iconset>
             </property>
            </widget>
           </item>
@@ -846,7 +848,8 @@
              <string>Folder</string>
             </property>
             <property name="icon">
-             <iconset theme="folder"/>
+             <iconset theme="folder">
+              <normaloff>.</normaloff>.</iconset>
             </property>
            </widget>
           </item>
@@ -858,6 +861,7 @@
     </item>
    </layout>
   </widget>
+  <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>

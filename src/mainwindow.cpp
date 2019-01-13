@@ -12,6 +12,11 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    // Show database messages in statusbar
+    connect(ui->packagesView->model(), &PackagesModel::databaseStatusChanged, [&](const QString &text) {
+       statusBar()->showMessage(text);
+    });
+
     // Select package when clicking on dependencies
     depsButtonGroup = new QButtonGroup(this);
     connect(depsButtonGroup, qOverload<QAbstractButton *>(&QButtonGroup::buttonClicked), this, &MainWindow::findDepend);

@@ -11,66 +11,14 @@ PackagesModel::PackagesModel(QObject *parent) :
     QAbstractItemModel(parent)
 {
     m_manager = new QNetworkAccessManager(this);
-    m_handle = alpm_initialize("/", "/var/lib/pacman", &m_error);
-    if (m_error != ALPM_ERR_OK)
-        return;
-
-    // Load sync packages
-    loadDatabase("core");
-    loadDatabase("extra");
-    loadDatabase("community");
-    loadDatabase("multilib");
-
-    // Load local packages
-    alpm_db_t *database = alpm_get_localdb(m_handle);
-    alpm_list_t *cache = alpm_db_get_pkgcache(database);
-    while (cache != nullptr) {
-        auto packageData = static_cast<alpm_pkg_t *>(cache->data);
-        bool found = false;
-
-        // Search package with the same name first (to add installation information for an existing package)
-        const char *name = alpm_pkg_get_name(packageData);
-        for (Package *package : m_repoPackages) {
-            if (package->name() == name) {
-                package->setLocalData(packageData);
-                found = true;
-                break;
-            }
-        }
-
-        if (!found) {
-            // Add local package
-            auto package = new Package;
-            package->setLocalData(packageData);
-
-            // Try to load info from AUR (temporary disabled)
-//            QUrl url(AUR_URL);
-//            url.setQuery("v=5&type=info&arg[]=" + QLatin1String(name));
-
-//            QNetworkReply *reply = m_manager.get(QNetworkRequest(url));
-//            QEventLoop waitForReply;
-//            connect(reply, &QNetworkReply::finished, &waitForReply, &QEventLoop::quit);
-//            waitForReply.exec();
-
-//            if (reply->error() != QNetworkReply::NoError) {
-//                qDebug() << reply->errorString();
-//                return;
-//            }
-
-//            const QJsonObject jsonReply = QJsonDocument::fromJson(reply->readAll()).object();
-//            if (jsonReply.value("resultcount").toInt() != 0) {
-//                package->setAurData(jsonReply.value("results").toArray().at(0));
-//            }
-
-            m_repoPackages.append(package);
-        }
-
-        cache = cache->next;
-    }
+    m_loadingDatabases = QtConcurrent::run(this, &PackagesModel::loadDatabases);
 }
 
 PackagesModel::~PackagesModel()
 {
+    m_loadingDatabases.cancel();
+    m_loadingDatabases.waitForFinished();
+
     qDeleteAll(m_repoPackages);
     qDeleteAll(m_aurPackages);
     alpm_release(m_handle);
@@ -367,6 +315,98 @@ void PackagesModel::loadMoreAurInfo(Package *package)
     package->setAurData(packageData, true);
 }
 
+void PackagesModel::loadDatabases()
+{
+    // Remove old database
+    if (m_handle != nullptr) {
+        beginResetModel();
+
+        alpm_release(m_handle);
+        qDeleteAll(m_repoPackages);
+        m_repoPackages.clear();
+
+        endResetModel();
+    }
+
+    // Initialize ALPM
+    m_handle = alpm_initialize("/", "/var/lib/pacman", &m_error);
+    if (m_error != ALPM_ERR_OK)
+        return;
+
+    // Load sync packages
+    emit databaseStatusChanged("Loading sync packages");
+    loadDatabase("core");
+    loadDatabase("extra");
+    loadDatabase("community");
+    loadDatabase("multilib");
+
+    // Load local packages
+    emit databaseStatusChanged("Loading installed packages");
+    alpm_db_t *database = alpm_get_localdb(m_handle);
+    alpm_list_t *cache = alpm_db_get_pkgcache(database);
+    while (cache != nullptr) {
+        if (m_loadingDatabases.isCanceled())
+            return;
+
+        auto packageData = static_cast<alpm_pkg_t *>(cache->data);
+        bool found = false;
+
+        // Search package with the same name first (to add installation information for an existing package)
+        const char *name = alpm_pkg_get_name(packageData);
+        for (Package *package : m_repoPackages) {
+            if (package->name() == name) {
+                package->setLocalData(packageData);
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            // If not found, add new local package (installed from AUR or cutom PKGBUILD)
+            beginInsertRows(QModelIndex(), m_repoPackages.size(), m_repoPackages.size());
+
+            auto package = new Package;
+            package->setLocalData(packageData);
+            m_repoPackages.append(package);
+        }
+
+        cache = cache->next;
+    }
+
+    endInsertRows();
+
+    // Load information from packages installed from AUR
+    QNetworkAccessManager manager;
+    for (Package *package : m_repoPackages) {
+        if (!package->isInstalled() || package->repo() != "local")
+            continue;
+
+        if (m_loadingDatabases.isCanceled())
+            return;
+
+        emit databaseStatusChanged("Loading information from AUR for " + package->name());
+
+        QUrl url(AUR_API_URL);
+        url.setQuery("v=5&type=info&arg[]=" + package->name());
+
+        QNetworkReply *reply = manager.get(QNetworkRequest(url));
+        QEventLoop waitForReply;
+        connect(reply, &QNetworkReply::finished, &waitForReply, &QEventLoop::quit);
+        waitForReply.exec();
+
+        if (reply->error() != QNetworkReply::NoError) {
+            qDebug() << reply->errorString();
+            break;
+        }
+
+        const QJsonObject jsonReply = QJsonDocument::fromJson(reply->readAll()).object();
+        if (jsonReply.value("resultcount").toInt() != 0)
+            package->setAurData(jsonReply.value("results").toArray().at(0));
+    }
+
+    emit databaseStatusChanged(QString::number(m_repoPackages.size()) + " packages avaible in official repositories");
+}
+
 void PackagesModel::loadDatabase(const char *databaseName)
 {
     alpm_db_t *database = alpm_register_syncdb(m_handle, databaseName, 0);
@@ -375,6 +415,8 @@ void PackagesModel::loadDatabase(const char *databaseName)
 
     alpm_list_t *cache = alpm_db_get_pkgcache(database);
     while (cache != nullptr) {
+        beginInsertRows(QModelIndex(), m_repoPackages.size(), m_repoPackages.size());
+
         auto packageData = static_cast<alpm_pkg_t *>(cache->data);
         auto package = new Package;
         package->setSyncData(packageData);
