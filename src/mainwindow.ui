@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>743</width>
-    <height>722</height>
+    <width>740</width>
+    <height>770</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -84,7 +84,7 @@
         <item>
          <widget class="PackagesView" name="packagesView">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -186,7 +186,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>667</width>
+                 <width>664</width>
                  <height>450</height>
                 </rect>
                </property>
@@ -611,8 +611,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>97</width>
-                 <height>96</height>
+                 <width>684</width>
+                 <height>343</height>
                 </rect>
                </property>
                <layout class="QFormLayout" name="depsContentLayout">
