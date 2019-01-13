@@ -72,6 +72,7 @@ PackagesModel::PackagesModel(QObject *parent) :
 PackagesModel::~PackagesModel()
 {
     qDeleteAll(m_repoPackages);
+    qDeleteAll(m_aurPackages);
     alpm_release(m_handle);
 }
 
@@ -306,9 +307,9 @@ void PackagesModel::aurSearch(const QString &text, const QString &queryType)
     url.setQuery("v=5&type=search&by=" + queryType + "&arg=" + text);
 
     // Get request
-    QNetworkReply *reply = m_manager->get(QNetworkRequest(url));
+    QScopedPointer reply(m_manager->get(QNetworkRequest(url)));
     QEventLoop waitForReply;
-    connect(reply, &QNetworkReply::finished, &waitForReply, &QEventLoop::quit);
+    connect(reply.get(), &QNetworkReply::finished, &waitForReply, &QEventLoop::quit);
     waitForReply.exec();
 
     if (reply->error() != QNetworkReply::NoError) {
@@ -350,9 +351,9 @@ void PackagesModel::loadMoreAurInfo(Package *package)
     QUrl url(AUR_API_URL);
     url.setQuery("v=5&type=info&arg[]=" + package->name());
 
-    QNetworkReply *reply = m_manager->get(QNetworkRequest(url));
+    QScopedPointer reply(m_manager->get(QNetworkRequest(url)));
     QEventLoop waitForReply;
-    connect(reply, &QNetworkReply::finished, &waitForReply, &QEventLoop::quit);
+    connect(reply.get(), &QNetworkReply::finished, &waitForReply, &QEventLoop::quit);
     waitForReply.exec();
 
     if (reply->error() != QNetworkReply::NoError) {
