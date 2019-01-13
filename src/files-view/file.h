@@ -30,7 +30,7 @@ public:
     bool isReadable() const;
 
 private:
-    File *m_parent;
+    File *m_parent = nullptr;
     QVector<File *> m_children;
 
     QString m_nameColumn;

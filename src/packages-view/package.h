@@ -9,7 +9,7 @@
 class Package
 {
 public:
-    Package();
+    Package() = default;
     void setSyncData(alpm_pkg_t *data);
     void setLocalData(alpm_pkg_t *data);
     void setAurData(const QJsonValue &value, bool full = false);

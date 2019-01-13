@@ -48,7 +48,7 @@ void PackagesView::filter(const QString &text, PackagesView::FilterType type)
     }
 
     if (text.isEmpty()) {
-        if (m_filtered == false)
+        if (!m_filtered)
             return;
 
         // Show all repo packages
@@ -140,7 +140,7 @@ Package *PackagesView::currentPackage() const
 
 PackagesModel *PackagesView::model() const
 {
-    return static_cast<PackagesModel *>(QTreeView::model());
+    return qobject_cast<PackagesModel *>(QTreeView::model());
 }
 
 void PackagesView::setModel(QAbstractItemModel *model)

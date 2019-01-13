@@ -423,6 +423,8 @@ void PackagesModel::loadDatabase(const QString &databaseName)
         m_repoPackages.append(package);
         cache = cache->next;
     }
+
+    endInsertRows();
 }
 
 template<typename T1, typename T2>

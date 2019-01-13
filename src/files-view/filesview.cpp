@@ -24,7 +24,7 @@ FilesView::FilesView(QWidget *parent) :
 
 FilesModel *FilesView::model() const
 {
-    return static_cast<FilesModel *>(QTreeView::model());
+    return qobject_cast<FilesModel *>(QTreeView::model());
 }
 
 void FilesView::open() const
@@ -42,7 +42,7 @@ void FilesView::openInFileManager() const
 void FilesView::copyFile() const
 {
     const auto item = static_cast<File *>(currentIndex().internalPointer());
-    QMimeData* mimeData = new QMimeData();
+    auto mimeData = new QMimeData();
     mimeData->setUrls({QUrl::fromLocalFile(item->path())});
 
     SingleApplication::clipboard()->setMimeData(mimeData);

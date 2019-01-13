@@ -19,7 +19,7 @@ public:
 private:
     void parseDepend(const QString &text, const QString &mod, int position);
 
-    alpm_depend_t *m_alpmData;
+    alpm_depend_t *m_alpmData = nullptr;
     QString m_name;
     QString m_mod;
     QString m_version;

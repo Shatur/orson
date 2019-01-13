@@ -60,10 +60,10 @@ QModelIndex FilesModel::index(int row, int column, const QModelIndex &parent) co
         parentItem = static_cast<File *>(parent.internalPointer());
 
     File *childItem = parentItem->child(row);
-    if (childItem)
-        return createIndex(row, column, childItem);
-    else
+    if (!childItem)
         return QModelIndex();
+
+    return createIndex(row, column, childItem);
 }
 
 QModelIndex FilesModel::parent(const QModelIndex &index) const
