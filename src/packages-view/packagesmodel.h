@@ -47,7 +47,7 @@ private:
     using Comparator = T (Package::*)() const;
 
     void loadDatabases();
-    void loadDatabase(const char *databaseName);
+    void loadDatabase(const QString &databaseName);
 
     template<typename T1, typename T2>
     void sortPackages(QVector<Package *> &container, Qt::SortOrder order, Comparator<T1> firstMember, Comparator<T2> secondMember);

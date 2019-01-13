@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "pacmansettings.h"
 
 #include <QPushButton>
 #include <QStandardItemModel>
@@ -20,6 +21,10 @@ MainWindow::MainWindow(QWidget *parent) :
     // Select package when clicking on dependencies
     depsButtonGroup = new QButtonGroup(this);
     connect(depsButtonGroup, qOverload<QAbstractButton *>(&QButtonGroup::buttonClicked), this, &MainWindow::findDepend);
+
+    // Wait until the first package has been loaded
+    while (!ui->packagesView->model()->index(0, 0).isValid())
+        QThread::msleep(20);
 
     // Select first package
     ui->packagesView->setCurrentIndex(ui->packagesView->model()->index(0, 0));
@@ -134,14 +139,17 @@ void MainWindow::on_packageTabsWidget_currentChanged(int index)
 
 void MainWindow::on_reloadHistoryButton_clicked()
 {
-    QFile historyFile("/var/log/pacman.log");
+    PacmanSettings pacmanSettings;
+    QFile historyFile(pacmanSettings.logFile());
+
     if (!historyFile.exists()) {
-        QMessageBox errorBox(QMessageBox::Critical, "Error", "File /var/log/pacman.log does not exist");
+        QMessageBox errorBox(QMessageBox::Critical, "Error", "File " + pacmanSettings.logFile() + " does not exist");
         errorBox.exec();
         return;
     }
+
     if (!historyFile.open(QIODevice::ReadOnly)) {
-        QMessageBox errorBox(QMessageBox::Critical, "Error", "Unable to read /var/log/pacman.log");
+        QMessageBox errorBox(QMessageBox::Critical, "Error", "Unable to read " + pacmanSettings.logFile());
         errorBox.exec();
         return;
     }
@@ -163,7 +171,9 @@ void MainWindow::on_findPreviousButton_clicked()
 
 void MainWindow::on_openHistoryFolderButton_clicked()
 {
-    QDesktopServices::openUrl(QUrl("/var/log/"));
+    const PacmanSettings pacmanSettings;
+    const QFileInfo logFile = pacmanSettings.logFile();
+    QDesktopServices::openUrl(logFile.dir().path());
 }
 
 void MainWindow::on_tabWidget_currentChanged(int index)

@@ -18,6 +18,7 @@ DEFINES += \
 SOURCES += \
     src/main.cpp \
     src/mainwindow.cpp \
+    src/pacmansettings.cpp \
     src/packages-view/depend.cpp \
     src/packages-view/package.cpp \
     src/packages-view/packagesmodel.cpp \
@@ -28,6 +29,7 @@ SOURCES += \
 
 HEADERS += \
     src/mainwindow.h \
+    src/pacmansettings.h \
     src/packages-view/depend.h \
     src/packages-view/package.h \
     src/packages-view/packagesmodel.h \

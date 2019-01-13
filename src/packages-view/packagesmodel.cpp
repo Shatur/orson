@@ -1,4 +1,5 @@
 #include "packagesmodel.h"
+#include "../pacmansettings.h"
 
 #include <QNetworkReply>
 #include <QEventLoop>
@@ -329,16 +330,15 @@ void PackagesModel::loadDatabases()
     }
 
     // Initialize ALPM
-    m_handle = alpm_initialize("/", "/var/lib/pacman", &m_error);
+    const PacmanSettings settings;
+    m_handle = alpm_initialize(qPrintable(settings.rootDir()), qPrintable(settings.databasesPath()), &m_error);
     if (m_error != ALPM_ERR_OK)
         return;
 
     // Load sync packages
     emit databaseStatusChanged("Loading sync packages");
-    loadDatabase("core");
-    loadDatabase("extra");
-    loadDatabase("community");
-    loadDatabase("multilib");
+    foreach (const QString &repo, settings.repositories())
+        loadDatabase(repo);
 
     // Load local packages
     emit databaseStatusChanged("Loading installed packages");
@@ -407,9 +407,9 @@ void PackagesModel::loadDatabases()
     emit databaseStatusChanged(QString::number(m_repoPackages.size()) + " packages avaible in official repositories");
 }
 
-void PackagesModel::loadDatabase(const char *databaseName)
+void PackagesModel::loadDatabase(const QString &databaseName)
 {
-    alpm_db_t *database = alpm_register_syncdb(m_handle, databaseName, 0);
+    alpm_db_t *database = alpm_register_syncdb(m_handle, qPrintable(databaseName), 0);
     if (database == nullptr)
         return;
 
