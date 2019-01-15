@@ -336,7 +336,6 @@ void PackagesModel::loadDatabases()
         return;
 
     // Load sync packages
-    emit databaseStatusChanged("Loading sync packages");
     foreach (const QString &repo, settings.repositories())
         loadDatabase(repo);
 
@@ -409,6 +408,8 @@ void PackagesModel::loadDatabases()
 
 void PackagesModel::loadDatabase(const QString &databaseName)
 {
+    emit databaseStatusChanged("Loading " + databaseName + " database");
+
     alpm_db_t *database = alpm_register_syncdb(m_handle, qPrintable(databaseName), 0);
     if (database == nullptr)
         return;
