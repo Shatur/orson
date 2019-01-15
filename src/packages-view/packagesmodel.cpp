@@ -388,9 +388,9 @@ void PackagesModel::loadDatabases()
         QUrl url(AUR_API_URL);
         url.setQuery("v=5&type=info&arg[]=" + package->name());
 
-        QNetworkReply *reply = manager.get(QNetworkRequest(url));
+        QScopedPointer reply(manager.get(QNetworkRequest(url)));
         QEventLoop waitForReply;
-        connect(reply, &QNetworkReply::finished, &waitForReply, &QEventLoop::quit);
+        connect(reply.get(), &QNetworkReply::finished, &waitForReply, &QEventLoop::quit);
         waitForReply.exec();
 
         if (reply->error() != QNetworkReply::NoError) {
