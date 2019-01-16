@@ -96,7 +96,6 @@ void Package::setAurData(const QJsonObject &object, bool full)
 
     if (!m_installed) {
         m_name = object.value("Name").toString();
-        m_repo = QStringLiteral("aur");
         m_version = object.value("Version").toString();
         m_description = object.value("Description").toString();
         m_url = object.value("URL").toString();
@@ -114,6 +113,7 @@ void Package::setAurData(const QJsonObject &object, bool full)
             m_licenses.append(value.toString());
     }
 
+    m_repo = QStringLiteral("aur");
     m_firstSubmitted = QDateTime::fromSecsSinceEpoch(object.value("FirstSubmitted").toInt());
     m_lastModified = QDateTime::fromSecsSinceEpoch(object.value("LastModified").toInt());
     m_popularity = object.value("Popularity").toDouble();
