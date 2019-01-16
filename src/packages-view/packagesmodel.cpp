@@ -422,7 +422,7 @@ void PackagesModel::loadSyncDatabase(alpm_handle_t *handle, const QString &datab
 
         // Check if package installed
         bool found = false;
-        const QString packageName = Package::name(packageData);
+        const QLatin1String packageName = Package::name(packageData);
         for (Package *package : m_repoPackages) {
             if (!package->isInstalled() || package->name() != packageName)
                 continue;

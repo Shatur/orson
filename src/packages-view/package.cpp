@@ -289,9 +289,9 @@ bool Package::fullAurInfo() const
     return m_fullAurInfo;
 }
 
-QString Package::name(alpm_pkg_t *packageData)
+QLatin1String Package::name(alpm_pkg_t *packageData)
 {
-    return alpm_pkg_get_name(packageData);
+    return QLatin1String(alpm_pkg_get_name(packageData));
 }
 
 // Generate QVector from alpm list

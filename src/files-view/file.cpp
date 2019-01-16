@@ -5,9 +5,9 @@
 File::File()
 {
     m_parent = nullptr;
-    m_nameColumn = "Name";
-    m_sizeColumn = "Size";
-    m_typeColumn = "Type";
+    m_nameColumn = QStringLiteral("Name");
+    m_sizeColumn = QStringLiteral("Size");
+    m_typeColumn = QStringLiteral("Type");
     m_info.setFile("/");
 }
 
@@ -17,7 +17,7 @@ File::File(const QString &path, File *parent) :
     m_nameColumn = m_info.fileName();
     if (!m_info.exists() && parent->isReadable()) {
         m_icon = QIcon::fromTheme("dialog-error");
-        m_typeColumn = "Missing";
+        m_typeColumn = QStringLiteral("Missing");
         m_backgroundColor = {255, 0, 0, 127};
     } else if (m_info.isFile()) {
         const QMimeDatabase mimeDatabase;
@@ -36,10 +36,10 @@ File::File(const QString &path, File *parent) :
         else
             m_icon = QIcon::fromTheme("lock");
 
-        m_typeColumn = "Folder";
+        m_typeColumn = QStringLiteral("Folder");
     } else {
         // No access to read any information
-        m_typeColumn = "No access";
+        m_typeColumn = QStringLiteral("No access");
         m_icon = QIcon::fromTheme("lock");
     }
 

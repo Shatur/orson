@@ -31,13 +31,13 @@ void PackagesView::filter(const QString &text, PackagesView::FilterType type)
         QString queryType;
         switch (type) {
         case NameDescription:
-            queryType = "name-desc";
+            queryType = QStringLiteral("name-desc");
             break;
         case Name:
-            queryType = "name";
+            queryType = QStringLiteral("name");
             break;
         case Maintainer:
-            queryType = "maintainer";
+            queryType = QStringLiteral("maintainer");
             break;
         default:
             qFatal("Unsupported search type for AUR");

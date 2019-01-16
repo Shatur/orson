@@ -7,22 +7,22 @@ Depend::Depend(alpm_depend_t *dependData)
 
     switch (dependData->mod) {
     case ALPM_DEP_MOD_EQ:
-        m_mod = " = ";
+        m_mod = QStringLiteral(" = ");
         break;
     case ALPM_DEP_MOD_GE:
-        m_mod = " >= ";
+        m_mod = QStringLiteral(" >= ");
         break;
     case ALPM_DEP_MOD_LE:
-        m_mod = " <= ";
+        m_mod = QStringLiteral(" <= ");
         break;
     case ALPM_DEP_MOD_GT:
-        m_mod = " > ";
+        m_mod = QStringLiteral(" > ");
         break;
     case ALPM_DEP_MOD_LT:
-        m_mod = " < ";
+        m_mod = QStringLiteral(" < ");
         break;
     default:
-        m_mod = "";
+        break;
     }
 }
 

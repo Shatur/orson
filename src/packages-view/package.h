@@ -49,7 +49,7 @@ public:
     bool hasScript() const;
     bool fullAurInfo() const;
 
-    static QString name(alpm_pkg_t *packageData);
+    static QLatin1String name(alpm_pkg_t *packageData);
 
 private:
     static QVector<Depend> alpmDeps(alpm_list_t *list);
