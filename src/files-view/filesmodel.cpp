@@ -131,7 +131,7 @@ void FilesModel::addPath(const QStringList &path)
             for (int i = 0; i <= partIndex; ++i)
                 itemPath.append("/" + path.at(i));
 
-            auto item = new File(itemPath, lastFound);
+            auto *item = new File(itemPath, lastFound);
             lastFound = item;
         }
     }

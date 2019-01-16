@@ -295,9 +295,9 @@ void MainWindow::displayInfo(bool display, const QString &text, QLabel *titleLab
 
 void MainWindow::loadDepsButtons(int row, const QVector<Depend> &deps)
 {
-    auto depsContentLayout = qobject_cast<QFormLayout *>(ui->depsContentWidget->layout());
-    auto packagesLabel = qobject_cast<QLabel *>(depsContentLayout->itemAt(row, QFormLayout::LabelRole)->widget());
-    auto packagesLayout = qobject_cast<QVBoxLayout *>(depsContentLayout->itemAt(row, QFormLayout::FieldRole)->layout());
+    auto *depsContentLayout = qobject_cast<QFormLayout *>(ui->depsContentWidget->layout());
+    auto *packagesLabel = qobject_cast<QLabel *>(depsContentLayout->itemAt(row, QFormLayout::LabelRole)->widget());
+    auto *packagesLayout = qobject_cast<QVBoxLayout *>(depsContentLayout->itemAt(row, QFormLayout::FieldRole)->layout());
 
     // Remove old items
     while (QLayoutItem *child = packagesLayout->takeAt(0)) {
@@ -313,7 +313,7 @@ void MainWindow::loadDepsButtons(int row, const QVector<Depend> &deps)
 
     // Add new
     foreach (const Depend &depend, deps) {
-        auto button = new QPushButton;
+        auto *button = new QPushButton;
         button->setFlat(true);
         button->setStyleSheet("padding: 6px");
         button->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);

@@ -193,8 +193,8 @@ void PackagesModel::sort(int column, Qt::SortOrder order)
 
     // Update indexes
     QModelIndexList newIndexes;
-    foreach (auto oldIndex, oldIndexes) {
-        const auto package = static_cast<Package *>(oldIndex.internalPointer()); // Get package from old index
+    foreach (const QModelIndex &oldIndex, oldIndexes) {
+        auto *package = static_cast<Package *>(oldIndex.internalPointer()); // Get package from old index
 
         // Find new package position
         int row = 0;
@@ -275,7 +275,7 @@ void PackagesModel::aurSearch(const QString &text, const QString &queryType)
             if (!package->isInstalled() || package->name() != packageName)
                 continue;
 
-            auto aurPackage = new Package(*package);
+            auto *aurPackage = new Package(*package);
             m_aurPackages.append(aurPackage);
             found = true;
             break;
@@ -283,7 +283,7 @@ void PackagesModel::aurSearch(const QString &text, const QString &queryType)
 
         if (!found) {
             // Create new package
-            const auto package = new Package;
+            auto *package = new Package;
             package->setAurData(aurPackageData.toObject());
             m_aurPackages.append(package);
         }
@@ -345,8 +345,8 @@ void PackagesModel::loadDatabases()
         if (m_loadingDatabases.isCanceled())
             return;
 
-        auto packageData = static_cast<alpm_pkg_t *>(cache->data);
-        auto package = new Package;
+        auto *packageData = static_cast<alpm_pkg_t *>(cache->data);
+        auto *package = new Package;
         package->setLocalData(packageData);
 
         beginInsertRows(QModelIndex(), m_repoPackages.size(), m_repoPackages.size());
@@ -411,7 +411,7 @@ void PackagesModel::loadSyncDatabase(alpm_handle_t *handle, const QString &datab
         if (m_loadingDatabases.isCanceled())
             return;
 
-        auto packageData = static_cast<alpm_pkg_t *>(cache->data);
+        auto *packageData = static_cast<alpm_pkg_t *>(cache->data);
 
         // Check if package installed
         bool found = false;
@@ -427,7 +427,7 @@ void PackagesModel::loadSyncDatabase(alpm_handle_t *handle, const QString &datab
 
         // Add new sync package to database
         if (!found) {
-            auto package = new Package;
+            auto *package = new Package;
             package->setSyncData(packageData);
 
             beginInsertRows(QModelIndex(), m_repoPackages.size(), m_repoPackages.size());

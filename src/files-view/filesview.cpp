@@ -29,20 +29,20 @@ FilesModel *FilesView::model() const
 
 void FilesView::open() const
 {
-    const auto item = static_cast<File *>(currentIndex().internalPointer());
+    const auto *item = static_cast<File *>(currentIndex().internalPointer());
     QDesktopServices::openUrl(item->path());
 }
 
 void FilesView::openInFileManager() const
 {
-    const auto item = static_cast<File *>(currentIndex().internalPointer());
+    const auto *item = static_cast<File *>(currentIndex().internalPointer());
     QDesktopServices::openUrl(item->parent()->path());
 }
 
 void FilesView::copyFile() const
 {
-    const auto item = static_cast<File *>(currentIndex().internalPointer());
-    auto mimeData = new QMimeData();
+    const auto *item = static_cast<File *>(currentIndex().internalPointer());
+    auto *mimeData = new QMimeData;
     mimeData->setUrls({QUrl::fromLocalFile(item->path())});
 
     SingleApplication::clipboard()->setMimeData(mimeData);
@@ -50,19 +50,19 @@ void FilesView::copyFile() const
 
 void FilesView::copyName() const
 {
-    const auto item = static_cast<File *>(currentIndex().internalPointer());
+    const auto *item = static_cast<File *>(currentIndex().internalPointer());
     SingleApplication::clipboard()->setText(item->name());
 }
 
 void FilesView::copyPath() const
 {
-    const auto item = static_cast<File *>(currentIndex().internalPointer());
+    const auto *item = static_cast<File *>(currentIndex().internalPointer());
     SingleApplication::clipboard()->setText(item->path());
 }
 
 void FilesView::contextMenuEvent(QContextMenuEvent *event)
 {
-    const auto item = static_cast<File *>(indexAt(event->pos()).internalPointer());
+    const auto *item = static_cast<File *>(indexAt(event->pos()).internalPointer());
     if (item != nullptr) {
         // Enable "Copy" only for files
         if (item->isFile())
@@ -78,7 +78,7 @@ void FilesView::mouseDoubleClickEvent(QMouseEvent *event)
 {
     const QModelIndex index = indexAt(event->pos());
     if (index.isValid()) {
-        const auto item = static_cast<File *>(index.internalPointer());
+        const auto *item = static_cast<File *>(index.internalPointer());
         QDesktopServices::openUrl(item->path());
     }
 }
