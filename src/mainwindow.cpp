@@ -102,11 +102,14 @@ void MainWindow::on_packagesView_currentPackageChanged(Package *package)
 
 void MainWindow::findDepend(QAbstractButton *button)
 {
-    // Search in repo first
+    // Clear filter
     ui->searchPackagesEdit->clear();
-    ui->searchModeComboBox->setCurrentIndex(PackagesModel::Repo);
+    if (ui->searchModeComboBox->currentIndex() != PackagesModel::Repo)
+        ui->searchModeComboBox->setCurrentIndex(PackagesModel::Repo);
+    else
+        on_searchPackagesEdit_returnPressed();
 
-    // Search package
+    // Search package in repo first
     const bool found = ui->packagesView->find(button->toolTip());
     if (!found) {
         // Search in AUR
