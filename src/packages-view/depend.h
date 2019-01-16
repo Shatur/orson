@@ -8,7 +8,8 @@
 class Depend
 {
 public:
-    explicit Depend(alpm_depend_t *dependData = nullptr);
+    Depend() = default;
+    explicit Depend(alpm_depend_t *dependData);
     explicit Depend(const QString &text);
 
     QString name() const;
@@ -19,8 +20,8 @@ public:
 private:
     void parseDepend(const QString &text, const QString &mod, int position);
 
-    alpm_depend_t *m_alpmData = nullptr;
     QString m_name;
+    QString m_description;
     QString m_mod;
     QString m_version;
 };

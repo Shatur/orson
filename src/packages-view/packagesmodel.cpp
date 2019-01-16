@@ -11,7 +11,6 @@ constexpr char AUR_API_URL[] = "https://aur.archlinux.org/rpc/";
 PackagesModel::PackagesModel(QObject *parent) :
     QAbstractItemModel(parent)
 {
-    m_manager = new QNetworkAccessManager(this);
     m_loadingDatabases = QtConcurrent::run(this, &PackagesModel::loadDatabases);
 }
 
@@ -22,7 +21,6 @@ PackagesModel::~PackagesModel()
 
     qDeleteAll(m_repoPackages);
     qDeleteAll(m_aurPackages);
-    alpm_release(m_handle);
 }
 
 QVariant PackagesModel::data(const QModelIndex &index, int role) const
@@ -242,21 +240,14 @@ QVector<Package *> PackagesModel::packages() const
     qFatal("Unknown mode");
 }
 
-alpm_errno_t PackagesModel::error() const
-{
-    return m_error;
-}
-
 void PackagesModel::aurSearch(const QString &text, const QString &queryType)
 {
-    alpm_db_t *localDatabase = alpm_get_localdb(m_handle);
-
     // Generate API URL
     QUrl url(AUR_API_URL);
     url.setQuery("v=5&type=search&by=" + queryType + "&arg=" + text);
 
     // Get request
-    QScopedPointer reply(m_manager->get(QNetworkRequest(url)));
+    QScopedPointer reply(m_manager.get(QNetworkRequest(url)));
     QEventLoop waitForReply;
     connect(reply.get(), &QNetworkReply::finished, &waitForReply, &QEventLoop::quit);
     waitForReply.exec();
@@ -277,15 +268,25 @@ void PackagesModel::aurSearch(const QString &text, const QString &queryType)
     m_aurPackages.clear();
 
     foreach (const QJsonValue &aurPackageData, jsonData.value("results").toArray()) {
-        // Get AUR data
-        const auto package = new Package;
-        package->setAurData(aurPackageData);
+        // Check if package already installed
+        bool found = false;
+        const QString packageName = aurPackageData.toObject().value("Name").toString();
+        foreach (Package *package, m_repoPackages) {
+            if (!package->isInstalled() || package->name() != packageName)
+                continue;
 
-        // Get local data
-        alpm_pkg_t *localPackageData = alpm_db_get_pkg(localDatabase, qPrintable(package->name()));
-        package->setLocalData(localPackageData);
+            auto aurPackage = new Package(*package);
+            m_aurPackages.append(aurPackage);
+            found = true;
+            break;
+        }
 
-        m_aurPackages.append(package);
+        if (!found) {
+            // Create new package
+            const auto package = new Package;
+            package->setAurData(aurPackageData.toObject());
+            m_aurPackages.append(package);
+        }
     }
 
     endResetModel();
@@ -300,7 +301,7 @@ void PackagesModel::loadMoreAurInfo(Package *package)
     QUrl url(AUR_API_URL);
     url.setQuery("v=5&type=info&arg[]=" + package->name());
 
-    QScopedPointer reply(m_manager->get(QNetworkRequest(url)));
+    QScopedPointer reply(m_manager.get(QNetworkRequest(url)));
     QEventLoop waitForReply;
     connect(reply.get(), &QNetworkReply::finished, &waitForReply, &QEventLoop::quit);
     waitForReply.exec();
@@ -318,11 +319,10 @@ void PackagesModel::loadMoreAurInfo(Package *package)
 
 void PackagesModel::loadDatabases()
 {
-    // Remove old database
-    if (m_handle != nullptr) {
+    // Reset old data
+    if (!m_repoPackages.isEmpty()) {
         beginResetModel();
 
-        alpm_release(m_handle);
         qDeleteAll(m_repoPackages);
         m_repoPackages.clear();
 
@@ -331,53 +331,42 @@ void PackagesModel::loadDatabases()
 
     // Initialize ALPM
     const PacmanSettings settings;
-    m_handle = alpm_initialize(qPrintable(settings.rootDir()), qPrintable(settings.databasesPath()), &m_error);
-    if (m_error != ALPM_ERR_OK)
+    alpm_errno_t error;
+    alpm_handle_t *handle = alpm_initialize(qPrintable(settings.rootDir()), qPrintable(settings.databasesPath()), &error);
+    if (error != ALPM_ERR_OK) {
+        qDebug() << alpm_strerror(error);
         return;
+    }
 
-    // Load sync packages
-    foreach (const QString &repo, settings.repositories())
-        loadDatabase(repo);
-
-    // Load local packages
-    emit databaseStatusChanged("Loading installed packages");
-    alpm_db_t *database = alpm_get_localdb(m_handle);
+    // Load installed (local) packages
+    alpm_db_t *database = alpm_get_localdb(handle);
     alpm_list_t *cache = alpm_db_get_pkgcache(database);
     while (cache != nullptr) {
         if (m_loadingDatabases.isCanceled())
             return;
 
         auto packageData = static_cast<alpm_pkg_t *>(cache->data);
-        bool found = false;
+        auto package = new Package;
+        package->setLocalData(packageData);
 
-        // Search package with the same name first (to add installation information for an existing package)
-        const char *name = alpm_pkg_get_name(packageData);
-        for (Package *package : m_repoPackages) {
-            if (package->name() == name) {
-                package->setLocalData(packageData);
-                found = true;
-                break;
-            }
-        }
-
-        if (!found) {
-            // If not found, add new local package (installed from AUR or cutom PKGBUILD)
-            beginInsertRows(QModelIndex(), m_repoPackages.size(), m_repoPackages.size());
-
-            auto package = new Package;
-            package->setLocalData(packageData);
-            m_repoPackages.append(package);
-        }
+        beginInsertRows(QModelIndex(), m_repoPackages.size(), m_repoPackages.size());
+        m_repoPackages.append(package);
 
         cache = cache->next;
     }
-
+    const int installedPackages = m_repoPackages.size(); // Store to display info later
     endInsertRows();
+
+    // Load sync packages
+    foreach (const QString &repo, settings.repositories())
+        loadSyncDatabase(handle, repo);
+
+    alpm_release(handle);
 
     // Load information from packages installed from AUR
     QNetworkAccessManager manager;
     for (Package *package : m_repoPackages) {
-        if (!package->isInstalled() || package->repo() != "local")
+        if (!package->isInstalled() || package->repo() != QStringLiteral("local"))
             continue;
 
         if (m_loadingDatabases.isCanceled())
@@ -400,31 +389,53 @@ void PackagesModel::loadDatabases()
 
         const QJsonObject jsonReply = QJsonDocument::fromJson(reply->readAll()).object();
         if (jsonReply.value("resultcount").toInt() != 0)
-            package->setAurData(jsonReply.value("results").toArray().at(0));
+            package->setAurData(jsonReply.value("results").toArray().at(0).toObject());
     }
 
-    emit databaseStatusChanged(QString::number(m_repoPackages.size()) + " packages avaible in official repositories");
+    emit databaseStatusChanged(QString::number(m_repoPackages.size())
+                               + " packages avaible in official repositories, "
+                               + QString::number(installedPackages)
+                               + " packages installed");
 }
 
-void PackagesModel::loadDatabase(const QString &databaseName)
+void PackagesModel::loadSyncDatabase(alpm_handle_t *handle, const QString &databaseName)
 {
     emit databaseStatusChanged("Loading " + databaseName + " database");
 
-    alpm_db_t *database = alpm_register_syncdb(m_handle, qPrintable(databaseName), 0);
+    alpm_db_t *database = alpm_register_syncdb(handle, qPrintable(databaseName), 0);
     if (database == nullptr)
         return;
 
     alpm_list_t *cache = alpm_db_get_pkgcache(database);
     while (cache != nullptr) {
-        beginInsertRows(QModelIndex(), m_repoPackages.size(), m_repoPackages.size());
+        if (m_loadingDatabases.isCanceled())
+            return;
 
         auto packageData = static_cast<alpm_pkg_t *>(cache->data);
-        auto package = new Package;
-        package->setSyncData(packageData);
-        m_repoPackages.append(package);
+
+        // Check if package installed
+        bool found = false;
+        const QString packageName = Package::name(packageData);
+        for (Package *package : m_repoPackages) {
+            if (!package->isInstalled() || package->name() != packageName)
+                continue;
+
+            package->setSyncData(packageData);
+            found = true;
+            break;
+        }
+
+        // Add new sync package to database
+        if (!found) {
+            auto package = new Package;
+            package->setSyncData(packageData);
+
+            beginInsertRows(QModelIndex(), m_repoPackages.size(), m_repoPackages.size());
+            m_repoPackages.append(package);
+        }
+
         cache = cache->next;
     }
-
     endInsertRows();
 }
 
@@ -437,14 +448,14 @@ void PackagesModel::sortPackages(QVector<Package *> &container, Qt::SortOrder or
         std::sort(container.begin(), container.end(), [&](Package *first, Package *second) {
             if ((first->*firstMember)() == (second->*firstMember)())
                 return (first->*secondMember)() < (second->*secondMember)();
-           return (first->*firstMember)() > (second->*firstMember)();
+            return (first->*firstMember)() > (second->*firstMember)();
         });
         break;
     case Qt::DescendingOrder:
         std::sort(container.begin(), container.end(), [&](Package *first, Package *second) {
             if ((first->*firstMember)() == (second->*firstMember)())
                 return (first->*secondMember)() < (second->*secondMember)();
-           return (first->*firstMember)() < (second->*firstMember)();
+            return (first->*firstMember)() < (second->*firstMember)();
         });
         break;
     }
@@ -456,12 +467,12 @@ void PackagesModel::sortPackages(QVector<Package *> &container, Qt::SortOrder or
     switch (order) {
     case Qt::AscendingOrder:
         std::sort(container.begin(), container.end(), [&](Package *first, Package *second) {
-           return (first->*member)() > (second->*member)();
+            return (first->*member)() > (second->*member)();
         });
         break;
     case Qt::DescendingOrder:
         std::sort(container.begin(), container.end(), [&](Package *first, Package *second) {
-           return (first->*member)() < (second->*member)();
+            return (first->*member)() < (second->*member)();
         });
         break;
     }

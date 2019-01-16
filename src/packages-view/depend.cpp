@@ -1,8 +1,29 @@
 #include "depend.h"
 
-Depend::Depend(alpm_depend_t *dependData) :
-    m_alpmData(dependData)
+Depend::Depend(alpm_depend_t *dependData)
 {
+    m_name = dependData->name;
+    m_version = dependData->version;
+
+    switch (dependData->mod) {
+    case ALPM_DEP_MOD_EQ:
+        m_mod = " = ";
+        break;
+    case ALPM_DEP_MOD_GE:
+        m_mod = " >= ";
+        break;
+    case ALPM_DEP_MOD_LE:
+        m_mod = " <= ";
+        break;
+    case ALPM_DEP_MOD_GT:
+        m_mod = " > ";
+        break;
+    case ALPM_DEP_MOD_LT:
+        m_mod = " < ";
+        break;
+    default:
+        m_mod = "";
+    }
 }
 
 Depend::Depend(const QString &text)
@@ -37,59 +58,35 @@ Depend::Depend(const QString &text)
         return;
     }
 
+    // Just copy all text if unable to parse
     m_name = text;
 }
 
 QString Depend::name() const
 {
-    if (m_alpmData == nullptr)
-        return m_name;
-
-    return m_alpmData->name;
+    return m_name;
 }
 
 QString Depend::version() const
 {
-    if (m_alpmData == nullptr)
-        return m_version;
-
-    return m_alpmData->version;
+    return m_version;
 }
 
 QString Depend::description() const
 {
-    if (m_alpmData == nullptr)
-        return "";
-
-    return m_alpmData->desc;
+    return m_description;
 }
 
 QString Depend::mod() const
 {
-    if (m_alpmData == nullptr)
-        return m_mod;
-
-    switch (m_alpmData->mod) {
-    case ALPM_DEP_MOD_EQ:
-        return " = ";
-    case ALPM_DEP_MOD_GE:
-        return " >= ";
-    case ALPM_DEP_MOD_LE:
-        return " <= ";
-    case ALPM_DEP_MOD_GT:
-        return " > ";
-    case ALPM_DEP_MOD_LT:
-        return " < ";
-    default:
-        return "";
-    }
+    return m_mod;;
 }
 
 void Depend::parseDepend(const QString &text, const QString &mod, int position)
 {
     const int modSize = mod.size();
 
-    // Tokenize string like jre>=11 to jre, >= and 11
+    // Tokenize string like "jre>=11" to "jre", ">=" and "11"
     m_name = text.left(position);
     m_mod = text.mid(position, position + modSize);
     m_version = text.right(position + modSize);

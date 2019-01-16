@@ -29,13 +29,12 @@ public:
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) override;
 
-    // Show AUR or local database
+    // Switch between AUR and ALPM
     Mode mode() const;
     void setMode(Mode mode);
 
     // Other
     QVector<Package *> packages() const;
-    alpm_errno_t error() const;
     void aurSearch(const QString &text, const QString &queryType);
     void loadMoreAurInfo(Package *package);
 
@@ -43,11 +42,11 @@ signals:
     void databaseStatusChanged(const QString &text);
 
 private:
+    void loadDatabases();
+    void loadSyncDatabase(alpm_handle_t *handle, const QString &databaseName);
+
     template<typename T>
     using Comparator = T (Package::*)() const;
-
-    void loadDatabases();
-    void loadDatabase(const QString &databaseName);
 
     template<typename T1, typename T2>
     void sortPackages(QVector<Package *> &container, Qt::SortOrder order, Comparator<T1> firstMember, Comparator<T2> secondMember);
@@ -55,14 +54,10 @@ private:
     template<typename T>
     void sortPackages(QVector<Package *> &container, Qt::SortOrder order, Comparator<T> member);
 
-    // Repo ALPM specific members
-    alpm_handle_t *m_handle = nullptr;
-    alpm_errno_t m_error = ALPM_ERR_OK;
-
     Mode m_mode = Repo;
     QVector<Package *> m_repoPackages;
     QVector<Package *> m_aurPackages;
-    QNetworkAccessManager *m_manager;
+    QNetworkAccessManager m_manager;
     QFuture<void> m_loadingDatabases;
 };
 

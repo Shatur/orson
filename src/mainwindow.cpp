@@ -139,7 +139,7 @@ void MainWindow::on_packageTabsWidget_currentChanged(int index)
 
 void MainWindow::on_reloadHistoryButton_clicked()
 {
-    PacmanSettings pacmanSettings;
+    const PacmanSettings pacmanSettings;
     QFile historyFile(pacmanSettings.logFile());
 
     if (!historyFile.exists()) {
@@ -165,7 +165,6 @@ void MainWindow::on_findNextButton_clicked()
 
 void MainWindow::on_findPreviousButton_clicked()
 {
-
     searchHistory(true);
 }
 
@@ -188,52 +187,41 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 void MainWindow::loadPackageInfo(const Package *package)
 {
     // Licenses
-    const QStringList licenses = package->licenses();
-    displayInfo(!licenses.isEmpty(), licenses.join(", "), ui->licensesTitleLabel, ui->licensesLabel);
+    displayInfo(!package->licenses().isEmpty(), package->licenses().join(", "), ui->licensesTitleLabel, ui->licensesLabel);
 
     // URL
-    const QString url = package->url();
-    displayInfo(!url.isEmpty(), QString("<a href=\"" + url + "\">" + url + "</a>"), ui->urlTitleLabel, ui->urlLabel);
+    displayInfo(!package->url().isEmpty(), QString("<a href=\"" + package->url() + "\">" + package->url() + "</a>"), ui->urlTitleLabel, ui->urlLabel);
 
     // Keywords (AUR)
-    const QStringList keywords = package->keywords();
-    displayInfo(!keywords.isEmpty(), keywords.join(", "), ui->keywordsTitleLabel, ui->keywordsLabel);
+    displayInfo(!package->keywords().isEmpty(), package->keywords().join(", "), ui->keywordsTitleLabel, ui->keywordsLabel);
 
     // Arch
-    const QString arch = package->arch();
-    displayInfo(!arch.isEmpty(), arch, ui->archTitleLabel, ui->archLabel);
+    displayInfo(!package->arch().isEmpty(), package->arch(), ui->archTitleLabel, ui->archLabel);
 
     // Groups
-    const QStringList groups = package->groups();
-    displayInfo(!groups.isEmpty(), groups.join(", "), ui->groupsTitlelabel, ui->groupsLabel);
+    displayInfo(!package->groups().isEmpty(), package->groups().join(", "), ui->groupsTitlelabel, ui->groupsLabel);
 
     // Sizes
     displayInfo(package->downloadSize() != -1, package->formattedDownloadSize(), ui->downloadSizeTitleLabel, ui->downloadSizeLabel);
     displayInfo(package->installedSize() != -1, package->formattedInstalledSize(), ui->installedSizeTitleLabel, ui->installedSizeLabel);
 
     // Build date
-    const QDateTime buildDate = package->buildDate();
-    displayInfo(buildDate.isValid(), buildDate.toString("ddd dd MMM yyyy HH:mm:ss"), ui->buildDateTitleLabel, ui->buildDateLabel);
+    displayInfo(package->buildDate().isValid(), package->buildDate().toString("ddd dd MMM yyyy HH:mm:ss"), ui->buildDateTitleLabel, ui->buildDateLabel);
 
     // Install date
-    const QDateTime installDate = package->installDate();
-    displayInfo(installDate.isValid(), installDate.toString("ddd dd MMM yyyy HH:mm:ss"), ui->installDateTitleLabel, ui->installDateLabel);
+    displayInfo(package->installDate().isValid(), package->installDate().toString("ddd dd MMM yyyy HH:mm:ss"), ui->installDateTitleLabel, ui->installDateLabel);
 
     // First submitted date (AUR)
-    const QDateTime firstSubmitted = package->firstSubmitted();
-    displayInfo(firstSubmitted.isValid(), firstSubmitted.toString("ddd dd MMM yyyy HH:mm:ss"), ui->firstSubmittedTitleLabel, ui->firstSubmittedLabel);
+    displayInfo(package->firstSubmitted().isValid(), package->firstSubmitted().toString("ddd dd MMM yyyy HH:mm:ss"), ui->firstSubmittedTitleLabel, ui->firstSubmittedLabel);
 
-    // Last submitted date (AUR)
-    const QDateTime lastSubmitted = package->lastModified();
-    displayInfo(lastSubmitted.isValid(), lastSubmitted.toString("ddd dd MMM yyyy HH:mm:ss"), ui->lastModifiedTitleLabel, ui->lastModifiedLabel);
+    // Last modified date (AUR)
+    displayInfo(package->lastModified().isValid(), package->lastModified().toString("ddd dd MMM yyyy HH:mm:ss"), ui->lastModifiedTitleLabel, ui->lastModifiedLabel);
 
     // Out of date (AUR)
-    const QDateTime outOfDate = package->outOfDate();
-    displayInfo(outOfDate.isValid(), outOfDate.toString("ddd dd MMM yyyy HH:mm:ss"), ui->outOfDateTitleLabel, ui->outOfDateLabel);
+    displayInfo(package->outOfDate().isValid(), package->outOfDate().toString("ddd dd MMM yyyy HH:mm:ss"), ui->outOfDateTitleLabel, ui->outOfDateLabel);
 
     // Maintainer
-    const QString maintainer = package->maintainer();
-    if (!maintainer.isEmpty())
+    if (!package->maintainer().isEmpty())
         ui->maintainerLabel->setText(package->maintainer());
     else
         ui->maintainerLabel->setText("None");
@@ -243,7 +231,7 @@ void MainWindow::loadPackageInfo(const Package *package)
         // Reason
         ui->reasonLabel->setVisible(true);
         ui->reasonTitleLabel->setVisible(true);
-        if (package->reason() == ALPM_PKG_REASON_EXPLICIT)
+        if (package->isExplicitly() == ALPM_PKG_REASON_EXPLICIT)
             ui->reasonLabel->setText(tr("Installed explicitly"));
         else
             ui->reasonLabel->setText(tr("Installed as dependency"));
