@@ -28,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Select first package
     ui->packagesView->setCurrentIndex(ui->packagesView->model()->index(0, 0));
+    statusBar()->showMessage("Loading installed packages");
 }
 
 MainWindow::~MainWindow()

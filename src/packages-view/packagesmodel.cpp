@@ -11,7 +11,7 @@ constexpr char AUR_API_URL[] = "https://aur.archlinux.org/rpc/";
 PackagesModel::PackagesModel(QObject *parent) :
     QAbstractItemModel(parent)
 {
-    m_loadingDatabases = QtConcurrent::run(this, &PackagesModel::loadDatabases);
+    m_loadingDatabases = QtConcurrent::run(this, &PackagesModel::loadRepoPackages);
 }
 
 PackagesModel::~PackagesModel()
@@ -317,7 +317,7 @@ void PackagesModel::loadMoreAurInfo(Package *package)
     package->setAurData(packageData, true);
 }
 
-void PackagesModel::loadDatabases()
+void PackagesModel::loadRepoPackages()
 {
     // Reset old data
     if (!m_repoPackages.isEmpty()) {
@@ -338,12 +338,58 @@ void PackagesModel::loadDatabases()
         return;
     }
 
-    // Load installed (local) packages
+    // Load local database
+    const int installedPackages = loadLocalDatabase(handle);
+
+    // Load sync packages
+    foreach (const QString &repo, settings.repositories())
+        loadSyncDatabase(handle, repo);
+
+    alpm_release(handle);
+
+    // Load information from packages installed from AUR
+//    QNetworkAccessManager manager;
+//    for (Package *package : m_repoPackages) {
+//        if (!package->isInstalled() || package->repo() != QStringLiteral("local"))
+//            continue;
+
+//        if (m_loadingDatabases.isCanceled())
+//            return;
+
+//        emit databaseStatusChanged("Loading information from AUR for " + package->name());
+
+//        QUrl url(AUR_API_URL);
+//        url.setQuery("v=5&type=info&arg[]=" + package->name());
+
+//        QScopedPointer reply(manager.get(QNetworkRequest(url)));
+//        QEventLoop waitForReply;
+//        connect(reply.get(), &QNetworkReply::finished, &waitForReply, &QEventLoop::quit);
+//        waitForReply.exec();
+
+//        if (reply->error() != QNetworkReply::NoError) {
+//            qDebug() << reply->errorString();
+//            break;
+//        }
+
+//        const QJsonObject jsonReply = QJsonDocument::fromJson(reply->readAll()).object();
+//        if (jsonReply.value("resultcount").toInt() != 0)
+//            package->setAurData(jsonReply.value("results").toArray().at(0).toObject());
+//    }
+
+    emit databaseStatusChanged(QString::number(m_repoPackages.size())
+                               + " packages avaible in official repositories, "
+                               + QString::number(installedPackages)
+                               + " packages installed");
+}
+
+// Load installed (local) packages
+int PackagesModel::loadLocalDatabase(alpm_handle_t *handle)
+{
     alpm_db_t *database = alpm_get_localdb(handle);
     alpm_list_t *cache = alpm_db_get_pkgcache(database);
     while (cache != nullptr) {
         if (m_loadingDatabases.isCanceled())
-            return;
+            return 0;
 
         auto *packageData = static_cast<alpm_pkg_t *>(cache->data);
         auto *package = new Package;
@@ -354,48 +400,9 @@ void PackagesModel::loadDatabases()
 
         cache = cache->next;
     }
-    const int installedPackages = m_repoPackages.size(); // Store to display info later
     endInsertRows();
 
-    // Load sync packages
-    foreach (const QString &repo, settings.repositories())
-        loadSyncDatabase(handle, repo);
-
-    alpm_release(handle);
-
-    // Load information from packages installed from AUR
-    QNetworkAccessManager manager;
-    for (Package *package : m_repoPackages) {
-        if (!package->isInstalled() || package->repo() != QStringLiteral("local"))
-            continue;
-
-        if (m_loadingDatabases.isCanceled())
-            return;
-
-        emit databaseStatusChanged("Loading information from AUR for " + package->name());
-
-        QUrl url(AUR_API_URL);
-        url.setQuery("v=5&type=info&arg[]=" + package->name());
-
-        QScopedPointer reply(manager.get(QNetworkRequest(url)));
-        QEventLoop waitForReply;
-        connect(reply.get(), &QNetworkReply::finished, &waitForReply, &QEventLoop::quit);
-        waitForReply.exec();
-
-        if (reply->error() != QNetworkReply::NoError) {
-            qDebug() << reply->errorString();
-            break;
-        }
-
-        const QJsonObject jsonReply = QJsonDocument::fromJson(reply->readAll()).object();
-        if (jsonReply.value("resultcount").toInt() != 0)
-            package->setAurData(jsonReply.value("results").toArray().at(0).toObject());
-    }
-
-    emit databaseStatusChanged(QString::number(m_repoPackages.size())
-                               + " packages avaible in official repositories, "
-                               + QString::number(installedPackages)
-                               + " packages installed");
+    return m_repoPackages.size();
 }
 
 void PackagesModel::loadSyncDatabase(alpm_handle_t *handle, const QString &databaseName)

@@ -42,7 +42,8 @@ signals:
     void databaseStatusChanged(const QString &text);
 
 private:
-    void loadDatabases();
+    void loadRepoPackages();
+    int loadLocalDatabase(alpm_handle_t *handle);
     void loadSyncDatabase(alpm_handle_t *handle, const QString &databaseName);
 
     template<typename T>
