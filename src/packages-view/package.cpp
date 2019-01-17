@@ -103,13 +103,17 @@ QString Package::url() const
 
 QString Package::maintainer() const
 {
+    // Check data from AUR first to get AUR maintainer
+    if (!m_aurData.isEmpty())
+        return m_aurData.value("Maintainer").toString();
+
     if (m_localData != nullptr)
         return alpm_pkg_get_packager(m_localData);
 
     if (m_syncData != nullptr)
         return alpm_pkg_get_packager(m_syncData);
 
-    return m_aurData.value("Maintainer").toString();
+    return QString();
 }
 
 QString Package::formattedInstalledSize() const
