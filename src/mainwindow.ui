@@ -214,8 +214,11 @@
                 </property>
                 <item row="0" column="0">
                  <widget class="QLabel" name="archTitleLabel">
-                  <property name="styleSheet">
-                   <string notr="true">font-weight: bold;</string>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
                   </property>
                   <property name="text">
                    <string>Architecture:</string>
@@ -240,8 +243,11 @@
                 </item>
                 <item row="1" column="0">
                  <widget class="QLabel" name="urlTitleLabel">
-                  <property name="styleSheet">
-                   <string notr="true">font-weight: bold;</string>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
                   </property>
                   <property name="text">
                    <string>URL:</string>
@@ -269,8 +275,11 @@
                 </item>
                 <item row="3" column="0">
                  <widget class="QLabel" name="licensesTitleLabel">
-                  <property name="styleSheet">
-                   <string notr="true">font-weight: bold;</string>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
                   </property>
                   <property name="text">
                    <string>Licenses:</string>
@@ -295,8 +304,11 @@
                 </item>
                 <item row="4" column="0">
                  <widget class="QLabel" name="groupsTitlelabel">
-                  <property name="styleSheet">
-                   <string notr="true">font-weight: bold;</string>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
                   </property>
                   <property name="text">
                    <string>Groups:</string>
@@ -321,8 +333,11 @@
                 </item>
                 <item row="5" column="0">
                  <widget class="QLabel" name="downloadSizeTitleLabel">
-                  <property name="styleSheet">
-                   <string notr="true">font-weight: bold;</string>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
                   </property>
                   <property name="text">
                    <string>Download size:</string>
@@ -347,8 +362,11 @@
                 </item>
                 <item row="6" column="0">
                  <widget class="QLabel" name="installedSizeTitleLabel">
-                  <property name="styleSheet">
-                   <string notr="true">font-weight: bold;</string>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
                   </property>
                   <property name="text">
                    <string>Installed size:</string>
@@ -370,8 +388,11 @@
                 </item>
                 <item row="7" column="0">
                  <widget class="QLabel" name="maintainerTitleLabel">
-                  <property name="styleSheet">
-                   <string notr="true">font-weight: bold;</string>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
                   </property>
                   <property name="text">
                    <string>Maintainer:</string>
@@ -396,8 +417,11 @@
                 </item>
                 <item row="8" column="0">
                  <widget class="QLabel" name="buildDateTitleLabel">
-                  <property name="styleSheet">
-                   <string notr="true">font-weight: bold;</string>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
                   </property>
                   <property name="text">
                    <string>Build date:</string>
@@ -422,8 +446,11 @@
                 </item>
                 <item row="9" column="0">
                  <widget class="QLabel" name="installDateTitleLabel">
-                  <property name="styleSheet">
-                   <string notr="true">font-weight: bold;</string>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
                   </property>
                   <property name="text">
                    <string>Install date:</string>
@@ -448,8 +475,11 @@
                 </item>
                 <item row="10" column="0">
                  <widget class="QLabel" name="firstSubmittedTitleLabel">
-                  <property name="styleSheet">
-                   <string notr="true">font-weight: bold;</string>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
                   </property>
                   <property name="text">
                    <string>First submitted:</string>
@@ -471,8 +501,11 @@
                 </item>
                 <item row="11" column="0">
                  <widget class="QLabel" name="lastModifiedTitleLabel">
-                  <property name="styleSheet">
-                   <string notr="true">font-weight: bold;</string>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
                   </property>
                   <property name="text">
                    <string>Last modified:</string>
@@ -494,8 +527,11 @@
                 </item>
                 <item row="12" column="0">
                  <widget class="QLabel" name="outOfDateTitleLabel">
-                  <property name="styleSheet">
-                   <string notr="true">font-weight: bold;</string>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
                   </property>
                   <property name="text">
                    <string>Out of date:</string>
@@ -520,8 +556,11 @@
                 </item>
                 <item row="13" column="0">
                  <widget class="QLabel" name="reasonTitleLabel">
-                  <property name="styleSheet">
-                   <string notr="true">font-weight: bold;</string>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
                   </property>
                   <property name="text">
                    <string>Installation reason:</string>
@@ -543,8 +582,11 @@
                 </item>
                 <item row="14" column="0">
                  <widget class="QLabel" name="scriptTitleLabel">
-                  <property name="styleSheet">
-                   <string notr="true">font-weight: bold;</string>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
                   </property>
                   <property name="text">
                    <string>Installation script:</string>
@@ -566,8 +608,11 @@
                 </item>
                 <item row="2" column="0">
                  <widget class="QLabel" name="keywordsTitleLabel">
-                  <property name="styleSheet">
-                   <string notr="true">font-weight: bold;</string>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
                   </property>
                   <property name="text">
                    <string>Keywords</string>
@@ -630,8 +675,11 @@
                 </property>
                 <item row="0" column="0">
                  <widget class="QLabel" name="providesTitleLabel">
-                  <property name="styleSheet">
-                   <string notr="true">font-weight: bold;</string>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
                   </property>
                   <property name="text">
                    <string>Provides:</string>
@@ -647,8 +695,11 @@
                 </item>
                 <item row="1" column="0">
                  <widget class="QLabel" name="replacesTitleLabel">
-                  <property name="styleSheet">
-                   <string notr="true">font-weight: bold;</string>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
                   </property>
                   <property name="text">
                    <string>Replaces:</string>
@@ -664,8 +715,11 @@
                 </item>
                 <item row="2" column="0">
                  <widget class="QLabel" name="conflictsTitleLabel">
-                  <property name="styleSheet">
-                   <string notr="true">font-weight: bold;</string>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
                   </property>
                   <property name="text">
                    <string>Conflicts:</string>
@@ -681,8 +735,11 @@
                 </item>
                 <item row="3" column="0">
                  <widget class="QLabel" name="dependsTitleLabel">
-                  <property name="styleSheet">
-                   <string notr="true">font-weight: bold;</string>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
                   </property>
                   <property name="text">
                    <string>Depends:</string>
@@ -698,8 +755,11 @@
                 </item>
                 <item row="4" column="0">
                  <widget class="QLabel" name="optdependsTitleLabel">
-                  <property name="styleSheet">
-                   <string notr="true">font-weight: bold;</string>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
                   </property>
                   <property name="text">
                    <string>Optdepends:</string>
