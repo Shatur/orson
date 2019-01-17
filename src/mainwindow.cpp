@@ -191,70 +191,81 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 void MainWindow::loadPackageInfo(const Package *package)
 {
     // Licenses
-    displayInfo(!package->licenses().isEmpty(), package->licenses().join(", "), ui->licensesTitleLabel, ui->licensesLabel);
+     const QStringList licenses = package->licenses();
+     displayInfo(!licenses.isEmpty(), licenses.join(", "), ui->licensesTitleLabel, ui->licensesLabel);
 
-    // URL
-    displayInfo(!package->url().isEmpty(), QString("<a href=\"" + package->url() + "\">" + package->url() + "</a>"), ui->urlTitleLabel, ui->urlLabel);
+     // URL
+     const QString url = package->url();
+     displayInfo(!url.isEmpty(), QString("<a href=\"" + url + "\">" + url + "</a>"), ui->urlTitleLabel, ui->urlLabel);
 
-    // Keywords (AUR)
-    displayInfo(!package->keywords().isEmpty(), package->keywords().join(", "), ui->keywordsTitleLabel, ui->keywordsLabel);
+     // Keywords (AUR)
+     const QStringList keywords = package->keywords();
+     displayInfo(!keywords.isEmpty(), keywords.join(", "), ui->keywordsTitleLabel, ui->keywordsLabel);
 
-    // Arch
-    displayInfo(!package->arch().isEmpty(), package->arch(), ui->archTitleLabel, ui->archLabel);
+     // Arch
+     const QString arch = package->arch();
+     displayInfo(!arch.isEmpty(), arch, ui->archTitleLabel, ui->archLabel);
 
-    // Groups
-    displayInfo(!package->groups().isEmpty(), package->groups().join(", "), ui->groupsTitlelabel, ui->groupsLabel);
+     // Groups
+     const QStringList groups = package->groups();
+     displayInfo(!groups.isEmpty(), groups.join(", "), ui->groupsTitlelabel, ui->groupsLabel);
 
-    // Sizes
-    displayInfo(package->downloadSize() != -1, package->formattedDownloadSize(), ui->downloadSizeTitleLabel, ui->downloadSizeLabel);
-    displayInfo(package->installedSize() != -1, package->formattedInstalledSize(), ui->installedSizeTitleLabel, ui->installedSizeLabel);
+     // Sizes
+     displayInfo(package->downloadSize() != -1, package->formattedDownloadSize(), ui->downloadSizeTitleLabel, ui->downloadSizeLabel);
+     displayInfo(package->installedSize() != -1, package->formattedInstalledSize(), ui->installedSizeTitleLabel, ui->installedSizeLabel);
 
-    // Build date
-    displayInfo(package->buildDate().isValid(), package->buildDate().toString("ddd dd MMM yyyy HH:mm:ss"), ui->buildDateTitleLabel, ui->buildDateLabel);
+     // Build date
+     const QDateTime buildDate = package->buildDate();
+     displayInfo(buildDate.isValid(), buildDate.toString("ddd dd MMM yyyy HH:mm:ss"), ui->buildDateTitleLabel, ui->buildDateLabel);
 
-    // Install date
-    displayInfo(package->installDate().isValid(), package->installDate().toString("ddd dd MMM yyyy HH:mm:ss"), ui->installDateTitleLabel, ui->installDateLabel);
+     // Install date
+     const QDateTime installDate = package->installDate();
+     displayInfo(installDate.isValid(), installDate.toString("ddd dd MMM yyyy HH:mm:ss"), ui->installDateTitleLabel, ui->installDateLabel);
 
-    // First submitted date (AUR)
-    displayInfo(package->firstSubmitted().isValid(), package->firstSubmitted().toString("ddd dd MMM yyyy HH:mm:ss"), ui->firstSubmittedTitleLabel, ui->firstSubmittedLabel);
+     // First submitted date (AUR)
+     const QDateTime firstSubmitted = package->firstSubmitted();
+     displayInfo(firstSubmitted.isValid(), firstSubmitted.toString("ddd dd MMM yyyy HH:mm:ss"), ui->firstSubmittedTitleLabel, ui->firstSubmittedLabel);
 
-    // Last modified date (AUR)
-    displayInfo(package->lastModified().isValid(), package->lastModified().toString("ddd dd MMM yyyy HH:mm:ss"), ui->lastModifiedTitleLabel, ui->lastModifiedLabel);
+     // Last submitted date (AUR)
+     const QDateTime lastSubmitted = package->lastModified();
+     displayInfo(lastSubmitted.isValid(), lastSubmitted.toString("ddd dd MMM yyyy HH:mm:ss"), ui->lastModifiedTitleLabel, ui->lastModifiedLabel);
 
-    // Out of date (AUR)
-    displayInfo(package->outOfDate().isValid(), package->outOfDate().toString("ddd dd MMM yyyy HH:mm:ss"), ui->outOfDateTitleLabel, ui->outOfDateLabel);
+     // Out of date (AUR)
+     const QDateTime outOfDate = package->outOfDate();
+     displayInfo(outOfDate.isValid(), outOfDate.toString("ddd dd MMM yyyy HH:mm:ss"), ui->outOfDateTitleLabel, ui->outOfDateLabel);
 
-    // Maintainer
-    if (!package->maintainer().isEmpty())
-        ui->maintainerLabel->setText(package->maintainer());
-    else
-        ui->maintainerLabel->setText("None");
+     // Maintainer
+     const QString maintainer = package->maintainer();
+     if (!maintainer.isEmpty())
+         ui->maintainerLabel->setText(package->maintainer());
+     else
+         ui->maintainerLabel->setText("None");
 
-    // Other install-specific info
-    if (package->isInstalled()) {
-        // Reason
-        ui->reasonLabel->setVisible(true);
-        ui->reasonTitleLabel->setVisible(true);
-        if (package->isExplicitly() == ALPM_PKG_REASON_EXPLICIT)
-            ui->reasonLabel->setText(tr("Installed explicitly"));
-        else
-            ui->reasonLabel->setText(tr("Installed as dependency"));
+     // Other install-specific info
+     if (package->isInstalled()) {
+         // Reason
+         ui->reasonLabel->setVisible(true);
+         ui->reasonTitleLabel->setVisible(true);
+         if (package->isInstalledExplicitly())
+             ui->reasonLabel->setText(tr("Installed explicitly"));
+         else
+             ui->reasonLabel->setText(tr("Installed as dependency"));
 
-        // Install script
-        ui->scriptLabel->setVisible(true);
-        ui->scriptTitleLabel->setVisible(true);
-        if (package->hasScript())
-            ui->scriptLabel->setText(tr("Yes"));
-        else
-            ui->scriptLabel->setText(tr("No"));
-    } else {
-        ui->reasonLabel->setVisible(false);
-        ui->reasonTitleLabel->setVisible(false);
-        ui->scriptLabel->setVisible(false);
-        ui->scriptTitleLabel->setVisible(false);
-    }
+         // Install script
+         ui->scriptLabel->setVisible(true);
+         ui->scriptTitleLabel->setVisible(true);
+         if (package->hasScript())
+             ui->scriptLabel->setText(tr("Yes"));
+         else
+             ui->scriptLabel->setText(tr("No"));
+     } else {
+         ui->reasonLabel->setVisible(false);
+         ui->reasonTitleLabel->setVisible(false);
+         ui->scriptLabel->setVisible(false);
+         ui->scriptTitleLabel->setVisible(false);
+     }
 
-    ui->infoTab->setProperty("loaded", true);
+ ui->infoTab->setProperty("loaded", true);
 }
 
 void MainWindow::loadPackageDeps(const Package *package)

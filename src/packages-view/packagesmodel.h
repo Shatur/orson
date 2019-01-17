@@ -43,8 +43,8 @@ signals:
 
 private:
     void loadRepoPackages();
-    int loadLocalDatabase(alpm_handle_t *handle);
-    void loadSyncDatabase(alpm_handle_t *handle, const QString &databaseName);
+    int loadLocalDatabase();
+    void loadSyncDatabase(const QString &databaseName);
 
     template<typename T>
     using Comparator = T (Package::*)() const;
@@ -55,11 +55,16 @@ private:
     template<typename T>
     void sortPackages(QVector<Package *> &container, Qt::SortOrder order, Comparator<T> member);
 
+    // ALPM stuff
+    alpm_handle_t *m_handle = nullptr;
+    alpm_errno_t m_error = ALPM_ERR_OK;
+
     Mode m_mode = Repo;
     QVector<Package *> m_repoPackages;
     QVector<Package *> m_aurPackages;
-    QNetworkAccessManager m_manager;
     QFuture<void> m_loadingDatabases;
+
+    QNetworkAccessManager m_manager;
 };
 
 #endif // PACKAGESMODEL_H

@@ -5,162 +5,111 @@
 #include <QDateTime>
 #include <QJsonArray>
 
-// Copy all data from ALPM
 void Package::setSyncData(alpm_pkg_t *data)
 {
-    // General info
-    if (!m_installed) {
-        m_name = alpm_pkg_get_name(data);
-        m_version = alpm_pkg_get_version(data);
-        m_description = alpm_pkg_get_desc(data);
-        m_arch = alpm_pkg_get_arch(data);
-        m_url = alpm_pkg_get_url(data);
-        m_maintainer = alpm_pkg_get_packager(data);
-        m_buildDate = QDateTime::fromSecsSinceEpoch(alpm_pkg_get_builddate(data));
-        m_installedSize = alpm_pkg_get_isize(data);
-
-        // Dependencies
-        m_provides = alpmDeps(alpm_pkg_get_provides(data));
-        m_replaces = alpmDeps(alpm_pkg_get_replaces(data));
-        m_conflicts = alpmDeps(alpm_pkg_get_conflicts(data));
-        m_depends = alpmDeps(alpm_pkg_get_depends(data));
-        m_optdepends = alpmDeps(alpm_pkg_get_optdepends(data));
-
-        // Licenses
-        alpm_list_t *licensesList = alpm_pkg_get_licenses(data);
-        while (licensesList != nullptr) {
-            m_licenses.append(static_cast<const char *>(licensesList->data));
-            licensesList = licensesList->next;
-        }
-
-        // Groups
-        alpm_list_t *groupsList = alpm_pkg_get_groups(data);
-        while (groupsList != nullptr) {
-            m_groups.append(static_cast<const char *>(groupsList->data));
-            groupsList = groupsList->next;
-        }
-    }
-
-    m_downloadSize = alpm_pkg_get_size(data);
-    m_repo = alpm_db_get_name(alpm_pkg_get_db(data));
+    m_syncData = data;
 }
 
-// Copy all data from ALPM
 void Package::setLocalData(alpm_pkg_t *data)
 {
-    // General info
-    m_name = alpm_pkg_get_name(data);
-    m_repo = QStringLiteral("local");
-    m_version = alpm_pkg_get_version(data);
-    m_description = alpm_pkg_get_desc(data);
-    m_arch = alpm_pkg_get_arch(data);
-    m_url = alpm_pkg_get_url(data);
-    m_maintainer = alpm_pkg_get_packager(data);
-    m_buildDate = QDateTime::fromSecsSinceEpoch(alpm_pkg_get_builddate(data));
-    m_installDate = QDateTime::fromSecsSinceEpoch(alpm_pkg_get_installdate(data));
-    m_installedSize = alpm_pkg_get_isize(data);
-    m_hasScript = alpm_pkg_has_scriptlet(data);
-    m_explicitly = alpm_pkg_get_reason(data) == ALPM_PKG_REASON_EXPLICIT;
-    m_installed = true;
-
-    // Dependencies
-    m_provides = alpmDeps(alpm_pkg_get_provides(data));
-    m_replaces = alpmDeps(alpm_pkg_get_replaces(data));
-    m_conflicts = alpmDeps(alpm_pkg_get_conflicts(data));
-    m_depends = alpmDeps(alpm_pkg_get_depends(data));
-    m_optdepends = alpmDeps(alpm_pkg_get_optdepends(data));
-
-    // Licenses
-    alpm_list_t *licensesList = alpm_pkg_get_licenses(data);
-    while (licensesList != nullptr) {
-        m_licenses.append(static_cast<const char *>(licensesList->data));
-        licensesList = licensesList->next;
-    }
-
-    // Groups
-    alpm_list_t *groupsList = alpm_pkg_get_groups(data);
-    while (groupsList != nullptr) {
-        m_groups.append(static_cast<const char *>(groupsList->data));
-        groupsList = groupsList->next;
-    }
-
-    // Files
-    alpm_filelist_t *filesList = alpm_pkg_get_files(data);
-    for (unsigned i = 0; i < filesList->count; ++i)
-        m_files.append(filesList->files[i].name);
+    m_localData = data;
+    if (m_localData != nullptr)
+        m_installed = true;
 }
 
 void Package::setAurData(const QJsonObject &object, bool full)
 {
+    m_aurData = object;
     m_fullAurInfo = full;
+}
 
-    if (!m_installed) {
-        m_name = object.value("Name").toString();
-        m_version = object.value("Version").toString();
-        m_description = object.value("Description").toString();
-        m_url = object.value("URL").toString();
-        m_maintainer = object.value("Maintainer").toString();
+bool Package::sameName(alpm_pkg_t *otherData)
+{
+    const char *text = alpm_pkg_get_name(otherData);
 
-        // Dependencies
-        m_provides = aurDeps(object.value("Provides"));
-        m_replaces = aurDeps(object.value("Replaces"));
-        m_conflicts = aurDeps(object.value("Conflicts"));
-        m_depends = aurDeps(object.value("Depends"));
-        m_optdepends = aurDeps(object.value("OptDepends"));
+    if (m_localData != nullptr)
+        return qstrcmp(text, alpm_pkg_get_name(m_localData)) == 0;
 
-        // Licenses
-        foreach (const QJsonValue &value, object.value("License").toArray())
-            m_licenses.append(value.toString());
-    }
+    if (m_syncData != nullptr)
+        return qstrcmp(text, alpm_pkg_get_name(m_syncData)) == 0;
 
-    m_repo = QStringLiteral("aur");
-    m_firstSubmitted = QDateTime::fromSecsSinceEpoch(object.value("FirstSubmitted").toInt());
-    m_lastModified = QDateTime::fromSecsSinceEpoch(object.value("LastModified").toInt());
-    m_popularity = object.value("Popularity").toDouble();
-    m_votes = object.value("NumVotes").toInt();
-
-    // Check for out of date
-    if (!object.value("OutOfDate").isNull())
-        m_outOfDate = QDateTime::fromSecsSinceEpoch(object.value("OutOfDate").toInt());
-
-    // Keywords
-    foreach (const QJsonValue &word, object.value("Keywords").toArray())
-        m_keywords.append(word.toString());
+    return false;
 }
 
 QString Package::name() const
 {
-    return m_name;
+    if (m_localData != nullptr)
+        return alpm_pkg_get_name(m_localData);
+
+    if (m_syncData != nullptr)
+        return alpm_pkg_get_name(m_syncData );
+
+    return m_aurData.value("Name").toString();
 }
 
 QString Package::repo() const
 {
-    return m_repo;
+    if (m_syncData != nullptr)
+        return alpm_db_get_name(alpm_pkg_get_db(m_syncData));
+
+    if (!m_aurData.isEmpty())
+        return QStringLiteral("aur");
+
+    return QStringLiteral("local");
 }
 
 QString Package::version() const
 {
-    return m_version;
+    if (m_localData != nullptr)
+        return alpm_pkg_get_version(m_localData);
+
+    if (m_syncData != nullptr)
+        return alpm_pkg_get_version(m_syncData);
+
+    return m_aurData.value("Version").toString();
 }
 
 QString Package::description() const
 {
-    return m_description;
+    if (m_localData != nullptr)
+        return alpm_pkg_get_desc(m_localData);
+
+    if (m_syncData != nullptr)
+        return alpm_pkg_get_desc(m_syncData);
+
+    return m_aurData.value("Description").toString();
 }
 
 QString Package::arch() const
 {
-    return m_arch;
+    if (m_localData != nullptr)
+        return alpm_pkg_get_arch(m_localData);
+    if (m_syncData != nullptr)
+        return alpm_pkg_get_arch(m_syncData);
+
+    return QStringLiteral();
 }
 
 QString Package::url() const
 {
-    return m_url;
+    if (m_localData != nullptr)
+        return alpm_pkg_get_url(m_localData);
+
+    if (m_syncData != nullptr)
+        return alpm_pkg_get_url(m_syncData);
+
+    return m_aurData.value("URL").toString();
 }
 
 QString Package::maintainer() const
 {
-    return m_maintainer;
+    if (m_localData != nullptr)
+        return alpm_pkg_get_packager(m_localData);
+
+    if (m_syncData != nullptr)
+        return alpm_pkg_get_packager(m_syncData);
+
+    return m_aurData.value("Maintainer").toString();
 }
 
 QString Package::formattedInstalledSize() const
@@ -177,94 +126,195 @@ QString Package::formattedDownloadSize() const
 
 QStringList Package::licenses() const
 {
-    return m_licenses;
+    QStringList licenses;
+    alpm_list_t *licensesList;
+    if (m_localData != nullptr) {
+        licensesList = alpm_pkg_get_licenses(m_localData);
+    } else if (m_syncData != nullptr) {
+        licensesList = alpm_pkg_get_licenses(m_syncData);
+    } else {
+        // Load AUR info
+        foreach (const QJsonValue &value, m_aurData.value("License").toArray())
+            licenses.append(value.toString());
+        return licenses;
+    }
+
+    while (licensesList != nullptr) {
+        licenses.append(static_cast<const char *>(licensesList->data));
+        licensesList = licensesList->next;
+    }
+
+    return licenses;
 }
 
 QStringList Package::groups() const
 {
-    return m_groups;
+    QStringList groups;
+    alpm_list_t *groupsList;
+    if (m_localData == nullptr)
+        groupsList = alpm_pkg_get_groups(m_syncData);
+    else
+        groupsList = alpm_pkg_get_groups(m_localData);
+
+    while (groupsList != nullptr) {
+        groups.append(static_cast<const char *>(groupsList->data));
+        groupsList = groupsList->next;
+    }
+
+    return groups;
 }
 
 QStringList Package::files() const
 {
-    return m_files;
+    QStringList files;
+    alpm_filelist_t *filesList;
+    if (m_localData == nullptr)
+        filesList = alpm_pkg_get_files(m_syncData);
+    else
+        filesList = alpm_pkg_get_files(m_localData);
+
+    for (unsigned i = 0; i < filesList->count; ++i)
+        files.append(filesList->files[i].name);
+
+    return files;
 }
 
 QStringList Package::keywords() const
 {
-    return m_keywords;
+    QStringList keywords;
+    foreach(const QJsonValue &word, m_aurData.value("Keywords").toArray())
+        keywords.append(word.toString());
+
+    return keywords;
 }
 
 QVector<Depend> Package::provides() const
 {
-    return m_provides;
+    if (m_localData != nullptr)
+        return alpmDeps(alpm_pkg_get_provides(m_localData));
+
+    if (m_syncData != nullptr)
+        return alpmDeps(alpm_pkg_get_provides(m_syncData));
+
+    return aurDeps(m_aurData.value("Provides"));
 }
 
 QVector<Depend> Package::replaces() const
 {
-    return m_replaces;
+    if (m_localData != nullptr)
+        return alpmDeps(alpm_pkg_get_replaces(m_localData));
+
+    if (m_syncData != nullptr)
+        return alpmDeps(alpm_pkg_get_replaces(m_syncData));
+
+    return aurDeps(m_aurData.value("Replaces"));
 }
 
 QVector<Depend> Package::conflicts() const
 {
-    return m_conflicts;
+    if (m_localData != nullptr)
+        return alpmDeps(alpm_pkg_get_conflicts(m_localData));
+
+    if (m_syncData != nullptr)
+        return alpmDeps(alpm_pkg_get_conflicts(m_syncData));
+
+    return aurDeps(m_aurData.value("Conflicts"));
 }
 
 QVector<Depend> Package::depends() const
 {
-    return m_depends;
+    if (m_localData != nullptr)
+        return alpmDeps(alpm_pkg_get_depends(m_localData));
+
+    if (m_syncData != nullptr)
+        return alpmDeps(alpm_pkg_get_depends(m_syncData));
+
+    return aurDeps(m_aurData.value("Depends"));
 }
 
 QVector<Depend> Package::optdepends() const
 {
-    return m_optdepends;
+    if (m_localData != nullptr)
+        return alpmDeps(alpm_pkg_get_optdepends(m_localData));
+
+    if (m_syncData != nullptr)
+        return alpmDeps(alpm_pkg_get_optdepends(m_syncData));
+
+    return aurDeps(m_aurData.value("OptDepends"));
 }
 
 QDateTime Package::buildDate() const
 {
-    return m_buildDate;
+    if (m_localData != nullptr)
+        return QDateTime::fromSecsSinceEpoch(alpm_pkg_get_builddate(m_localData));
+
+    if (m_syncData != nullptr)
+        return QDateTime::fromSecsSinceEpoch(alpm_pkg_get_builddate(m_syncData));
+
+    return QDateTime();
 }
 
 // Can be obtained only from local data
 QDateTime Package::installDate() const
 {
-    return m_installDate;
+    if (m_localData == nullptr)
+        return QDateTime();
+
+    return QDateTime::fromSecsSinceEpoch(alpm_pkg_get_installdate(m_localData));
 }
 
 QDateTime Package::firstSubmitted() const
 {
-    return m_firstSubmitted;
+    if (m_aurData.isEmpty())
+        return QDateTime();
+
+    return QDateTime::fromSecsSinceEpoch(m_aurData.value("FirstSubmitted").toInt());
 }
 
 QDateTime Package::lastModified() const
 {
-    return m_lastModified;
+    if (m_aurData.isEmpty())
+        return QDateTime();
+
+    return QDateTime::fromSecsSinceEpoch(m_aurData.value("LastModified").toInt());
 }
 
 QDateTime Package::outOfDate() const
 {
-    return m_outOfDate;
+    if (m_aurData.isEmpty() || m_aurData.value("OutOfDate").isNull())
+        return QDateTime();
+
+    return QDateTime::fromSecsSinceEpoch(m_aurData.value("OutOfDate").toInt());
 }
 
 double Package::popularity() const
 {
-    return m_popularity;
+    return m_aurData.value("Popularity").toDouble();
 }
 
 // Can be obtained only from sync data
 long Package::downloadSize() const
 {
-    return m_downloadSize;
+    if (m_syncData == nullptr)
+        return -1;
+
+    return alpm_pkg_get_size(m_syncData);
 }
 
 long Package::installedSize() const
 {
-    return m_installedSize;
+    if (m_localData != nullptr)
+        return alpm_pkg_get_isize(m_localData);
+
+    if (m_syncData != nullptr)
+        return alpm_pkg_get_isize(m_syncData);
+
+    return -1;
 }
 
 int Package::votes() const
 {
-    return m_votes;
+    return m_aurData.value("NumVotes").toInt();
 }
 
 bool Package::isInstalled() const
@@ -273,15 +323,18 @@ bool Package::isInstalled() const
 }
 
 // Can be obtained only from local data
-bool Package::isExplicitly() const
+bool Package::isInstalledExplicitly() const
 {
-    return m_explicitly;
+    if (m_localData == nullptr)
+        return false;
+
+    return alpm_pkg_get_reason(m_localData) == ALPM_PKG_REASON_EXPLICIT;
 }
 
 // Can be obtained only from local data
 bool Package::hasScript() const
 {
-    return m_hasScript;
+    return alpm_pkg_has_scriptlet(m_localData);
 }
 
 bool Package::fullAurInfo() const

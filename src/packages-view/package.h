@@ -16,6 +16,7 @@ public:
     void setSyncData(alpm_pkg_t *data);
     void setLocalData(alpm_pkg_t *data);
     void setAurData(const QJsonObject &object, bool full = false);
+    bool sameName(alpm_pkg_t *otherData);
 
     QString name() const;
     QString repo() const;
@@ -45,7 +46,7 @@ public:
     long installedSize() const;
     int votes() const;
     bool isInstalled() const;
-    bool isExplicitly() const;
+    bool isInstalledExplicitly() const;
     bool hasScript() const;
     bool fullAurInfo() const;
 
@@ -53,35 +54,12 @@ private:
     static QVector<Depend> alpmDeps(alpm_list_t *list);
     static QVector<Depend> aurDeps(const QJsonValue &value);
 
-    QString m_name;
-    QString m_repo;
-    QString m_version;
-    QString m_description;
-    QString m_arch;
-    QString m_url;
-    QString m_maintainer;
-    QStringList m_licenses;
-    QStringList m_groups;
-    QStringList m_files;
-    QStringList m_keywords;
-    QVector<Depend> m_provides;
-    QVector<Depend> m_replaces;
-    QVector<Depend> m_conflicts;
-    QVector<Depend> m_depends;
-    QVector<Depend> m_optdepends;
-    QDateTime m_buildDate;
-    QDateTime m_installDate;
-    QDateTime m_firstSubmitted;
-    QDateTime m_lastModified;
-    QDateTime m_outOfDate;
-    double m_popularity = 0;
-    long m_downloadSize = -1;
-    long m_installedSize = -1;
-    int m_votes = 0;
-    bool m_explicitly = false;
-    bool m_hasScript = false;
     bool m_installed = false;
     bool m_fullAurInfo = false;
+
+    alpm_pkg_t *m_syncData = nullptr;
+    alpm_pkg_t *m_localData = nullptr;
+    QJsonObject m_aurData;
 };
 
 #endif // PACKAGE_H

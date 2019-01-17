@@ -331,50 +331,48 @@ void PackagesModel::loadRepoPackages()
 
     // Initialize ALPM
     const PacmanSettings settings;
-    alpm_errno_t error = ALPM_ERR_OK;
-    alpm_handle_t *handle = alpm_initialize(qPrintable(settings.rootDir()), qPrintable(settings.databasesPath()), &error);
-    if (error != ALPM_ERR_OK) {
-        qDebug() << alpm_strerror(error);
+    m_handle = alpm_initialize(qPrintable(settings.rootDir()), qPrintable(settings.databasesPath()), &m_error);
+    if (m_error != ALPM_ERR_OK) {
+        qDebug() << alpm_strerror(m_error);
         return;
     }
 
     // Load local database
-    const int installedPackages = loadLocalDatabase(handle);
+    const int installedPackages = loadLocalDatabase();
 
     // Load sync packages
     foreach (const QString &repo, settings.repositories())
-        loadSyncDatabase(handle, repo);
-
-    alpm_release(handle);
+        loadSyncDatabase(repo);
 
     // Load information from packages installed from AUR
-//    QNetworkAccessManager manager;
-//    for (Package *package : m_repoPackages) {
-//        if (!package->isInstalled() || package->repo() != QStringLiteral("local"))
-//            continue;
+    QNetworkAccessManager manager;
+    for (Package *package : m_repoPackages) {
+        if (!package->isInstalled() || package->repo() != "local")
+            continue;
 
-//        if (m_loadingDatabases.isCanceled())
-//            return;
+        if (m_loadingDatabases.isCanceled())
+            return;
 
-//        emit databaseStatusChanged("Loading information from AUR for " + package->name());
+        const QString packageName = package->name();
+        emit databaseStatusChanged("Loading information from AUR for " + packageName);
 
-//        QUrl url(AUR_API_URL);
-//        url.setQuery("v=5&type=info&arg[]=" + package->name());
+        QUrl url(AUR_API_URL);
+        url.setQuery("v=5&type=info&arg[]=" + packageName);
 
-//        QScopedPointer reply(manager.get(QNetworkRequest(url)));
-//        QEventLoop waitForReply;
-//        connect(reply.get(), &QNetworkReply::finished, &waitForReply, &QEventLoop::quit);
-//        waitForReply.exec();
+        QScopedPointer reply(manager.get(QNetworkRequest(url)));
+        QEventLoop waitForReply;
+        connect(reply.get(), &QNetworkReply::finished, &waitForReply, &QEventLoop::quit);
+        waitForReply.exec();
 
-//        if (reply->error() != QNetworkReply::NoError) {
-//            qDebug() << reply->errorString();
-//            break;
-//        }
+        if (reply->error() != QNetworkReply::NoError) {
+            qDebug() << reply->errorString();
+            break;
+        }
 
-//        const QJsonObject jsonReply = QJsonDocument::fromJson(reply->readAll()).object();
-//        if (jsonReply.value("resultcount").toInt() != 0)
-//            package->setAurData(jsonReply.value("results").toArray().at(0).toObject());
-//    }
+        const QJsonObject jsonReply = QJsonDocument::fromJson(reply->readAll()).object();
+        if (jsonReply.value("resultcount").toInt() != 0)
+            package->setAurData(jsonReply.value("results").toArray().at(0).toObject());
+    }
 
     emit databaseStatusChanged(QString::number(m_repoPackages.size())
                                + " packages avaible in official repositories, "
@@ -383,9 +381,9 @@ void PackagesModel::loadRepoPackages()
 }
 
 // Load installed (local) packages
-int PackagesModel::loadLocalDatabase(alpm_handle_t *handle)
+int PackagesModel::loadLocalDatabase()
 {
-    alpm_db_t *database = alpm_get_localdb(handle);
+    alpm_db_t *database = alpm_get_localdb(m_handle);
     alpm_list_t *cache = alpm_db_get_pkgcache(database);
     while (cache != nullptr) {
         if (m_loadingDatabases.isCanceled())
@@ -405,11 +403,11 @@ int PackagesModel::loadLocalDatabase(alpm_handle_t *handle)
     return m_repoPackages.size();
 }
 
-void PackagesModel::loadSyncDatabase(alpm_handle_t *handle, const QString &databaseName)
+void PackagesModel::loadSyncDatabase(const QString &databaseName)
 {
     emit databaseStatusChanged("Loading " + databaseName + " database");
 
-    alpm_db_t *database = alpm_register_syncdb(handle, qPrintable(databaseName), 0);
+    alpm_db_t *database = alpm_register_syncdb(m_handle, qPrintable(databaseName), 0);
     if (database == nullptr)
         return;
 
@@ -422,9 +420,8 @@ void PackagesModel::loadSyncDatabase(alpm_handle_t *handle, const QString &datab
 
         // Check if package installed
         bool found = false;
-        const char *packageName = alpm_pkg_get_name(packageData);
         for (Package *package : m_repoPackages) {
-            if (!package->isInstalled() || package->name() != packageName)
+            if (!package->isInstalled() || !package->sameName(packageData))
                 continue;
 
             package->setSyncData(packageData);
