@@ -270,7 +270,7 @@ void PackagesModel::aurSearch(const QString &text, const QString &queryType)
     foreach (const QJsonValue &aurPackageData, jsonData.value("results").toArray()) {
         // Check if package already installed
         bool found = false;
-        const QString packageName = Package::name(aurPackageData.toObject());
+        const QString packageName = aurPackageData.toObject().value("Name").toString();
         foreach (Package *package, m_repoPackages) {
             if (!package->isInstalled() || package->name() != packageName)
                 continue;
@@ -422,7 +422,7 @@ void PackagesModel::loadSyncDatabase(alpm_handle_t *handle, const QString &datab
 
         // Check if package installed
         bool found = false;
-        const QLatin1String packageName = Package::name(packageData);
+        const char *packageName = alpm_pkg_get_name(packageData);
         for (Package *package : m_repoPackages) {
             if (!package->isInstalled() || package->name() != packageName)
                 continue;
