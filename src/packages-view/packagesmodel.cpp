@@ -331,7 +331,7 @@ void PackagesModel::loadRepoPackages()
 
     // Initialize ALPM
     const PacmanSettings settings;
-    alpm_errno_t error;
+    alpm_errno_t error = ALPM_ERR_OK;
     alpm_handle_t *handle = alpm_initialize(qPrintable(settings.rootDir()), qPrintable(settings.databasesPath()), &error);
     if (error != ALPM_ERR_OK) {
         qDebug() << alpm_strerror(error);
