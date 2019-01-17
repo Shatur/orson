@@ -270,7 +270,7 @@ void PackagesModel::aurSearch(const QString &text, const QString &queryType)
     foreach (const QJsonValue &aurPackageData, jsonData.value("results").toArray()) {
         // Check if package already installed
         bool found = false;
-        const QString packageName = aurPackageData.toObject().value("Name").toString();
+        const QString packageName = Package::name(aurPackageData.toObject());
         foreach (Package *package, m_repoPackages) {
             if (!package->isInstalled() || package->name() != packageName)
                 continue;

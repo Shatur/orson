@@ -50,6 +50,7 @@ public:
     bool fullAurInfo() const;
 
     static QLatin1String name(alpm_pkg_t *packageData);
+    static QString name(const QJsonObject &object);
 
 private:
     static QVector<Depend> alpmDeps(alpm_list_t *list);

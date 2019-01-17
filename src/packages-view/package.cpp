@@ -294,6 +294,11 @@ QLatin1String Package::name(alpm_pkg_t *packageData)
     return QLatin1String(alpm_pkg_get_name(packageData));
 }
 
+QString Package::name(const QJsonObject &object)
+{
+    return object.value("Name").toString();
+}
+
 // Generate QVector from alpm list
 QVector<Depend> Package::alpmDeps(alpm_list_t *list)
 {
