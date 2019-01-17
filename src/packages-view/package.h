@@ -77,7 +77,7 @@ private:
     QDateTime m_firstSubmitted;
     QDateTime m_lastModified;
     QDateTime m_outOfDate;
-    double m_popularity;
+    double m_popularity = 0;
     long m_downloadSize = -1;
     long m_installedSize = -1;
     int m_votes = 0;
