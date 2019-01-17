@@ -82,6 +82,12 @@ void MainWindow::on_packagesView_currentPackageChanged(Package *package)
     else
         ui->packageTabsWidget->setTabEnabled(2, false);
 
+    // Disable "Open in browser" button for local packages
+    if (package->repo() == "local")
+        ui->browserButton->setDisabled(true);
+    else
+        ui->browserButton->setDisabled(false);
+
     // Reload opened tab
     switch (ui->packageTabsWidget->currentIndex()) {
     case 0:
@@ -186,6 +192,18 @@ void MainWindow::on_tabWidget_currentChanged(int index)
         on_reloadHistoryButton_clicked();
         ui->historyEdit->setProperty("loaded", true);
     }
+}
+
+void MainWindow::on_browserButton_clicked()
+{
+    QUrl url;
+    const Package *package = ui->packagesView->currentPackage();
+    if (package->repo() == "aur")
+        url = "https://aur.archlinux.org/packages/" + package->name();
+    else
+        url = "https://www.archlinux.org/packages/" + package->repo() + "/" + package->arch() + "/" + package->name();
+
+    QDesktopServices::openUrl(url);
 }
 
 void MainWindow::loadPackageInfo(const Package *package)
