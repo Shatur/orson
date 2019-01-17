@@ -35,8 +35,8 @@ QVariant PackagesModel::data(const QModelIndex &index, int role) const
         switch (index.column()) {
         case 0:
             if (!package->isInstalled())
-                return "";
-            return "Installed";
+                return QString();
+            return QStringLiteral("Installed");
         case 1:
             return package->name();
         case 2:
@@ -51,8 +51,8 @@ QVariant PackagesModel::data(const QModelIndex &index, int role) const
         switch (index.column()) {
         case 0:
             if (!package->isInstalled())
-                return "";
-            return "Installed";
+                return QString();
+            return QStringLiteral("Installed");
         case 1:
             return package->name();
         case 2:
@@ -78,29 +78,29 @@ QVariant PackagesModel::headerData(int section, Qt::Orientation orientation, int
     case Repo:
         switch (section) {
         case 0:
-            return "Status";
+            return QStringLiteral("Status");
         case 1:
-            return "Name";
+            return QStringLiteral("Name");
         case 2:
-            return "Version";
+            return QStringLiteral("Version");
         case 3:
-            return "Size";
+            return QStringLiteral("Size");
         case 4:
-            return "Repo";
+            return QStringLiteral("Repo");
         }
         break;
     case AUR:
         switch (section) {
         case 0:
-            return "Status";
+            return QStringLiteral("Status");
         case 1:
-            return "Name";
+            return QStringLiteral("Name");
         case 2:
-            return "Version";
+            return QStringLiteral("Version");
         case 3:
-            return "Votes";
+            return QStringLiteral("Votes");
         case 4:
-            return "Popularity";
+            return QStringLiteral("Popularity");
         }
         break;
     }
@@ -112,11 +112,11 @@ QModelIndex PackagesModel::index(int row, int column, const QModelIndex &) const
 {
     switch (m_mode) {
     case Repo:
-        if (row < m_repoPackages.size())
+        if (row < m_repoPackages.size() - 1)
             return createIndex(row, column, m_repoPackages.at(row));
         break;
     case AUR:
-        if (row < m_aurPackages.size())
+        if (row < m_aurPackages.size() - 1)
             return createIndex(row, column, m_aurPackages.at(row));
         break;
     }

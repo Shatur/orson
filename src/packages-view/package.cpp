@@ -87,7 +87,7 @@ QString Package::arch() const
     if (m_syncData != nullptr)
         return alpm_pkg_get_arch(m_syncData);
 
-    return QStringLiteral();
+    return QString();
 }
 
 QString Package::url() const
