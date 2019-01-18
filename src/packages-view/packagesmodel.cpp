@@ -425,6 +425,7 @@ void PackagesModel::loadSyncDatabase(const QString &databaseName)
                 continue;
 
             package->setSyncData(packageData);
+            emit packageChanged(package);
             found = true;
             break;
         }

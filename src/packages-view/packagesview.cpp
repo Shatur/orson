@@ -21,6 +21,12 @@ PackagesView::PackagesView(QWidget *parent) :
 
         emit currentPackageChanged(package);
     });
+
+    // Emit current package changed signal if package data changed too
+    connect(model(), &PackagesModel::packageChanged, [&](Package *package) {
+       if (package == currentPackage())
+           emit currentPackageChanged(package);
+    });
 }
 
 void PackagesView::filter(const QString &text, PackagesView::FilterType type)

@@ -40,6 +40,7 @@ public:
 
 signals:
     void databaseStatusChanged(const QString &text);
+    void packageChanged(Package *package);
 
 private:
     void loadRepoPackages();
