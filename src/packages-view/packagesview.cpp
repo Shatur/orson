@@ -2,10 +2,25 @@
 #include "packagesmodel.h"
 
 #include <QHeaderView>
+#include <QContextMenuEvent>
+#include <QMenu>
 
 PackagesView::PackagesView(QWidget *parent) :
     QTreeView(parent)
 {
+    // Setup menu
+    m_menu = new QMenu(this);
+    m_installExplicity = new QAction(QIcon::fromTheme("filesaveas"), "Install", m_menu);
+    m_installAsDepend = new QAction(QIcon::fromTheme("filesaveas"), "Install as dependency", m_menu);
+    m_reinstall = new QAction(QIcon::fromTheme("filesaveas"), "Reinstall", m_menu);
+    m_remove = new QAction(QIcon::fromTheme("remove"), "Remove", m_menu);
+    m_changeReason = new QAction(QIcon::fromTheme("edit"), QString(), m_menu);
+    m_menu->addAction(m_installExplicity);
+    m_menu->addAction(m_installAsDepend);
+    m_menu->addAction(m_reinstall);
+    m_menu->addAction(m_remove);
+    m_menu->addAction(m_changeReason);
+
     // Setup items
     sortByColumn(-1, Qt::AscendingOrder); // Show item unsorted by default
     setModel(new PackagesModel(this));
@@ -24,8 +39,8 @@ PackagesView::PackagesView(QWidget *parent) :
 
     // Emit current package changed signal if package data changed too
     connect(model(), &PackagesModel::packageChanged, [&](Package *package) {
-       if (package == currentPackage())
-           emit currentPackageChanged(package);
+        if (package == currentPackage())
+            emit currentPackageChanged(package);
     });
 }
 
@@ -147,6 +162,36 @@ Package *PackagesView::currentPackage() const
 PackagesModel *PackagesView::model() const
 {
     return qobject_cast<PackagesModel *>(QTreeView::model());
+}
+
+void PackagesView::contextMenuEvent(QContextMenuEvent *event)
+{
+    const auto *package = static_cast<Package *>(indexAt(event->pos()).internalPointer());
+    if (package == nullptr)
+        return;
+
+    // Setup menu items
+    if (package->isInstalled()) {
+        m_installAsDepend->setVisible(false);
+        m_installExplicity->setVisible(false);
+
+        m_remove->setVisible(true);
+        m_reinstall->setVisible(true);
+        m_changeReason->setVisible(true);
+        if (package->isInstalledExplicitly())
+            m_changeReason->setText("Mark installed as dependency");
+        else
+            m_changeReason->setText("Mark installed explicity");
+    } else {
+        m_reinstall->setVisible(false);
+        m_changeReason->setVisible(false);
+        m_remove->setVisible(false);
+
+        m_installAsDepend->setVisible(true);
+        m_installExplicity->setVisible(true);
+    }
+
+    m_menu->exec(event->globalPos());
 }
 
 void PackagesView::setModel(QAbstractItemModel *model)

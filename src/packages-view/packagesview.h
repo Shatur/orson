@@ -28,7 +28,16 @@ signals:
     void currentPackageChanged(Package *package);
 
 private:
+    void contextMenuEvent(QContextMenuEvent *event) override;
     void setModel(QAbstractItemModel *model) override;
+
+    QMenu *m_menu;
+    QAction *m_installExplicity;
+    QAction *m_installAsDepend;
+    QAction *m_reinstall;
+    QAction *m_remove;
+    QAction *m_changeReason;
+
     bool m_filtered = false;
 };
 
