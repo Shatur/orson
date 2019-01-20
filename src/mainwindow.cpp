@@ -13,6 +13,14 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    // Enable reload button when database loaded
+    connect(ui->packagesView->model(), &PackagesModel::databaseLoaded, [&] {
+       ui->reloadButton->setEnabled(true);
+    });
+
+    // Select first package when available on loading installed packages
+    connect(ui->packagesView->model(), &PackagesModel::firstPackageAvailable, this, &MainWindow::selectFirstPackage);
+
     // Show database messages in statusbar
     connect(ui->packagesView->model(), &PackagesModel::databaseStatusChanged, [&](const QString &text) {
        statusBar()->showMessage(text);
@@ -22,13 +30,9 @@ MainWindow::MainWindow(QWidget *parent) :
     depsButtonGroup = new QButtonGroup(this);
     connect(depsButtonGroup, qOverload<QAbstractButton *>(&QButtonGroup::buttonClicked), this, &MainWindow::findDepend);
 
-    // Wait until the first package has been loaded
-    while (!ui->packagesView->model()->index(0, 0).isValid())
-        QThread::msleep(20);
-
-    // Select first package
-    ui->packagesView->setCurrentIndex(ui->packagesView->model()->index(0, 0));
-    statusBar()->showMessage("Loading installed packages");
+    // Select the first package if it is not already selected (when first package loaded faster than window)
+    if (ui->packagesView->model()->index(0, 0).isValid() && ui->packagesView->selectionModel()->selectedRows().isEmpty())
+        selectFirstPackage();
 }
 
 MainWindow::~MainWindow()
@@ -125,6 +129,12 @@ void MainWindow::findDepend(QAbstractButton *button)
     }
 }
 
+void MainWindow::selectFirstPackage()
+{
+    ui->packagesView->setCurrentIndex(ui->packagesView->model()->index(0, 0));
+    statusBar()->showMessage("Loading installed packages");
+}
+
 void MainWindow::on_packageTabsWidget_currentChanged(int index)
 {
     const Package *package = ui->packagesView->currentPackage();
@@ -145,6 +155,12 @@ void MainWindow::on_packageTabsWidget_currentChanged(int index)
     default:
         return;
     }
+}
+
+void MainWindow::on_reloadButton_clicked()
+{
+    ui->reloadButton->setEnabled(false);
+    ui->packagesView->model()->reloadRepoPackages();
 }
 
 void MainWindow::on_reloadHistoryButton_clicked()

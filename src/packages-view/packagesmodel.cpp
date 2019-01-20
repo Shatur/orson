@@ -11,7 +11,7 @@ constexpr char AUR_API_URL[] = "https://aur.archlinux.org/rpc/";
 PackagesModel::PackagesModel(QObject *parent) :
     QAbstractItemModel(parent)
 {
-    m_loadingDatabases = QtConcurrent::run(this, &PackagesModel::loadRepoPackages);
+    reloadRepoPackages();
 }
 
 PackagesModel::~PackagesModel()
@@ -240,6 +240,11 @@ QVector<Package *> PackagesModel::packages() const
     qFatal("Unknown mode");
 }
 
+void PackagesModel::reloadRepoPackages()
+{
+    m_loadingDatabases = QtConcurrent::run(this, &PackagesModel::loadRepoPackages);
+}
+
 void PackagesModel::aurSearch(const QString &text, const QString &queryType)
 {
     // Generate API URL
@@ -325,6 +330,7 @@ void PackagesModel::loadRepoPackages()
 
         qDeleteAll(m_repoPackages);
         m_repoPackages.clear();
+        alpm_release(m_handle);
 
         endResetModel();
     }
@@ -378,6 +384,7 @@ void PackagesModel::loadRepoPackages()
                                + " packages avaible in official repositories, "
                                + QString::number(installedPackages)
                                + " packages installed");
+    emit databaseLoaded();
 }
 
 // Load installed (local) packages
@@ -392,6 +399,10 @@ int PackagesModel::loadLocalDatabase()
         auto *packageData = static_cast<alpm_pkg_t *>(cache->data);
         auto *package = new Package;
         package->setLocalData(packageData);
+
+        // Emit signal about first package
+        if (m_repoPackages.size() == 0)
+            emit firstPackageAvailable();
 
         beginInsertRows(QModelIndex(), m_repoPackages.size(), m_repoPackages.size());
         m_repoPackages.append(package);

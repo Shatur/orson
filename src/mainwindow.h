@@ -29,8 +29,10 @@ private slots:
     void on_searchPackagesEdit_returnPressed();
     void on_packagesView_currentPackageChanged(Package *package);
     void on_packageTabsWidget_currentChanged(int index);
+    void on_reloadButton_clicked();
 
     void findDepend(QAbstractButton* button);
+    void selectFirstPackage();
 
     // History tab
     void on_reloadHistoryButton_clicked();

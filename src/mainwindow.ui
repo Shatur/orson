@@ -32,6 +32,22 @@
         <item>
          <layout class="QHBoxLayout" name="searchPackagesLayout">
           <item>
+           <widget class="QToolButton" name="reloadButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="toolTip">
+             <string>Reload database</string>
+            </property>
+            <property name="text">
+             <string>Reload database</string>
+            </property>
+            <property name="icon">
+             <iconset theme="reload"/>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QLineEdit" name="searchPackagesEdit">
             <property name="placeholderText">
              <string>Search packages</string>

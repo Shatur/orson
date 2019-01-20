@@ -35,11 +35,14 @@ public:
 
     // Other
     QVector<Package *> packages() const;
+    void reloadRepoPackages();
     void aurSearch(const QString &text, const QString &queryType);
     void loadMoreAurInfo(Package *package);
 
 signals:
     void databaseStatusChanged(const QString &text);
+    void databaseLoaded();
+    void firstPackageAvailable();
     void packageChanged(Package *package);
 
 private:
