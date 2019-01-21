@@ -351,34 +351,34 @@ void PackagesModel::loadRepoPackages()
         loadSyncDatabase(repo);
 
     // Load information from packages installed from AUR
-    QNetworkAccessManager manager;
-    for (Package *package : m_repoPackages) {
-        if (!package->isInstalled() || package->repo() != "local")
-            continue;
+//    QNetworkAccessManager manager;
+//    for (Package *package : m_repoPackages) {
+//        if (!package->isInstalled() || package->repo() != "local")
+//            continue;
 
-        if (m_loadingDatabases.isCanceled())
-            return;
+//        if (m_loadingDatabases.isCanceled())
+//            return;
 
-        const QString packageName = package->name();
-        emit databaseStatusChanged("Loading information from AUR for " + packageName);
+//        const QString packageName = package->name();
+//        emit databaseStatusChanged("Loading information from AUR for " + packageName);
 
-        QUrl url(AUR_API_URL);
-        url.setQuery("v=5&type=info&arg[]=" + packageName);
+//        QUrl url(AUR_API_URL);
+//        url.setQuery("v=5&type=info&arg[]=" + packageName);
 
-        QScopedPointer reply(manager.get(QNetworkRequest(url)));
-        QEventLoop waitForReply;
-        connect(reply.get(), &QNetworkReply::finished, &waitForReply, &QEventLoop::quit);
-        waitForReply.exec();
+//        QScopedPointer reply(manager.get(QNetworkRequest(url)));
+//        QEventLoop waitForReply;
+//        connect(reply.get(), &QNetworkReply::finished, &waitForReply, &QEventLoop::quit);
+//        waitForReply.exec();
 
-        if (reply->error() != QNetworkReply::NoError) {
-            qDebug() << reply->errorString();
-            break;
-        }
+//        if (reply->error() != QNetworkReply::NoError) {
+//            qDebug() << reply->errorString();
+//            break;
+//        }
 
-        const QJsonObject jsonReply = QJsonDocument::fromJson(reply->readAll()).object();
-        if (jsonReply.value("resultcount").toInt() != 0)
-            package->setAurData(jsonReply.value("results").toArray().at(0).toObject());
-    }
+//        const QJsonObject jsonReply = QJsonDocument::fromJson(reply->readAll()).object();
+//        if (jsonReply.value("resultcount").toInt() != 0)
+//            package->setAurData(jsonReply.value("results").toArray().at(0).toObject());
+//    }
 
     emit databaseStatusChanged(QString::number(m_repoPackages.size())
                                + " packages avaible in official repositories, "

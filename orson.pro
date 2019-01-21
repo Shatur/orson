@@ -25,7 +25,10 @@ SOURCES += \
     src/packages-view/packagesview.cpp \
     src/files-view/file.cpp \
     src/files-view/filesmodel.cpp \
-    src/files-view/filesview.cpp
+    src/files-view/filesview.cpp \
+    src/tasks-view/task.cpp \
+    src/tasks-view/tasksmodel.cpp \
+    src/tasks-view/tasksview.cpp
 
 HEADERS += \
     src/mainwindow.h \
@@ -36,7 +39,10 @@ HEADERS += \
     src/packages-view/packagesview.h \
     src/files-view/file.h \
     src/files-view/filesmodel.h \
-    src/files-view/filesview.h
+    src/files-view/filesview.h \
+    src/tasks-view/task.h \
+    src/tasks-view/tasksmodel.h \
+    src/tasks-view/tasksview.h
 
 FORMS += \
     src/mainwindow.ui

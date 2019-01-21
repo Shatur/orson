@@ -43,7 +43,8 @@
              <string>Reload database</string>
             </property>
             <property name="icon">
-             <iconset theme="reload"/>
+             <iconset theme="reload">
+              <normaloff>.</normaloff>.</iconset>
             </property>
            </widget>
           </item>
@@ -940,6 +941,20 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="tasksWidget">
+       <attribute name="title">
+        <string>Tasks</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <item>
+         <widget class="TasksView" name="tasksView">
+          <property name="headerHidden">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -957,6 +972,11 @@
    <class>PackagesView</class>
    <extends>QTreeView</extends>
    <header>src/packages-view/packagesview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>TasksView</class>
+   <extends>QTreeView</extends>
+   <header>src/tasks-view/tasksview.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
