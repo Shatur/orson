@@ -8,7 +8,7 @@
 class TasksView : public QTreeView
 {
 public:
-    TasksView(QWidget *parent = nullptr);
+    explicit TasksView(QWidget *parent = nullptr);
     TasksModel *model() const;
 
 private:

@@ -17,8 +17,8 @@ public:
         Uninstall
     };
 
+    explicit Task(const Package *package);
     Task();
-    Task(const Package *package);
     ~Task();
 
     // Model-specific functions
@@ -35,7 +35,7 @@ public:
     QIcon icon() const;
 
 private:
-    Task(Category category);
+    explicit Task(Category category);
 
     Task *m_parent = nullptr;
     QVector<Task *> m_children;

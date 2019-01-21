@@ -4,7 +4,6 @@
 
 File::File()
 {
-    m_parent = nullptr;
     m_nameColumn = QStringLiteral("Name");
     m_sizeColumn = QStringLiteral("Size");
     m_typeColumn = QStringLiteral("Type");
@@ -53,7 +52,7 @@ File::~File()
 
 int File::row() const
 {
-    if (m_parent)
+    if (m_parent != nullptr)
         return m_parent->m_children.indexOf(const_cast<File *>(this));
 
     return 0;
@@ -88,10 +87,10 @@ int File::childCount() const
     return m_children.count();
 }
 
-void File::addChild(File *item)
+void File::addChild(File *child)
 {
-    item->m_parent = this;
-    m_children.append(item);
+    child->m_parent = this;
+    m_children.append(child);
 }
 
 void File::removeChildren()

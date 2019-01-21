@@ -53,7 +53,6 @@ QModelIndex FilesModel::index(int row, int column, const QModelIndex &parent) co
         return QModelIndex();
 
     File *parentItem;
-
     if (!parent.isValid())
         parentItem = rootItem;
     else

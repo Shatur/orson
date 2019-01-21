@@ -9,7 +9,7 @@
 class FilesView : public QTreeView
 {
 public:
-    FilesView(QWidget *parent = nullptr);
+    explicit FilesView(QWidget *parent = nullptr);
     FilesModel *model() const;
 
 private slots:

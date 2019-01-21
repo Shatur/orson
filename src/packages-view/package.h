@@ -11,7 +11,7 @@ class Package
 {
 public:
     Package() = default;
-    Package(const Package &other) = default;
+    explicit Package(const Package &other) = default;
 
     void setSyncData(alpm_pkg_t *data);
     void setLocalData(alpm_pkg_t *data);

@@ -31,6 +31,7 @@ private:
     void contextMenuEvent(QContextMenuEvent *event) override;
     void setModel(QAbstractItemModel *model) override;
 
+    // Context menu
     QMenu *m_menu;
     QAction *m_installExplicity;
     QAction *m_installAsDepend;

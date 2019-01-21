@@ -1,5 +1,10 @@
 #include "task.h"
 
+Task::Task(const Package *package) :
+    m_name(package->name())
+{
+}
+
 // Create root item with categories
 Task::Task()
 {
@@ -14,11 +19,6 @@ Task::Task()
 Task::Task(Task::Category category) :
     m_category(category)
 {
-}
-
-Task::Task(const Package *package)
-{
-    m_name = package->name();
 }
 
 Task::~Task()
@@ -49,10 +49,10 @@ int Task::childCount() const
     return m_children.count();
 }
 
-void Task::addChild(Task *item)
+void Task::addChild(Task *child)
 {
-    item->m_parent = this;
-    m_children.append(item);
+    child->m_parent = this;
+    m_children.append(child);
 }
 
 void Task::removeChildren()

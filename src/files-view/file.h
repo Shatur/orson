@@ -1,5 +1,5 @@
-#ifndef FILESYSTEMITEM_H
-#define FILESYSTEMITEM_H
+#ifndef FILE_H
+#define FILE_H
 
 #include <QIcon>
 #include <QFileInfo>
@@ -41,4 +41,4 @@ private:
     QColor m_backgroundColor = {0, 0, 0, 0};
 };
 
-#endif // FILESYSTEMITEM_H
+#endif // FILE_H

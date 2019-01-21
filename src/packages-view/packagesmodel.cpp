@@ -400,12 +400,12 @@ int PackagesModel::loadLocalDatabase()
         auto *package = new Package;
         package->setLocalData(packageData);
 
-        // Emit signal about first package
-        if (m_repoPackages.size() == 0)
-            emit firstPackageAvailable();
-
         beginInsertRows(QModelIndex(), m_repoPackages.size(), m_repoPackages.size());
         m_repoPackages.append(package);
+
+        // Emit signal about first package
+        if (m_repoPackages.size() == 1)
+            emit firstPackageAvailable();
 
         cache = cache->next;
     }

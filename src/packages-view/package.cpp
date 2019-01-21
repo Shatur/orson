@@ -357,10 +357,10 @@ QVector<Depend> Package::alpmDeps(alpm_list_t *list)
     return deps;
 }
 
-QVector<Depend> Package::aurDeps(const QJsonValue &array)
+QVector<Depend> Package::aurDeps(const QJsonValue &value)
 {
     QVector<Depend> deps;
-    foreach(const QJsonValue &value, array.toArray())
+    foreach(const QJsonValue &value, value.toArray())
         deps.append(Depend(value.toString()));
     return deps;
 }

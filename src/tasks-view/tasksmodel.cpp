@@ -86,6 +86,6 @@ void TasksModel::addTask(const Package *package, Task::Category category)
     QModelIndex parentIndex = index(category, 0, QModelIndex());
 
     beginInsertRows(parentIndex, parent->childCount(), parent->childCount());
-    m_rootItem->child(category)->addChild(new Task(package));
+    parent->addChild(new Task(package));
     endInsertRows();
 }
