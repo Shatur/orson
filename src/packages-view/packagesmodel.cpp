@@ -112,11 +112,11 @@ QModelIndex PackagesModel::index(int row, int column, const QModelIndex &) const
 {
     switch (m_mode) {
     case Repo:
-        if (row < m_repoPackages.size() - 1)
+        if (row < m_repoPackages.size())
             return createIndex(row, column, m_repoPackages.at(row));
         break;
     case AUR:
-        if (row < m_aurPackages.size() - 1)
+        if (row < m_aurPackages.size())
             return createIndex(row, column, m_aurPackages.at(row));
         break;
     }
