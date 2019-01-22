@@ -77,16 +77,6 @@ File *File::parent() const
     return m_parent;
 }
 
-File *File::child(int row) const
-{
-    return m_children.value(row);
-}
-
-int File::childCount() const
-{
-    return m_children.count();
-}
-
 void File::addChild(File *child)
 {
     child->m_parent = this;
@@ -127,4 +117,9 @@ bool File::isFile() const
 bool File::isReadable() const
 {
     return m_info.isReadable();
+}
+
+QVector<File *> File::children() const
+{
+    return m_children;
 }

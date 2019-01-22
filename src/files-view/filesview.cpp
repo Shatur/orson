@@ -29,43 +29,43 @@ FilesModel *FilesView::model() const
 
 void FilesView::open() const
 {
-    const auto *item = static_cast<File *>(currentIndex().internalPointer());
-    QDesktopServices::openUrl(item->path());
+    const auto *file = static_cast<File *>(currentIndex().internalPointer());
+    QDesktopServices::openUrl(file->path());
 }
 
 void FilesView::openInFileManager() const
 {
-    const auto *item = static_cast<File *>(currentIndex().internalPointer());
-    QDesktopServices::openUrl(item->parent()->path());
+    const auto *file = static_cast<File *>(currentIndex().internalPointer());
+    QDesktopServices::openUrl(file->parent()->path());
 }
 
 void FilesView::copyFile() const
 {
-    const auto *item = static_cast<File *>(currentIndex().internalPointer());
+    const auto *file = static_cast<File *>(currentIndex().internalPointer());
     auto *mimeData = new QMimeData;
-    mimeData->setUrls({QUrl::fromLocalFile(item->path())});
+    mimeData->setUrls({QUrl::fromLocalFile(file->path())});
 
     SingleApplication::clipboard()->setMimeData(mimeData);
 }
 
 void FilesView::copyName() const
 {
-    const auto *item = static_cast<File *>(currentIndex().internalPointer());
-    SingleApplication::clipboard()->setText(item->name());
+    const auto *file = static_cast<File *>(currentIndex().internalPointer());
+    SingleApplication::clipboard()->setText(file->name());
 }
 
 void FilesView::copyPath() const
 {
-    const auto *item = static_cast<File *>(currentIndex().internalPointer());
-    SingleApplication::clipboard()->setText(item->path());
+    const auto *file = static_cast<File *>(currentIndex().internalPointer());
+    SingleApplication::clipboard()->setText(file->path());
 }
 
 void FilesView::contextMenuEvent(QContextMenuEvent *event)
 {
-    const auto *item = static_cast<File *>(indexAt(event->pos()).internalPointer());
-    if (item != nullptr) {
+    const auto *file = static_cast<File *>(indexAt(event->pos()).internalPointer());
+    if (file != nullptr) {
         // Enable "Copy" only for files
-        if (item->isFile())
+        if (file->isFile())
             m_menu->actions().at(2)->setEnabled(true);
         else
             m_menu->actions().at(2)->setEnabled(false);

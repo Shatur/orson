@@ -151,7 +151,7 @@ void PackagesModel::sort(int column, Qt::SortOrder order)
     emit layoutAboutToBeChanged();
 
     // Save persistent indexes according to docs: https://doc.qt.io/qt-5/qabstractitemmodel.html#layoutChanged
-    QModelIndexList oldIndexes = persistentIndexList();
+    const QModelIndexList oldIndexes = persistentIndexList();
 
     switch (m_mode) {
     case Repo:

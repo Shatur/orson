@@ -16,8 +16,7 @@ public:
     QString text(int column) const;
     File *parent() const;
 
-    File *child(int row) const;
-    int childCount() const;
+    QVector<File *> children() const;
     void addChild(File *child);
     void removeChildren();
 

@@ -16,22 +16,16 @@ QVariant FilesModel::data(const QModelIndex &index, int role) const
     if (!index.isValid())
         return QVariant();
 
+    auto *item = static_cast<File *>(index.internalPointer());
+
     switch (role) {
     case Qt::BackgroundColorRole:
-    {
-        File *item = static_cast<File *>(index.internalPointer());
         return item->backgroundColor();
-    }
     case Qt::DisplayRole:
-    {
-        File *item = static_cast<File *>(index.internalPointer());
         return item->text(index.column());
-    }
     case Qt::DecorationRole:
-        if (index.column() == 0) {
-            File *item = static_cast<File *>(index.internalPointer());
+        if (index.column() == 0)
             return item->icon();
-        }
 
         [[fallthrough]];
     default:
@@ -58,7 +52,7 @@ QModelIndex FilesModel::index(int row, int column, const QModelIndex &parent) co
     else
         parentItem = static_cast<File *>(parent.internalPointer());
 
-    File *childItem = parentItem->child(row);
+    File *childItem = parentItem->children().at(row);
     if (!childItem)
         return QModelIndex();
 
@@ -70,7 +64,7 @@ QModelIndex FilesModel::parent(const QModelIndex &index) const
     if (!index.isValid())
         return QModelIndex();
 
-    File *childItem = static_cast<File *>(index.internalPointer());
+    auto *childItem = static_cast<File *>(index.internalPointer());
     File *parentItem = childItem->parent();
 
     if (parentItem == rootItem)
@@ -90,7 +84,7 @@ int FilesModel::rowCount(const QModelIndex &parent) const
     else
         parentItem = static_cast<File *>(parent.internalPointer());
 
-    return parentItem->childCount();
+    return parentItem->children().size();
 }
 
 int FilesModel::columnCount(const QModelIndex &) const
@@ -114,8 +108,7 @@ void FilesModel::addPath(const QStringList &path)
     for (int partIndex = 0; partIndex < path.size(); ++partIndex) {
         // Search item in tree
         bool found = false;
-        for (int i = 0; i < lastFound->childCount(); ++i) {
-            File *child = lastFound->child(i);
+        foreach (File *child, lastFound->children()) {
             if (child->name() == path.at(partIndex)) {
                 lastFound = child;
                 found = true;
