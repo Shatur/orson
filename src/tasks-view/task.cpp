@@ -10,7 +10,8 @@ Task::Task()
 {
     addChild(new Task(InstallExplicity));
     addChild(new Task(InstallAsDepend));
-    addChild(new Task(MarkExplicity));
+    addChild(new Task(Reinstall));
+    addChild(new Task(MarkAsExplicity));
     addChild(new Task(MarkAsDepend));
     addChild(new Task(Uninstall));
 }
@@ -19,6 +20,16 @@ Task::Task()
 Task::Task(Task::Category category) :
     m_category(category)
 {
+}
+
+QVector<Task *> Task::children() const
+{
+    return m_children;
+}
+
+Task::Category Task::category() const
+{
+    return m_category;
 }
 
 Task::~Task()
@@ -39,20 +50,15 @@ Task *Task::parent() const
     return m_parent;
 }
 
-Task *Task::child(int row) const
-{
-    return m_children.value(row);
-}
-
-int Task::childCount() const
-{
-    return m_children.count();
-}
-
 void Task::addChild(Task *child)
 {
     child->m_parent = this;
     m_children.append(child);
+}
+
+void Task::removeChild(Task *child)
+{
+    m_children.remove(m_children.indexOf(child));
 }
 
 void Task::removeChildren()
@@ -68,7 +74,9 @@ QString Task::name() const
         return "Install explicity";
     case InstallAsDepend:
         return "Install as depend";
-    case MarkExplicity:
+    case Reinstall:
+        return "Reinstall";
+    case MarkAsExplicity:
         return "Mark installed as explicity";
     case MarkAsDepend:
         return "Mark installed as depend";
@@ -84,9 +92,11 @@ QIcon Task::icon() const
     switch (m_category) {
     case InstallExplicity:
         return QIcon::fromTheme("edit-add");
+    case Reinstall:
+        return QIcon::fromTheme("edit");
     case InstallAsDepend:
         return QIcon::fromTheme("format-add-node");
-    case MarkExplicity:
+    case MarkAsExplicity:
         return QIcon::fromTheme("exchange-positions");
     case MarkAsDepend:
         return QIcon::fromTheme("exchange-positions-clockwise");

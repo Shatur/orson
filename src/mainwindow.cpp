@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->packagesView->setTaskView(ui->tasksView);
 
     // Enable reload button when database loaded
     connect(ui->packagesView->model(), &PackagesModel::databaseLoaded, [&] {

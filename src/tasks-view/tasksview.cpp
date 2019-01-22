@@ -6,13 +6,24 @@ TasksView::TasksView(QWidget *parent) :
     setModel(new TasksModel(this));
 
     // Hide all categories by default
-    for (int i = 0; i < model()->rowCount(QModelIndex()); ++i) {
+    for (int i = 0; i < model()->rowCount(QModelIndex()); ++i)
         setRowHidden(i, QModelIndex(), true);
-    }
 
     // Show category if item added
     connect(model(), &TasksModel::taskAdded, [&](Task::Category category) {
-       setRowHidden(category, QModelIndex(), false);
+        const QModelIndex index = model()->index(category, 0, QModelIndex());
+
+        setRowHidden(category, QModelIndex(), false);
+        setExpanded(index, true);
+    });
+
+    // Hide category if it is empty
+    connect(model(), &TasksModel::taskRemoved, [&](Task::Category category) {
+        const QModelIndex index = model()->index(category, 0, QModelIndex());
+        const auto task = static_cast<Task *>(index.internalPointer());
+
+        if (task->children().isEmpty())
+            setRowHidden(category, QModelIndex(), true);
     });
 }
 

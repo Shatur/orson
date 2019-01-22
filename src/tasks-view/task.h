@@ -12,7 +12,8 @@ public:
         Null = -1,
         InstallExplicity,
         InstallAsDepend,
-        MarkExplicity,
+        Reinstall,
+        MarkAsExplicity,
         MarkAsDepend,
         Uninstall
     };
@@ -25,14 +26,16 @@ public:
     int row() const;
     Task *parent() const;
 
-    Task *child(int row) const;
-    int childCount() const;
+    QVector<Task *> children() const;
     void addChild(Task *child);
+    void removeChild(Task *child);
     void removeChildren();
 
     // Item properties
     QString name() const;
     QIcon icon() const;
+    Category category() const;
+
 
 private:
     explicit Task(Category category);

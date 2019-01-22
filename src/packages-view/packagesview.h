@@ -2,6 +2,8 @@
 #define PACKAGESVIEW_H
 
 #include "packagesmodel.h"
+#include "../tasks-view/tasksview.h"
+
 #include <QTreeView>
 
 class PackagesView : public QTreeView
@@ -19,13 +21,16 @@ public:
     explicit PackagesView(QWidget *parent = nullptr);
 
     void filter(const QString &text, FilterType type = NameDescription);
+    void setTaskView(TasksView *taskView);
     bool find(const QString &packageName);
-
     Package *currentPackage() const;
     PackagesModel *model() const;
 
 signals:
     void currentPackageChanged(Package *package);
+
+private slots:
+    void addTask(QAction *action);
 
 private:
     void contextMenuEvent(QContextMenuEvent *event) override;
@@ -36,9 +41,10 @@ private:
     QAction *m_installExplicity;
     QAction *m_installAsDepend;
     QAction *m_reinstall;
-    QAction *m_remove;
+    QAction *m_uninstall;
     QAction *m_changeReason;
 
+    TasksView *m_taskView;
     bool m_filtered = false;
 };
 

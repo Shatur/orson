@@ -43,7 +43,7 @@ QModelIndex TasksModel::index(int row, int column, const QModelIndex &parent) co
     else
         parentItem = static_cast<Task *>(parent.internalPointer());
 
-    Task *childItem = parentItem->child(row);
+    Task *childItem = parentItem->children().at(row);
     if (!childItem)
         return QModelIndex();
 
@@ -72,7 +72,7 @@ int TasksModel::rowCount(const QModelIndex &parent) const
     else
         parentItem = static_cast<Task *>(parent.internalPointer());
 
-    return parentItem->childCount();
+    return parentItem->children().size();
 }
 
 int TasksModel::columnCount(const QModelIndex &) const
@@ -80,12 +80,46 @@ int TasksModel::columnCount(const QModelIndex &) const
     return 1;
 }
 
-void TasksModel::addTask(const Package *package, Task::Category category)
+void TasksModel::addTask(const Package *package, Task::Category destinationCategory)
 {
-    Task *parent = m_rootItem->child(category);
-    QModelIndex parentIndex = index(category, 0, QModelIndex());
+    const QModelIndex destinationParentIndex = index(destinationCategory, 0, QModelIndex());
+    Task *destinationParentTask = m_rootItem->children().at(destinationCategory);
 
-    beginInsertRows(parentIndex, parent->childCount(), parent->childCount());
-    parent->addChild(new Task(package));
-    endInsertRows();
+    Task *task = find(package->name());
+    if (task != nullptr) {
+        // Just move task if the package has been added to another category
+        const Task::Category sourceCategory = task->parent()->category();
+        const QModelIndex sourceParentIndex = index(sourceCategory, 0, QModelIndex());
+        Task *sourceParentTask = m_rootItem->children().at(sourceCategory);
+
+        beginMoveRows(sourceParentIndex, task->row(), task->row(), destinationParentIndex, tasks(destinationCategory).size());
+        sourceParentTask->removeChild(task);
+        emit taskRemoved(sourceCategory);
+        destinationParentTask->addChild(task);
+        endMoveRows();
+    } else {
+        // Add new task
+        beginInsertRows(destinationParentIndex, destinationParentTask->children().size(), destinationParentTask->children().size());
+        destinationParentTask->addChild(new Task(package));
+        endInsertRows();
+    }
+
+    emit taskAdded(destinationCategory);
+}
+
+QVector<Task *> TasksModel::tasks(Task::Category category)
+{
+    return m_rootItem->children().at(category)->children();
+}
+
+Task *TasksModel::find(QString packageName)
+{
+    foreach (Task *category, m_rootItem->children()) {
+        foreach (Task *task, category->children()) {
+            if (task->name() == packageName)
+                return task;
+        }
+    }
+
+    return nullptr;
 }

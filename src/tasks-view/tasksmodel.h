@@ -21,10 +21,13 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
-    void addTask(const Package *package, Task::Category category);
+    void addTask(const Package *package, Task::Category destinationCategory);
+    QVector<Task *> tasks(Task::Category category);
+    Task *find(QString packageName);
 
 signals:
     void taskAdded(Task::Category category);
+    void taskRemoved(Task::Category category);
 
 private:
     Task *m_rootItem;

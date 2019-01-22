@@ -10,16 +10,13 @@ PackagesView::PackagesView(QWidget *parent) :
 {
     // Setup menu
     m_menu = new QMenu(this);
-    m_installExplicity = new QAction(QIcon::fromTheme("filesaveas"), "Install", m_menu);
-    m_installAsDepend = new QAction(QIcon::fromTheme("filesaveas"), "Install as dependency", m_menu);
-    m_reinstall = new QAction(QIcon::fromTheme("filesaveas"), "Reinstall", m_menu);
-    m_remove = new QAction(QIcon::fromTheme("remove"), "Remove", m_menu);
-    m_changeReason = new QAction(QIcon::fromTheme("edit"), QString(), m_menu);
-    m_menu->addAction(m_installExplicity);
-    m_menu->addAction(m_installAsDepend);
-    m_menu->addAction(m_reinstall);
-    m_menu->addAction(m_remove);
-    m_menu->addAction(m_changeReason);
+    m_menu->addAction(QIcon::fromTheme("filesaveas"), "Install explicity");
+    m_menu->addAction(QIcon::fromTheme("filesaveas"), "Install as dependency");
+    m_menu->addAction(QIcon::fromTheme("filesaveas"), "Reinstall");
+    m_menu->addAction(QIcon::fromTheme("edit"), "Mark as explicity");
+    m_menu->addAction(QIcon::fromTheme("edit"), "Mark as dependency");
+    m_menu->addAction(QIcon::fromTheme("remove"), "Uninstall");
+    connect(m_menu, &QMenu::triggered, this, &PackagesView::addTask);
 
     // Setup items
     sortByColumn(-1, Qt::AscendingOrder); // Show item unsorted by default
@@ -125,6 +122,11 @@ void PackagesView::filter(const QString &text, PackagesView::FilterType type)
     m_filtered = true;
 }
 
+void PackagesView::setTaskView(TasksView *taskView)
+{
+    m_taskView = taskView;
+}
+
 bool PackagesView::find(const QString &packageName)
 {
     clearSelection();
@@ -164,31 +166,46 @@ PackagesModel *PackagesView::model() const
     return qobject_cast<PackagesModel *>(QTreeView::model());
 }
 
+void PackagesView::addTask(QAction *action)
+{
+    const auto category = static_cast<Task::Category>(m_menu->actions().indexOf(action));
+    m_taskView->model()->addTask(currentPackage(), category);
+}
+
 void PackagesView::contextMenuEvent(QContextMenuEvent *event)
 {
     const auto *package = static_cast<Package *>(indexAt(event->pos()).internalPointer());
     if (package == nullptr)
         return;
 
-    // Setup menu items
-    if (package->isInstalled()) {
-        m_installAsDepend->setVisible(false);
-        m_installExplicity->setVisible(false);
-
-        m_remove->setVisible(true);
-        m_reinstall->setVisible(true);
-        m_changeReason->setVisible(true);
-        if (package->isInstalledExplicitly())
-            m_changeReason->setText("Mark installed as dependency");
+    // Disable an action if the selected package has already been added to its category
+    Task *task = m_taskView->model()->find(package->name());
+    for (int category = 0; category < m_menu->actions().size(); ++category) {
+        if (task != nullptr && category == task->parent()->category())
+            m_menu->actions().at(category)->setEnabled(false);
         else
-            m_changeReason->setText("Mark installed explicity");
-    } else {
-        m_reinstall->setVisible(false);
-        m_changeReason->setVisible(false);
-        m_remove->setVisible(false);
+            m_menu->actions().at(category)->setEnabled(true);
+    }
 
-        m_installAsDepend->setVisible(true);
-        m_installExplicity->setVisible(true);
+    // Setup menu actions
+    if (package->isInstalled()) {
+        m_menu->actions().at(Task::InstallExplicity)->setVisible(false);
+        m_menu->actions().at(Task::InstallAsDepend)->setVisible(false);
+
+        m_menu->actions().at(Task::Reinstall)->setVisible(true);
+        m_menu->actions().at(Task::Uninstall)->setVisible(true);
+        if (package->isInstalledExplicitly())
+            m_menu->actions().at(Task::MarkAsDepend)->setVisible(true);
+        else
+            m_menu->actions().at(Task::MarkAsExplicity)->setVisible(true);
+    } else {
+        m_menu->actions().at(Task::Reinstall)->setVisible(false);
+        m_menu->actions().at(Task::MarkAsDepend)->setVisible(false);
+        m_menu->actions().at(Task::MarkAsExplicity)->setVisible(false);
+        m_menu->actions().at(Task::Uninstall)->setVisible(false);
+
+        m_menu->actions().at(Task::InstallExplicity)->setVisible(true);
+        m_menu->actions().at(Task::InstallAsDepend)->setVisible(true);
     }
 
     m_menu->exec(event->globalPos());
