@@ -1,7 +1,8 @@
 #include "task.h"
 
 Task::Task(const Package *package) :
-    m_name(package->name())
+    m_name(package->name()),
+    m_icon(package->icon())
 {
 }
 
@@ -103,6 +104,6 @@ QIcon Task::icon() const
     case Uninstall:
         return QIcon::fromTheme("edit-delete");
     default:
-        return QIcon::fromTheme(m_name);
+        return m_icon;
     }
 }

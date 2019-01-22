@@ -72,12 +72,7 @@ void MainWindow::on_packagesView_currentPackageChanged(Package *package)
     ui->filesTab->setProperty("loaded", false);
 
     // Load package info header
-    QIcon icon;
-    if (QIcon::hasThemeIcon(package->name()))
-        icon = QIcon::fromTheme(package->name());
-    else
-        icon = QIcon::fromTheme("package-x-generic");
-    ui->iconLabel->setPixmap(icon.pixmap(64, 64));
+    ui->iconLabel->setPixmap(package->icon().pixmap(64, 64));
     ui->nameLabel->setText(package->name() + " " + package->version());
     ui->descriptionLabel->setText(package->description());
 

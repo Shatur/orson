@@ -5,7 +5,7 @@
 
 #include <QDateTime>
 #include <QJsonObject>
-#include <QVector>
+#include <QIcon>
 
 class Package
 {
@@ -41,6 +41,7 @@ public:
     QDateTime firstSubmitted() const;
     QDateTime lastModified() const;
     QDateTime outOfDate() const;
+    QIcon icon() const;
     double popularity() const;
     long downloadSize() const;
     long installedSize() const;

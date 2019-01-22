@@ -3,8 +3,6 @@
 
 #include "../packages-view/package.h"
 
-#include <QIcon>
-
 class Task
 {
 public:
@@ -45,6 +43,7 @@ private:
 
     Category m_category = Null;
     QString m_name;
+    QIcon m_icon;
 };
 
 #endif // TASK_H

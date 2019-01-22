@@ -291,6 +291,16 @@ QDateTime Package::outOfDate() const
     return QDateTime::fromSecsSinceEpoch(m_aurData.value("OutOfDate").toInt());
 }
 
+QIcon Package::icon() const
+{
+    const QString packageName = name();
+
+    if (QIcon::hasThemeIcon(packageName))
+        return QIcon::fromTheme(packageName);
+    else
+        return QIcon::fromTheme("package-x-generic");
+}
+
 double Package::popularity() const
 {
     return m_aurData.value("Popularity").toDouble();
