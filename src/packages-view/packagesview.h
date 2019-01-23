@@ -30,6 +30,7 @@ signals:
     void currentPackageChanged(Package *package);
 
 private slots:
+    void changeCurrent(const QModelIndex &current);
     void addTask(QAction *action);
 
 private:

@@ -7,27 +7,12 @@ TasksView::TasksView(QWidget *parent) :
     QTreeView(parent)
 {
     setModel(new TasksModel(this));
+    connect(model(), &TasksModel::taskAdded, this, &TasksView::showCategory);
+    connect(model(), &TasksModel::taskRemoved, this, &TasksView::hideCategory);
 
     // Hide all categories by default
     for (int i = 0; i < model()->rowCount(QModelIndex()); ++i)
         setRowHidden(i, QModelIndex(), true);
-
-    // Show category if item added
-    connect(model(), &TasksModel::taskAdded, [&](Task::Category category) {
-        const QModelIndex index = model()->index(category, 0, QModelIndex());
-
-        setRowHidden(category, QModelIndex(), false);
-        setExpanded(index, true);
-    });
-
-    // Hide category if it is empty
-    connect(model(), &TasksModel::taskRemoved, [&](Task::Category category) {
-        const QModelIndex index = model()->index(category, 0, QModelIndex());
-        const auto task = static_cast<Task *>(index.internalPointer());
-
-        if (task->children().isEmpty())
-            setRowHidden(category, QModelIndex(), true);
-    });
 
     // Setup context menu
     m_menu = new QMenu(this);
@@ -37,6 +22,21 @@ TasksView::TasksView(QWidget *parent) :
 TasksModel *TasksView::model() const
 {
     return qobject_cast<TasksModel *>(QTreeView::model());
+}
+
+void TasksView::showCategory(Task::Category category)
+{
+    const QModelIndex index = model()->index(category, 0, QModelIndex());
+
+    setRowHidden(category, QModelIndex(), false);
+    setExpanded(index, true);
+}
+
+// Hide category only if it is empty
+void TasksView::hideCategory(Task::Category category)
+{
+    if (model()->tasks(category).isEmpty())
+        setRowHidden(category, QModelIndex(), true);
 }
 
 void TasksView::removeCurrentTask()

@@ -22,19 +22,9 @@ PackagesView::PackagesView(QWidget *parent) :
     sortByColumn(-1, Qt::AscendingOrder); // Show item unsorted by default
     setModel(new PackagesModel(this));
     header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    connect(selectionModel(), &QItemSelectionModel::currentChanged, this, &PackagesView::changeCurrent);
 
-    // Add current package changed signal
-    connect(selectionModel(), &QItemSelectionModel::currentChanged, [&](const QModelIndex &current) {
-        auto *package = static_cast<Package *>(current.internalPointer());
-
-        // Load additional AUR info
-        if (model()->mode() == PackagesModel::AUR)
-            model()->loadMoreAurInfo(package);
-
-        emit currentPackageChanged(package);
-    });
-
-    // Emit current package changed signal if package data changed too
+    // Emit current package changed signal on data change
     connect(model(), &PackagesModel::packageChanged, [&](Package *package) {
         if (package == currentPackage())
             emit currentPackageChanged(package);
@@ -164,6 +154,17 @@ Package *PackagesView::currentPackage() const
 PackagesModel *PackagesView::model() const
 {
     return qobject_cast<PackagesModel *>(QTreeView::model());
+}
+
+void PackagesView::changeCurrent(const QModelIndex &current)
+{
+    auto *package = static_cast<Package *>(current.internalPointer());
+
+    // Load additional AUR info
+    if (model()->mode() == PackagesModel::AUR)
+        model()->loadMoreAurInfo(package);
+
+    emit currentPackageChanged(package);
 }
 
 void PackagesView::addTask(QAction *action)
