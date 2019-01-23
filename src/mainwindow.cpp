@@ -14,23 +14,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->packagesView->setTaskView(ui->tasksView);
 
-    // Enable reload button when database loaded
-    connect(ui->packagesView->model(), &PackagesModel::databaseLoaded, [&] {
-       ui->reloadButton->setEnabled(true);
-    });
-
-    // Show packages tab if task info opened
-    connect(ui->tasksView, &TasksView::taskOpened, [&] {
-       ui->tabWidget->setCurrentIndex(0);
-    });
-
-    // Select first package when available on loading installed packages
+    connect(ui->tasksView, &TasksView::taskOpened, this, &MainWindow::showPackagesTab);
+    connect(ui->packagesView->model(), &PackagesModel::databaseStatusChanged, this, &MainWindow::setStatusBarMessage);
     connect(ui->packagesView->model(), &PackagesModel::firstPackageAvailable, this, &MainWindow::selectFirstPackage);
-
-    // Show database messages in statusbar
-    connect(ui->packagesView->model(), &PackagesModel::databaseStatusChanged, [&](const QString &text) {
-       statusBar()->showMessage(text);
-    });
+    connect(ui->packagesView->model(), &PackagesModel::databaseLoaded, this, &MainWindow::enableReloading);
 
     // Select package when clicking on dependencies
     depsButtonGroup = new QButtonGroup(this);
@@ -133,7 +120,7 @@ void MainWindow::findDepend(QAbstractButton *button)
 void MainWindow::selectFirstPackage()
 {
     ui->packagesView->setCurrentIndex(ui->packagesView->model()->index(0, 0));
-    statusBar()->showMessage("Loading installed packages");
+    setStatusBarMessage("Loading installed packages");
 }
 
 void MainWindow::on_packageTabsWidget_currentChanged(int index)
@@ -221,6 +208,21 @@ void MainWindow::on_browserButton_clicked()
         url = "https://www.archlinux.org/packages/" + package->repo() + "/" + package->arch() + "/" + package->name();
 
     QDesktopServices::openUrl(url);
+}
+
+void MainWindow::setStatusBarMessage(const QString &text)
+{
+    statusBar()->showMessage(text);
+}
+
+void MainWindow::showPackagesTab()
+{
+    ui->tabWidget->setCurrentIndex(0);
+}
+
+void MainWindow::enableReloading()
+{
+    ui->reloadButton->setEnabled(true);
 }
 
 void MainWindow::loadPackageInfo(const Package *package)

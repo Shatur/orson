@@ -24,6 +24,10 @@ private slots:
     void on_tabWidget_currentChanged(int index);
     void on_browserButton_clicked();
 
+    void setStatusBarMessage(const QString &text);
+    void showPackagesTab();
+    void enableReloading();
+
     // Packages tab
     void on_searchModeComboBox_currentIndexChanged(int index);
     void on_searchPackagesEdit_returnPressed();
