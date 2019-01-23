@@ -107,6 +107,19 @@ void TasksModel::addTask(const Package *package, Task::Category destinationCateg
     emit taskAdded(destinationCategory);
 }
 
+void TasksModel::removeTask(Task *task)
+{
+    Task *parentTask = task->parent();
+    const QModelIndex parentIndex = index(parentTask->row(), 0, QModelIndex());
+
+    beginRemoveRows(parentIndex, task->row(), task->row());
+    parentTask->removeChild(task);
+    delete task;
+    endRemoveRows();
+
+    emit taskRemoved(parentTask->category());
+}
+
 QVector<Task *> TasksModel::tasks(Task::Category category)
 {
     return m_rootItem->children().at(category)->children();

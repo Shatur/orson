@@ -22,6 +22,7 @@ public:
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
     void addTask(const Package *package, Task::Category destinationCategory);
+    void removeTask(Task *task);
     QVector<Task *> tasks(Task::Category category);
     Task *find(QString packageName);
 

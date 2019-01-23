@@ -59,6 +59,7 @@ void Task::addChild(Task *child)
 
 void Task::removeChild(Task *child)
 {
+    child->m_parent = nullptr;
     m_children.remove(m_children.indexOf(child));
 }
 

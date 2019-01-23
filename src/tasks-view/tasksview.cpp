@@ -1,5 +1,8 @@
 #include "tasksview.h"
 
+#include <QMenu>
+#include <QContextMenuEvent>
+
 TasksView::TasksView(QWidget *parent) :
     QTreeView(parent)
 {
@@ -25,11 +28,34 @@ TasksView::TasksView(QWidget *parent) :
         if (task->children().isEmpty())
             setRowHidden(category, QModelIndex(), true);
     });
+
+    // Setup context menu
+    m_menu = new QMenu(this);
+    m_menu->addAction(QIcon::fromTheme("remove"), "Remove", this, &TasksView::removeCurrentTask);
 }
 
 TasksModel *TasksView::model() const
 {
     return qobject_cast<TasksModel *>(QTreeView::model());
+}
+
+void TasksView::removeCurrentTask()
+{
+    auto *task = static_cast<Task *>(currentIndex().internalPointer());
+    model()->removeTask(task);
+}
+
+void TasksView::contextMenuEvent(QContextMenuEvent *event)
+{
+    const auto *task = static_cast<Task *>(indexAt(event->pos()).internalPointer());
+    if (task == nullptr)
+        return;
+
+    // Do not show context menu for categories
+    if (task->category() != Task::Null)
+        return;
+
+    m_menu->exec(event->globalPos());
 }
 
 void TasksView::setModel(QAbstractItemModel *model)

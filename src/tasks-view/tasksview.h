@@ -11,8 +11,14 @@ public:
     explicit TasksView(QWidget *parent = nullptr);
     TasksModel *model() const;
 
+private slots:
+    void removeCurrentTask();
+
 private:
+    void contextMenuEvent(QContextMenuEvent *event) override;
     void setModel(QAbstractItemModel *model) override;
+
+    QMenu *m_menu;
 };
 
 #endif // TASKSVIEW_H
