@@ -120,9 +120,14 @@ void TasksModel::removeTask(Task *task)
     emit taskRemoved(parentTask->category());
 }
 
+QVector<Task *> TasksModel::categories()
+{
+    return m_rootItem->children();
+}
+
 QVector<Task *> TasksModel::tasks(Task::Category category)
 {
-    return m_rootItem->children().at(category)->children();
+    return categories().at(category)->children();
 }
 
 Task *TasksModel::find(QString packageName)
@@ -135,4 +140,9 @@ Task *TasksModel::find(QString packageName)
     }
 
     return nullptr;
+}
+
+int TasksModel::categoriesCount()
+{
+    return m_rootItem->children().size();
 }

@@ -10,12 +10,6 @@ PackagesView::PackagesView(QWidget *parent) :
 {
     // Setup menu
     m_menu = new QMenu(this);
-    m_menu->addAction(QIcon::fromTheme("filesaveas"), "Install explicity");
-    m_menu->addAction(QIcon::fromTheme("filesaveas"), "Install as dependency");
-    m_menu->addAction(QIcon::fromTheme("filesaveas"), "Reinstall");
-    m_menu->addAction(QIcon::fromTheme("edit"), "Mark as explicity");
-    m_menu->addAction(QIcon::fromTheme("edit"), "Mark as dependency");
-    m_menu->addAction(QIcon::fromTheme("remove"), "Uninstall");
     connect(m_menu, &QMenu::triggered, this, &PackagesView::addTask);
 
     // Setup items
@@ -115,6 +109,11 @@ void PackagesView::filter(const QString &text, PackagesView::FilterType type)
 void PackagesView::setTaskView(TasksView *taskView)
 {
     m_taskView = taskView;
+
+    // Setup context menu
+    m_menu->clear();
+    foreach (const Task *category, m_taskView->model()->categories())
+        m_menu->addAction(category->icon(), category->name());
 }
 
 bool PackagesView::find(const QString &packageName)
@@ -178,6 +177,9 @@ void PackagesView::contextMenuEvent(QContextMenuEvent *event)
     const auto *package = static_cast<Package *>(indexAt(event->pos()).internalPointer());
     if (package == nullptr)
         return;
+
+    if (m_taskView == nullptr)
+        qFatal("Task view is not specified");
 
     // Disable an action if the selected package has already been added to its category
     Task *task = m_taskView->model()->find(package->name());

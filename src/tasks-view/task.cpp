@@ -93,11 +93,11 @@ QIcon Task::icon() const
 {
     switch (m_category) {
     case InstallExplicity:
+        return QIcon::fromTheme("edit-download");
+    case InstallAsDepend:
         return QIcon::fromTheme("edit-add");
     case Reinstall:
-        return QIcon::fromTheme("edit");
-    case InstallAsDepend:
-        return QIcon::fromTheme("format-add-node");
+        return QIcon::fromTheme("reload");
     case MarkAsExplicity:
         return QIcon::fromTheme("exchange-positions");
     case MarkAsDepend:
