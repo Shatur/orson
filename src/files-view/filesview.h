@@ -14,11 +14,11 @@ public:
 
 private slots:
     // Context menu actions
-    void open() const;
-    void openInFileManager() const;
-    void copyFile() const;
-    void copyName() const;
-    void copyPath() const;
+    void openCurrent() const;
+    void openCurrentInFilesystem() const;
+    void copyCurrentFile() const;
+    void copyCurrentName() const;
+    void copyCurrentPath() const;
 
 private:
     void contextMenuEvent(QContextMenuEvent *event) override;

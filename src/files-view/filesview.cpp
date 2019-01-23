@@ -15,11 +15,11 @@ FilesView::FilesView(QWidget *parent) :
 
     // Setup context menu
     m_menu = new QMenu(this);
-    m_menu->addAction(QIcon::fromTheme("document-open"), tr("Open"), this, &FilesView::open);
-    m_menu->addAction(QIcon::fromTheme("folder"), tr("Open if file manager"), this, &FilesView::openInFileManager);
-    m_menu->addAction(QIcon::fromTheme("edit-copy"), tr("Copy"), this, &FilesView::copyFile);
-    m_menu->addAction(QIcon::fromTheme("edit-copy"), tr("Copy name"), this, &FilesView::copyName);
-    m_menu->addAction(QIcon::fromTheme("edit-copy"), tr("Copy path"), this, &FilesView::copyPath);
+    m_menu->addAction(QIcon::fromTheme("document-open"), tr("Open"), this, &FilesView::openCurrent);
+    m_menu->addAction(QIcon::fromTheme("folder"), tr("Open if file manager"), this, &FilesView::openCurrentInFilesystem);
+    m_menu->addAction(QIcon::fromTheme("edit-copy"), tr("Copy"), this, &FilesView::copyCurrentFile);
+    m_menu->addAction(QIcon::fromTheme("edit-copy"), tr("Copy name"), this, &FilesView::copyCurrentName);
+    m_menu->addAction(QIcon::fromTheme("edit-copy"), tr("Copy path"), this, &FilesView::copyCurrentPath);
 }
 
 FilesModel *FilesView::model() const
@@ -27,19 +27,19 @@ FilesModel *FilesView::model() const
     return qobject_cast<FilesModel *>(QTreeView::model());
 }
 
-void FilesView::open() const
+void FilesView::openCurrent() const
 {
     const auto *file = static_cast<File *>(currentIndex().internalPointer());
     QDesktopServices::openUrl(file->path());
 }
 
-void FilesView::openInFileManager() const
+void FilesView::openCurrentInFilesystem() const
 {
     const auto *file = static_cast<File *>(currentIndex().internalPointer());
     QDesktopServices::openUrl(file->parent()->path());
 }
 
-void FilesView::copyFile() const
+void FilesView::copyCurrentFile() const
 {
     const auto *file = static_cast<File *>(currentIndex().internalPointer());
     auto *mimeData = new QMimeData;
@@ -48,13 +48,13 @@ void FilesView::copyFile() const
     SingleApplication::clipboard()->setMimeData(mimeData);
 }
 
-void FilesView::copyName() const
+void FilesView::copyCurrentName() const
 {
     const auto *file = static_cast<File *>(currentIndex().internalPointer());
     SingleApplication::clipboard()->setText(file->name());
 }
 
-void FilesView::copyPath() const
+void FilesView::copyCurrentPath() const
 {
     const auto *file = static_cast<File *>(currentIndex().internalPointer());
     SingleApplication::clipboard()->setText(file->path());

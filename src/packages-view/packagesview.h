@@ -36,14 +36,7 @@ private:
     void contextMenuEvent(QContextMenuEvent *event) override;
     void setModel(QAbstractItemModel *model) override;
 
-    // Context menu
     QMenu *m_menu;
-    QAction *m_installExplicity;
-    QAction *m_installAsDepend;
-    QAction *m_reinstall;
-    QAction *m_uninstall;
-    QAction *m_changeReason;
-
     TasksView *m_taskView;
     bool m_filtered = false;
 };

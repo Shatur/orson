@@ -27,7 +27,7 @@ public:
 private:
     void addPath(const QStringList &path);
 
-    File *rootItem;
+    File *m_rootItem;
 };
 
 #endif // FILESMODEL_H

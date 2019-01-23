@@ -3,12 +3,12 @@
 FilesModel::FilesModel(QObject *parent) :
     QAbstractItemModel(parent)
 {
-    rootItem = new File;
+    m_rootItem = new File;
 }
 
 FilesModel::~FilesModel()
 {
-    delete rootItem;
+    delete m_rootItem;
 }
 
 QVariant FilesModel::data(const QModelIndex &index, int role) const
@@ -36,7 +36,7 @@ QVariant FilesModel::data(const QModelIndex &index, int role) const
 QVariant FilesModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
-        return rootItem->text(section);
+        return m_rootItem->text(section);
 
     return QVariant();
 }
@@ -48,7 +48,7 @@ QModelIndex FilesModel::index(int row, int column, const QModelIndex &parent) co
 
     File *parentItem;
     if (!parent.isValid())
-        parentItem = rootItem;
+        parentItem = m_rootItem;
     else
         parentItem = static_cast<File *>(parent.internalPointer());
 
@@ -67,7 +67,7 @@ QModelIndex FilesModel::parent(const QModelIndex &index) const
     auto *childItem = static_cast<File *>(index.internalPointer());
     File *parentItem = childItem->parent();
 
-    if (parentItem == rootItem)
+    if (parentItem == m_rootItem)
         return QModelIndex();
 
     return createIndex(parentItem->row(), 0, parentItem);
@@ -80,7 +80,7 @@ int FilesModel::rowCount(const QModelIndex &parent) const
         return 0;
 
     if (!parent.isValid())
-        parentItem = rootItem;
+        parentItem = m_rootItem;
     else
         parentItem = static_cast<File *>(parent.internalPointer());
 
@@ -95,7 +95,7 @@ int FilesModel::columnCount(const QModelIndex &) const
 void FilesModel::setPaths(const QStringList &paths)
 {
     beginResetModel();
-    rootItem->removeChildren();
+    m_rootItem->removeChildren();
     foreach (const QString &path, paths)
         addPath(path.split("/", QString::SkipEmptyParts));
     endResetModel();
@@ -103,7 +103,7 @@ void FilesModel::setPaths(const QStringList &paths)
 
 void FilesModel::addPath(const QStringList &path)
 {
-    File *lastFound = rootItem;
+    File *lastFound = m_rootItem;
 
     for (int partIndex = 0; partIndex < path.size(); ++partIndex) {
         // Search item in tree
