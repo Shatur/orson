@@ -16,12 +16,18 @@ TasksView::TasksView(QWidget *parent) :
 
     // Setup context menu
     m_menu = new QMenu(this);
+    m_menu->addAction(QIcon::fromTheme("help-info"), "Open package info", this, &TasksView::openCurrentTask);
     m_menu->addAction(QIcon::fromTheme("remove"), "Remove", this, &TasksView::removeCurrentTask);
 }
 
 TasksModel *TasksView::model() const
 {
     return qobject_cast<TasksModel *>(QTreeView::model());
+}
+
+Task *TasksView::currentTask()
+{
+    return static_cast<Task *>(currentIndex().internalPointer());
 }
 
 void TasksView::showCategory(Task::Category category)
@@ -41,8 +47,16 @@ void TasksView::hideCategory(Task::Category category)
 
 void TasksView::removeCurrentTask()
 {
-    auto *task = static_cast<Task *>(currentIndex().internalPointer());
-    model()->removeTask(task);
+    Task *task = currentTask();
+    if (task->category() == Task::Null)
+        model()->removeTask(task);
+}
+
+void TasksView::openCurrentTask()
+{
+    Task *task = currentTask();
+    if (task->category() == Task::Null)
+        emit taskOpened(task->name());
 }
 
 void TasksView::contextMenuEvent(QContextMenuEvent *event)

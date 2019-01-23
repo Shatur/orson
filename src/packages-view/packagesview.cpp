@@ -114,6 +114,8 @@ void PackagesView::setTaskView(TasksView *taskView)
     m_menu->clear();
     foreach (const Task *category, m_taskView->model()->categories())
         m_menu->addAction(category->icon(), category->name());
+
+    connect(m_taskView, &TasksView::taskOpened, this, &PackagesView::find);
 }
 
 bool PackagesView::find(const QString &packageName)

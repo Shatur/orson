@@ -19,6 +19,11 @@ MainWindow::MainWindow(QWidget *parent) :
        ui->reloadButton->setEnabled(true);
     });
 
+    // Show packages tab if task info opened
+    connect(ui->tasksView, &TasksView::taskOpened, [&] {
+       ui->tabWidget->setCurrentIndex(0);
+    });
+
     // Select first package when available on loading installed packages
     connect(ui->packagesView->model(), &PackagesModel::firstPackageAvailable, this, &MainWindow::selectFirstPackage);
 

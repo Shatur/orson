@@ -38,7 +38,7 @@ private:
     void setModel(QAbstractItemModel *model) override;
 
     QMenu *m_menu;
-    TasksView *m_taskView;
+    TasksView *m_taskView = nullptr;
     bool m_filtered = false;
 };
 
