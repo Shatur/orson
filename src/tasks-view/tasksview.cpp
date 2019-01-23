@@ -58,6 +58,14 @@ void TasksView::contextMenuEvent(QContextMenuEvent *event)
     m_menu->exec(event->globalPos());
 }
 
+void TasksView::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Delete)
+        removeCurrentTask();
+    else
+        QTreeView::keyPressEvent(event);
+}
+
 void TasksView::setModel(QAbstractItemModel *model)
 {
     QTreeView::setModel(model);

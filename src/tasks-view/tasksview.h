@@ -16,6 +16,7 @@ private slots:
 
 private:
     void contextMenuEvent(QContextMenuEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
     void setModel(QAbstractItemModel *model) override;
 
     QMenu *m_menu;
