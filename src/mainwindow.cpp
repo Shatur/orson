@@ -15,6 +15,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->packagesView->setTaskView(ui->tasksView);
 
     connect(ui->tasksView, &TasksView::taskOpened, this, &MainWindow::showPackagesTab);
+    connect(ui->tasksView->model(), &TasksModel::taskAdded, this, &MainWindow::showTasksCount);
+    connect(ui->tasksView->model(), &TasksModel::taskRemoved, this, &MainWindow::showTasksCount);
     connect(ui->packagesView->model(), &PackagesModel::databaseStatusChanged, this, &MainWindow::setStatusBarMessage);
     connect(ui->packagesView->model(), &PackagesModel::firstPackageAvailable, this, &MainWindow::selectFirstPackage);
     connect(ui->packagesView->model(), &PackagesModel::databaseLoaded, this, &MainWindow::enableReloading);
@@ -208,6 +210,18 @@ void MainWindow::on_browserButton_clicked()
         url = "https://www.archlinux.org/packages/" + package->repo() + "/" + package->arch() + "/" + package->name();
 
     QDesktopServices::openUrl(url);
+}
+
+void MainWindow::showTasksCount()
+{
+    int tasksCount = 0;
+    foreach (Task *category, ui->tasksView->model()->categories())
+        tasksCount += category->children().size();
+
+    if (tasksCount == 0)
+        ui->tabWidget->setTabText(2, "Tasks");
+    else
+        ui->tabWidget->setTabText(2, "Tasks (" + QString::number(tasksCount) + ")");
 }
 
 void MainWindow::setStatusBarMessage(const QString &text)
