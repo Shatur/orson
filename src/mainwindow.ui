@@ -1414,6 +1414,9 @@
             </disabled>
            </palette>
           </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
        </layout>
