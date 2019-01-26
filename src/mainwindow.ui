@@ -953,6 +953,26 @@
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QPushButton" name="applyButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Apply</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="processWidget">
+       <attribute name="title">
+        <string>Process</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_6">
+        <item>
+         <widget class="ProcessEdit" name="processEdit"/>
+        </item>
        </layout>
       </widget>
      </widget>
@@ -977,6 +997,11 @@
    <class>TasksView</class>
    <extends>QTreeView</extends>
    <header>src/tasks-view/tasksview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ProcessEdit</class>
+   <extends>QPlainTextEdit</extends>
+   <header>src/processedit.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

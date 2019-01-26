@@ -15,11 +15,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->packagesView->setTaskView(ui->tasksView);
 
     connect(ui->tasksView, &TasksView::taskOpened, this, &MainWindow::showPackagesTab);
-    connect(ui->tasksView->model(), &TasksModel::taskAdded, this, &MainWindow::showTasksCount);
-    connect(ui->tasksView->model(), &TasksModel::taskRemoved, this, &MainWindow::showTasksCount);
+    connect(ui->tasksView->model(), &TasksModel::taskAdded, this, &MainWindow::checkTasksCount);
+    connect(ui->tasksView->model(), &TasksModel::taskRemoved, this, &MainWindow::checkTasksCount);
     connect(ui->packagesView->model(), &PackagesModel::databaseStatusChanged, this, &MainWindow::setStatusBarMessage);
     connect(ui->packagesView->model(), &PackagesModel::firstPackageAvailable, this, &MainWindow::selectFirstPackage);
     connect(ui->packagesView->model(), &PackagesModel::databaseLoaded, this, &MainWindow::enableReloading);
+    connect(&m_pacman, &Pacman::dataAvailable, ui->processEdit, &ProcessEdit::addProcessData);
 
     // Select package when clicking on dependencies
     depsButtonGroup = new QButtonGroup(this);
@@ -212,16 +213,21 @@ void MainWindow::on_browserButton_clicked()
     QDesktopServices::openUrl(url);
 }
 
-void MainWindow::showTasksCount()
+void MainWindow::checkTasksCount()
 {
+    // Count tasks
     int tasksCount = 0;
     foreach (Task *category, ui->tasksView->model()->categories())
         tasksCount += category->children().size();
 
-    if (tasksCount == 0)
+    // Show count on tab
+    if (tasksCount == 0) {
         ui->tabWidget->setTabText(2, "Tasks");
-    else
+        ui->applyButton->setEnabled(false);
+    } else {
         ui->tabWidget->setTabText(2, "Tasks (" + QString::number(tasksCount) + ")");
+        ui->applyButton->setEnabled(true);
+    }
 }
 
 void MainWindow::setStatusBarMessage(const QString &text)
@@ -412,4 +418,11 @@ void MainWindow::searchHistory(bool backward)
         ui->searchHistoryEdit->setStyleSheet("");
     else
         ui->searchHistoryEdit->setStyleSheet("color:red");
+}
+
+void MainWindow::on_applyButton_clicked()
+{
+    m_pacman.setTasks(ui->tasksView->model());
+    m_pacman.start();
+    ui->tabWidget->setCurrentIndex(3);
 }

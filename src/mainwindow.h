@@ -3,6 +3,7 @@
 
 #include "files-view/filesmodel.h"
 #include "packages-view/packagesmodel.h"
+#include "pacman.h"
 
 #include <QMainWindow>
 #include <QButtonGroup>
@@ -24,7 +25,7 @@ private slots:
     void on_tabWidget_currentChanged(int index);
     void on_browserButton_clicked();
 
-    void showTasksCount();
+    void checkTasksCount();
     void setStatusBarMessage(const QString &text);
     void showPackagesTab();
     void enableReloading();
@@ -45,6 +46,9 @@ private slots:
     void on_findPreviousButton_clicked();
     void on_openHistoryFolderButton_clicked();
 
+    // Tasks tab
+    void on_applyButton_clicked();
+
 private:
     // Package info tabs
     void loadPackageInfo(const Package *package);
@@ -58,6 +62,8 @@ private:
 
     Ui::MainWindow *ui;
     QButtonGroup *depsButtonGroup;
+    Pacman m_pacman;
+
 };
 
 #endif // MAINWINDOW_H
