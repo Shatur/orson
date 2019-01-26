@@ -120,17 +120,33 @@ void TasksModel::removeTask(Task *task)
     emit taskRemoved(parentTask->category());
 }
 
-QVector<Task *> TasksModel::categories()
+void TasksModel::removeAllTasks()
+{
+    for (Task *category : m_rootItem->children()) {
+        if (category->children().isEmpty())
+            continue;
+
+        const QModelIndex parentIndex = index(category->row(), 0, QModelIndex());
+
+        beginRemoveRows(parentIndex, 0, category->children().size());
+        category->removeChildren();
+        endRemoveRows();
+
+        emit taskRemoved(category->category());
+    }
+}
+
+QVector<Task *> TasksModel::categories() const
 {
     return m_rootItem->children();
 }
 
-QVector<Task *> TasksModel::tasks(Task::Category category)
+QVector<Task *> TasksModel::tasks(Task::Category category) const
 {
     return categories().at(category)->children();
 }
 
-Task *TasksModel::find(QString packageName)
+Task *TasksModel::find(QString packageName) const
 {
     foreach (Task *category, m_rootItem->children()) {
         foreach (Task *task, category->children()) {
@@ -142,7 +158,7 @@ Task *TasksModel::find(QString packageName)
     return nullptr;
 }
 
-int TasksModel::categoriesCount()
+int TasksModel::categoriesCount() const
 {
     return m_rootItem->children().size();
 }

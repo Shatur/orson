@@ -425,4 +425,5 @@ void MainWindow::on_applyButton_clicked()
     m_pacman.setTasks(ui->tasksView->model());
     m_pacman.start();
     ui->tabWidget->setCurrentIndex(3);
+    ui->tasksView->model()->removeAllTasks();
 }

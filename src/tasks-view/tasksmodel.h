@@ -23,10 +23,12 @@ public:
 
     void addTask(const Package *package, Task::Category destinationCategory);
     void removeTask(Task *task);
-    QVector<Task *> categories();
-    QVector<Task *> tasks(Task::Category category);
-    Task *find(QString packageName);
-    int categoriesCount();
+    void removeAllTasks();
+
+    QVector<Task *> categories() const;
+    QVector<Task *> tasks(Task::Category category) const;
+    Task *find(QString packageName) const;
+    int categoriesCount() const;
 
 signals:
     void taskAdded(Task::Category category);
