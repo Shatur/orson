@@ -28,7 +28,7 @@ void Pacman::setTasks(TasksModel *model)
             pacmanCommands << "&&";
 
         // Pacman command
-        pacmanCommands << "pacman";
+        pacmanCommands << "pikaur";
         switch (category->category()) {
         case Task::InstallExplicity:
         case Task::InstallAsDepend:
