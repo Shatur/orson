@@ -17,6 +17,7 @@ public:
 
 signals:
     void dataAvailable(const QString &data);
+    void finished(int exitCode);
 
 private:
     static QPair<QString, QStringList> getSuCommand();

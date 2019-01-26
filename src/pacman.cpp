@@ -11,6 +11,9 @@ Pacman::Pacman()
     connect(&m_process, &QProcess::readyReadStandardOutput, [&] {
         emit dataAvailable(m_process.readAllStandardOutput());
     });
+
+    // Add finished signal
+    connect(&m_process, qOverload<int>(&QProcess::finished), this, &Pacman::finished);
 }
 
 void Pacman::setTasks(TasksModel *model)
