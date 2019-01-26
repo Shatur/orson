@@ -88,7 +88,7 @@ void TasksModel::addTask(const Package *package, Task::Category destinationCateg
     Task *task = find(package->name());
     if (task != nullptr) {
         // Just move task if the package has been added to another category
-        const Task::Category sourceCategory = task->parent()->category();
+        const Task::Category sourceCategory = task->parent()->categoryType();
         const QModelIndex sourceParentIndex = index(sourceCategory, 0, QModelIndex());
         Task *sourceParentTask = m_rootItem->children().at(sourceCategory);
 
@@ -117,7 +117,7 @@ void TasksModel::removeTask(Task *task)
     delete task;
     endRemoveRows();
 
-    emit taskRemoved(parentTask->category());
+    emit taskRemoved(parentTask->categoryType());
 }
 
 void TasksModel::removeAllTasks()
@@ -132,7 +132,7 @@ void TasksModel::removeAllTasks()
         category->removeChildren();
         endRemoveRows();
 
-        emit taskRemoved(category->category());
+        emit taskRemoved(category->categoryType());
     }
 }
 

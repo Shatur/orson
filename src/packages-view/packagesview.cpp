@@ -186,7 +186,7 @@ void PackagesView::contextMenuEvent(QContextMenuEvent *event)
     // Disable an action if the selected package has already been added to its category
     Task *task = m_taskView->model()->find(package->name());
     for (int category = 0; category < m_menu->actions().size(); ++category) {
-        if (task != nullptr && category == task->parent()->category())
+        if (task != nullptr && category == task->parent()->categoryType())
             m_menu->actions().at(category)->setEnabled(false);
         else
             m_menu->actions().at(category)->setEnabled(true);

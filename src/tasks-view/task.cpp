@@ -28,7 +28,7 @@ QVector<Task *> Task::children() const
     return m_children;
 }
 
-Task::Category Task::category() const
+Task::Category Task::categoryType() const
 {
     return m_category;
 }

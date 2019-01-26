@@ -29,7 +29,7 @@ void Pacman::setTasks(TasksModel *model)
 
         // Pacman command
         pacmanCommands << "pikaur";
-        switch (category->category()) {
+        switch (category->categoryType()) {
         case Task::InstallExplicity:
         case Task::InstallAsDepend:
         case Task::Reinstall:
@@ -51,7 +51,7 @@ void Pacman::setTasks(TasksModel *model)
             pacmanCommands << task->name();
 
         // Reason
-        switch (category->category()) {
+        switch (category->categoryType()) {
         case Task::InstallAsDepend:
         case Task::MarkAsDepend:
             pacmanCommands << "--asdeps";

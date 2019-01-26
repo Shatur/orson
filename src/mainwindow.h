@@ -25,10 +25,7 @@ private slots:
     void on_tabWidget_currentChanged(int index);
     void on_browserButton_clicked();
 
-    void checkTasksCount();
     void setStatusBarMessage(const QString &text);
-    void showPackagesTab();
-    void enableReloading();
 
     // Packages tab
     void on_searchModeComboBox_currentIndexChanged(int index);
@@ -39,6 +36,8 @@ private slots:
 
     void findDepend(QAbstractButton* button);
     void selectFirstPackage();
+    void enableReloading();
+    void showPackagesTab();
 
     // History tab
     void on_reloadHistoryButton_clicked();
@@ -48,6 +47,8 @@ private slots:
 
     // Tasks tab
     void on_applyButton_clicked();
+
+    void checkTasksCount();
 
 private:
     // Package info tabs

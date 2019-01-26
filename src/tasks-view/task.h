@@ -32,11 +32,11 @@ public:
     // Item properties
     QString name() const;
     QIcon icon() const;
-    Category category() const;
+    Category categoryType() const;
 
 
 private:
-    explicit Task(Category category);
+    explicit Task(Category categoryType);
 
     Task *m_parent = nullptr;
     QVector<Task *> m_children;

@@ -127,6 +127,16 @@ void MainWindow::selectFirstPackage()
     setStatusBarMessage("Loading installed packages");
 }
 
+void MainWindow::enableReloading()
+{
+    ui->reloadButton->setEnabled(true);
+}
+
+void MainWindow::showPackagesTab()
+{
+    ui->tabWidget->setCurrentIndex(0);
+}
+
 void MainWindow::on_packageTabsWidget_currentChanged(int index)
 {
     const Package *package = ui->packagesView->currentPackage();
@@ -214,36 +224,9 @@ void MainWindow::on_browserButton_clicked()
     QDesktopServices::openUrl(url);
 }
 
-void MainWindow::checkTasksCount()
-{
-    // Count tasks
-    int tasksCount = 0;
-    foreach (Task *category, ui->tasksView->model()->categories())
-        tasksCount += category->children().size();
-
-    // Show count on tab
-    if (tasksCount == 0) {
-        ui->tabWidget->setTabText(2, "Tasks");
-        ui->applyButton->setEnabled(false);
-    } else {
-        ui->tabWidget->setTabText(2, "Tasks (" + QString::number(tasksCount) + ")");
-        ui->applyButton->setEnabled(true);
-    }
-}
-
 void MainWindow::setStatusBarMessage(const QString &text)
 {
     statusBar()->showMessage(text);
-}
-
-void MainWindow::showPackagesTab()
-{
-    ui->tabWidget->setCurrentIndex(0);
-}
-
-void MainWindow::enableReloading()
-{
-    ui->reloadButton->setEnabled(true);
 }
 
 void MainWindow::loadPackageInfo(const Package *package)
@@ -428,4 +411,21 @@ void MainWindow::on_applyButton_clicked()
     ui->tabWidget->setCurrentIndex(3);
     ui->tasksView->model()->removeAllTasks();
     ui->reloadButton->setEnabled(false);
+}
+
+void MainWindow::checkTasksCount()
+{
+    // Count tasks
+    int tasksCount = 0;
+    foreach (Task *category, ui->tasksView->model()->categories())
+        tasksCount += category->children().size();
+
+    // Show count on tab
+    if (tasksCount == 0) {
+        ui->tabWidget->setTabText(2, "Tasks");
+        ui->applyButton->setEnabled(false);
+    } else {
+        ui->tabWidget->setTabText(2, "Tasks (" + QString::number(tasksCount) + ")");
+        ui->applyButton->setEnabled(true);
+    }
 }

@@ -48,14 +48,14 @@ void TasksView::hideCategory(Task::Category category)
 void TasksView::removeCurrentTask()
 {
     Task *task = currentTask();
-    if (task->category() == Task::Null)
+    if (task->categoryType() == Task::Null)
         model()->removeTask(task);
 }
 
 void TasksView::openCurrentTask()
 {
     Task *task = currentTask();
-    if (task->category() == Task::Null)
+    if (task->categoryType() == Task::Null)
         emit taskOpened(task->name());
 }
 
@@ -66,7 +66,7 @@ void TasksView::contextMenuEvent(QContextMenuEvent *event)
         return;
 
     // Do not show context menu for categories
-    if (task->category() != Task::Null)
+    if (task->categoryType() != Task::Null)
         return;
 
     m_menu->exec(event->globalPos());
