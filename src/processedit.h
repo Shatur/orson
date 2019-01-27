@@ -1,9 +1,9 @@
 #ifndef PROCESSEDIT_H
 #define PROCESSEDIT_H
 
-#include <QPlainTextEdit>
+#include <QTextEdit>
 
-class ProcessEdit : public QPlainTextEdit
+class ProcessEdit : public QTextEdit
 {
     Q_OBJECT
 
@@ -15,8 +15,8 @@ public slots:
 
 private:
     QString getCurrentProcessInfo();
+    QStringList formatProcessData(QString text);
     void replaceLastLine(const QString &line);
-
 };
 
 #endif // PROCESSEDIT_H

@@ -4,24 +4,20 @@
 #include <QRegularExpression>
 
 ProcessEdit::ProcessEdit(QWidget *parent) :
-    QPlainTextEdit(parent)
+    QTextEdit(parent)
 {
 }
 
 void ProcessEdit::addProcessData(const QString &text)
 {
     // Check every new line for progress info
-    QString processInfo = getCurrentProcessInfo();
-    foreach (const QString &line, text.split(QRegularExpression("\n|\r"), QString::SkipEmptyParts)) {
+    foreach (const QString &line, formatProcessData(text)) {
+        const QString processInfo = getCurrentProcessInfo();
         // Check if it the same task with other percentage
-        if (!processInfo.isEmpty() && line.contains(processInfo)) {
+        if (!processInfo.isEmpty() && line.contains(processInfo))
             replaceLastLine(line);
-        } else {
-            appendPlainText(line);
-
-            // Get new info about current task from last line
-            processInfo = getCurrentProcessInfo();
-        }
+        else
+            append(line);
     }
 }
 
@@ -41,6 +37,23 @@ QString ProcessEdit::getCurrentProcessInfo()
         return QString();
 
     return cursor.selectedText().mid(firstIndex, lastIndex - firstIndex);
+}
+
+QStringList ProcessEdit::formatProcessData(QString text)
+{
+    // Parse ANSI color codes
+    text.replace("\r\n\u001B[0m", "\u001B[0m\r\n"); // Swap to display colors correctly
+    text.replace("\u001B[1;34m::", R"(<span style="color: DodgerBlue">::</span>)");
+    text.replace("\u001B[1;33m", R"(<span style="font-weight: bold; color: DarkOrange">)");
+    text.replace("\u001B[0;1m", R"(<span style="font-weight: bold">)");
+    text.replace("\u001B[1;31m", R"(<span style="font-weight: bold; color: Red">)");
+    text.replace("\u001B[0m", "</span>");
+
+    QStringList lines = text.split(QRegularExpression("\r\n|\r"));
+    if (lines.last().isEmpty())
+        lines.removeLast();
+
+    return lines;
 }
 
 void ProcessEdit::replaceLastLine(const QString &line)

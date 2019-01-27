@@ -1446,7 +1446,7 @@
   </customwidget>
   <customwidget>
    <class>ProcessEdit</class>
-   <extends>QPlainTextEdit</extends>
+   <extends>QTextEdit</extends>
    <header>src/processedit.h</header>
   </customwidget>
  </customwidgets>
