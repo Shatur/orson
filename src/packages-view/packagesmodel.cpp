@@ -350,35 +350,8 @@ void PackagesModel::loadRepoPackages()
     foreach (const QString &repo, settings.repositories())
         loadSyncDatabase(repo);
 
-    // Load information from packages installed from AUR
-//    QNetworkAccessManager manager;
-//    for (Package *package : m_repoPackages) {
-//        if (!package->isInstalled() || package->repo() != "local")
-//            continue;
-
-//        if (m_loadingDatabases.isCanceled())
-//            return;
-
-//        const QString packageName = package->name();
-//        emit databaseStatusChanged("Loading information from AUR for " + packageName);
-
-//        QUrl url(AUR_API_URL);
-//        url.setQuery("v=5&type=info&arg[]=" + packageName);
-
-//        QScopedPointer reply(manager.get(QNetworkRequest(url)));
-//        QEventLoop waitForReply;
-//        connect(reply.get(), &QNetworkReply::finished, &waitForReply, &QEventLoop::quit);
-//        waitForReply.exec();
-
-//        if (reply->error() != QNetworkReply::NoError) {
-//            qDebug() << reply->errorString();
-//            break;
-//        }
-
-//        const QJsonObject jsonReply = QJsonDocument::fromJson(reply->readAll()).object();
-//        if (jsonReply.value("resultcount").toInt() != 0)
-//            package->setAurData(jsonReply.value("results").toArray().at(0).toObject());
-//    }
+    // Load additional information for packages installed from AUR
+//    loadAurDatabase();
 
     emit databaseStatusChanged(QString::number(m_repoPackages.size())
                                + " packages avaible in official repositories, "
@@ -453,6 +426,41 @@ void PackagesModel::loadSyncDatabase(const QString &databaseName)
         cache = cache->next;
     }
     endInsertRows();
+}
+
+void PackagesModel::loadAurDatabase()
+{
+    emit databaseStatusChanged("Loading information from AUR for");
+    QNetworkAccessManager manager;
+    QUrl url(AUR_API_URL);
+
+    // Get local packages names for query
+    QString query = QStringLiteral("v=5&type=info");
+    foreach (Package *package, m_repoPackages) {
+        if (package->isInstalled() && package->repo() == "local")
+            query.append("&arg[]=" + package->name());
+    }
+    url.setQuery(query);
+
+    // Make API request
+    QScopedPointer reply(manager.get(QNetworkRequest(url)));
+    QEventLoop waitForReply;
+    connect(reply.get(), &QNetworkReply::finished, &waitForReply, &QEventLoop::quit);
+    waitForReply.exec();
+
+    if (reply->error() != QNetworkReply::NoError) {
+        qDebug() << reply->errorString();
+        return;
+    }
+
+    // Parse data and info for packages
+    const QJsonObject jsonReply = QJsonDocument::fromJson(reply->readAll()).object();
+    foreach (QJsonValue packageData, jsonReply.value("results").toArray()) {
+        for (Package *package : m_repoPackages) {
+            if (package->isInstalled() && package->name() == packageData["Name"].toString())
+                package->setAurData(packageData.toObject(), true);
+        }
+    }
 }
 
 template<typename T1, typename T2>

@@ -49,6 +49,7 @@ private:
     void loadRepoPackages();
     int loadLocalDatabase();
     void loadSyncDatabase(const QString &databaseName);
+    void loadAurDatabase();
 
     template<typename T>
     using Comparator = T (Package::*)() const;
