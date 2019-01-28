@@ -1,16 +1,16 @@
-#ifndef PACMAN_H
-#define PACMAN_H
+#ifndef TERMINAL_H
+#define TERMINAL_H
 
 #include "tasks-view/tasksmodel.h"
 
 #include <QProcess>
 
-class Pacman : public QObject
+class Terminal : public QObject
 {
     Q_OBJECT
 
 public:
-    Pacman();
+    Terminal();
 
     void setTasks(TasksModel *model);
     void start();
@@ -20,9 +20,9 @@ signals:
     void finished(int exitCode);
 
 private:
-    static QPair<QString, QStringList> getSuCommand();
-
-    QProcess m_process;
+    QPair<QString, QStringList> getTerminalProgram();
+    QProcess m_console;
+    QString m_commands;
 };
 
-#endif // PACMAN_H
+#endif // TERMINAL_H

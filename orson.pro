@@ -18,9 +18,8 @@ DEFINES += \
 SOURCES += \
     src/main.cpp \
     src/mainwindow.cpp \
+    src/terminal.cpp \
     src/pacmansettings.cpp \
-    src/pacman.cpp \
-    src/processedit.cpp \
     src/packages-view/depend.cpp \
     src/packages-view/package.cpp \
     src/packages-view/packagesmodel.cpp \
@@ -34,9 +33,8 @@ SOURCES += \
 
 HEADERS += \
     src/mainwindow.h \
+    src/terminal.h \
     src/pacmansettings.h \
-    src/pacman.h \
-    src/processedit.h \
     src/packages-view/depend.h \
     src/packages-view/package.h \
     src/packages-view/packagesmodel.h \

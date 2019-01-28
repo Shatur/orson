@@ -20,8 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->packagesView->model(), &PackagesModel::databaseStatusChanged, this, &MainWindow::setStatusBarMessage);
     connect(ui->packagesView->model(), &PackagesModel::firstPackageAvailable, this, &MainWindow::selectFirstPackage);
     connect(ui->packagesView->model(), &PackagesModel::databaseLoaded, this, &MainWindow::enableReloading);
-    connect(&m_pacman, &Pacman::dataAvailable, ui->processEdit, &ProcessEdit::addProcessData);
-    connect(&m_pacman, &Pacman::finished, this, &MainWindow::on_reloadButton_clicked);
+    connect(&m_pacman, &Terminal::finished, this, &MainWindow::on_reloadButton_clicked);
 
     // Select package when clicking on dependencies
     depsButtonGroup = new QButtonGroup(this);
@@ -408,7 +407,6 @@ void MainWindow::on_applyButton_clicked()
 {
     m_pacman.setTasks(ui->tasksView->model());
     m_pacman.start();
-    ui->tabWidget->setCurrentIndex(3);
     ui->tasksView->model()->removeAllTasks();
     ui->reloadButton->setEnabled(false);
 }

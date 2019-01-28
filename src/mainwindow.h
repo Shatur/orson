@@ -3,7 +3,7 @@
 
 #include "files-view/filesmodel.h"
 #include "packages-view/packagesmodel.h"
-#include "pacman.h"
+#include "terminal.h"
 
 #include <QMainWindow>
 #include <QButtonGroup>
@@ -63,7 +63,7 @@ private:
 
     Ui::MainWindow *ui;
     QButtonGroup *depsButtonGroup;
-    Pacman m_pacman;
+    Terminal m_pacman;
 
 };
 
