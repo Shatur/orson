@@ -30,7 +30,9 @@ private slots:
 
     void activateTray(QSystemTrayIcon::ActivationReason reason);
     void setStatusBarMessage(const QString &text);
-    void checkForUpdates();
+
+    void processLoadedDatabase();
+    void processTerminalStart();
 
     // Packages tab
     void on_searchModeComboBox_currentIndexChanged(int index);
@@ -42,7 +44,6 @@ private slots:
 
     void findDepend(QAbstractButton* button);
     void selectFirstPackage();
-    void enableReloading();
     void showPackagesTab();
 
     // History tab

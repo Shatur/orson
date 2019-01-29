@@ -23,6 +23,7 @@ public:
 
 signals:
     void dataAvailable(const QString &data);
+    void started();
     void finished(int exitCode);
 
 private:

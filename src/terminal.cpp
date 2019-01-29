@@ -15,8 +15,9 @@ Terminal::Terminal()
         emit dataAvailable(m_terminal.readAllStandardOutput());
     });
 
-    // Add finished signal
+    // Add finished and started signal
     connect(&m_terminal, qOverload<int>(&QProcess::finished), this, &Terminal::finished);
+    connect(&m_terminal, &QProcess::started, this, &Terminal::started);
 }
 
 void Terminal::setTasks(TasksModel *model)

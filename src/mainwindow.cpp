@@ -21,9 +21,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->tasksView->model(), &TasksModel::taskRemoved, this, &MainWindow::addTasks);
     connect(ui->packagesView->model(), &PackagesModel::databaseStatusChanged, this, &MainWindow::setStatusBarMessage);
     connect(ui->packagesView->model(), &PackagesModel::firstPackageAvailable, this, &MainWindow::selectFirstPackage);
-    connect(ui->packagesView->model(), &PackagesModel::databaseLoaded, this, &MainWindow::enableReloading);
-    connect(ui->packagesView->model(), &PackagesModel::databaseLoaded, this, &MainWindow::checkForUpdates);
+    connect(ui->packagesView->model(), &PackagesModel::databaseLoaded, this, &MainWindow::processLoadedDatabase);
     connect(&m_terminal, &Terminal::finished, this, &MainWindow::on_reloadButton_clicked);
+    connect(&m_terminal, &Terminal::started, this, &MainWindow::processTerminalStart);
 
     // Select package when clicking on dependencies
     depsButtonGroup = new QButtonGroup(this);
@@ -149,11 +149,6 @@ void MainWindow::selectFirstPackage()
     setStatusBarMessage("Loading installed packages");
 }
 
-void MainWindow::enableReloading()
-{
-    ui->reloadButton->setEnabled(true);
-}
-
 void MainWindow::showPackagesTab()
 {
     ui->tabWidget->setCurrentIndex(0);
@@ -262,7 +257,6 @@ void MainWindow::on_installLocalAction_triggered()
         return;
 
     m_terminal.installPackage(dialog.selectedFiles().at(0));
-    m_trayIcon->setIcon(QIcon::fromTheme("state-sync"));
 }
 
 void MainWindow::on_installLocalDependAction_triggered()
@@ -276,7 +270,6 @@ void MainWindow::on_installLocalDependAction_triggered()
         return;
 
     m_terminal.installPackage(dialog.selectedFiles().at(0), true);
-    m_trayIcon->setIcon(QIcon::fromTheme("state-sync"));
 }
 
 void MainWindow::activateTray(QSystemTrayIcon::ActivationReason reason)
@@ -297,7 +290,7 @@ void MainWindow::setStatusBarMessage(const QString &text)
     statusBar()->showMessage(text);
 }
 
-void MainWindow::checkForUpdates()
+void MainWindow::processLoadedDatabase()
 {
     QString notifyApp;
     QStringList notifyArguments;
@@ -319,6 +312,14 @@ void MainWindow::checkForUpdates()
     }
 
     QProcess::execute(notifyApp, notifyArguments);
+
+    ui->reloadButton->setEnabled(true);
+}
+
+void MainWindow::processTerminalStart()
+{
+    m_trayIcon->setIcon(QIcon::fromTheme("state-sync"));
+    ui->reloadButton->setEnabled(false);
 }
 
 void MainWindow::loadPackageInfo(const Package *package)
@@ -499,9 +500,7 @@ void MainWindow::searchHistory(bool backward)
 void MainWindow::on_applyButton_clicked()
 {
     m_terminal.executeTasks();
-    m_trayIcon->setIcon(QIcon::fromTheme("state-sync"));
     ui->tasksView->model()->removeAllTasks();
-    ui->reloadButton->setEnabled(false);
 }
 
 void MainWindow::on_noConfirmCheckBox_toggled(bool checked)
