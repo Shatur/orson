@@ -713,7 +713,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>684</width>
-                 <height>341</height>
+                 <height>311</height>
                 </rect>
                </property>
                <layout class="QFormLayout" name="depsContentLayout">
@@ -1025,6 +1025,40 @@
    </layout>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>740</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="installLocalAction"/>
+    <addaction name="installLocalDependAction"/>
+   </widget>
+   <addaction name="menuFile"/>
+  </widget>
+  <action name="installLocalAction">
+   <property name="icon">
+    <iconset theme="package-x-generic"/>
+   </property>
+   <property name="text">
+    <string>Install from local package</string>
+   </property>
+  </action>
+  <action name="installLocalDependAction">
+   <property name="icon">
+    <iconset theme="package-x-generic"/>
+   </property>
+   <property name="text">
+    <string>Install from local package as depend</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>

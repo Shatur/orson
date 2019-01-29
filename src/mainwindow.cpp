@@ -7,6 +7,7 @@
 #include <QStandardItemModel>
 #include <QDesktopServices>
 #include <QMessageBox>
+#include <QFileDialog>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -248,6 +249,20 @@ void MainWindow::on_browserButton_clicked()
         url = "https://www.archlinux.org/packages/" + package->repo() + "/" + package->arch() + "/" + package->name();
 
     QDesktopServices::openUrl(url);
+}
+
+void MainWindow::on_installLocalAction_triggered()
+{
+    const QString fileName = QFileDialog::getOpenFileName(this, tr("Open Package"), "/home", tr("Pacman package (*.pkg.tar.xz);;All files"));
+    m_terminal.installPackage(fileName);
+    m_trayIcon->setIcon(QIcon::fromTheme("state-sync"));
+}
+
+void MainWindow::on_installLocalDependAction_triggered()
+{
+    const QString fileName = QFileDialog::getOpenFileName(this, tr("Open Package"), "/home", tr("Pacman package (*.pkg.tar.xz);;All files"));
+    m_terminal.installPackage(fileName, true);
+    m_trayIcon->setIcon(QIcon::fromTheme("state-sync"));
 }
 
 void MainWindow::activateTray(QSystemTrayIcon::ActivationReason reason)

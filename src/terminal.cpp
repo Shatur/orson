@@ -81,6 +81,18 @@ void Terminal::executeTasks()
     m_terminal.start();
 }
 
+void Terminal::installPackage(const QString &name, bool asDepend)
+{
+    QString command = "sudo pacman -U " + name;
+    if (asDepend)
+        command += " --asdepend";
+
+    auto [terminal, terminalArguments] = getTerminalProgram();
+    m_terminal.setProgram(terminal);
+    m_terminal.setArguments(terminalArguments << command + waitForInput);
+    m_terminal.start();
+}
+
 void Terminal::updateDatabase()
 {
     const QString command = QStringLiteral("sudo pacman -Sy");

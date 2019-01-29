@@ -14,6 +14,7 @@ public:
 
     void setTasks(TasksModel *model);
     void executeTasks();
+    void installPackage(const QString &name, bool asDepend = false);
     void updateDatabase();
     QString commands() const;
 

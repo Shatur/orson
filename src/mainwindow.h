@@ -25,6 +25,8 @@ public:
 private slots:
     void on_tabWidget_currentChanged(int index);
     void on_browserButton_clicked();
+    void on_installLocalAction_triggered();
+    void on_installLocalDependAction_triggered();
 
     void activateTray(QSystemTrayIcon::ActivationReason reason);
     void setStatusBarMessage(const QString &text);
