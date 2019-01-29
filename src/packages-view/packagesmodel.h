@@ -35,6 +35,7 @@ public:
 
     // Other
     QVector<Package *> packages() const;
+    QVector<Package *> outdatedPackages() const;
     void reloadRepoPackages();
     void aurSearch(const QString &text, const QString &queryType);
     void loadMoreAurInfo(Package *package);
@@ -65,10 +66,11 @@ private:
     alpm_errno_t m_error = ALPM_ERR_OK;
 
     Mode m_mode = Repo;
+    int m_updates = 0;
     QVector<Package *> m_repoPackages;
     QVector<Package *> m_aurPackages;
+    QVector<Package *> m_outdatedPackages;
     QFuture<void> m_loadingDatabases;
-
     QNetworkAccessManager m_manager;
 };
 

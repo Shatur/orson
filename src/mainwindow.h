@@ -28,6 +28,7 @@ private slots:
 
     void activateTray(QSystemTrayIcon::ActivationReason reason);
     void setStatusBarMessage(const QString &text);
+    void checkForUpdates();
 
     // Packages tab
     void on_searchModeComboBox_currentIndexChanged(int index);

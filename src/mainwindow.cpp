@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->packagesView->model(), &PackagesModel::databaseStatusChanged, this, &MainWindow::setStatusBarMessage);
     connect(ui->packagesView->model(), &PackagesModel::firstPackageAvailable, this, &MainWindow::selectFirstPackage);
     connect(ui->packagesView->model(), &PackagesModel::databaseLoaded, this, &MainWindow::enableReloading);
+    connect(ui->packagesView->model(), &PackagesModel::databaseLoaded, this, &MainWindow::checkForUpdates);
     connect(&m_terminal, &Terminal::finished, this, &MainWindow::on_reloadButton_clicked);
 
     // Select package when clicking on dependencies
@@ -39,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_trayMenu->addAction(QIcon::fromTheme("application-exit"), tr("Exit"), SingleApplication::instance(), &SingleApplication::quit);
 
     // System tray icon
-    m_trayIcon = new QSystemTrayIcon(QIcon::fromTheme("update-none"), this);
+    m_trayIcon = new QSystemTrayIcon(QIcon::fromTheme("state-sync"), this);
     m_trayIcon->setContextMenu(m_trayMenu);
     m_trayIcon->show();
     connect(m_trayIcon, &QSystemTrayIcon::activated, this, &MainWindow::activateTray);
@@ -267,6 +268,30 @@ void MainWindow::setStatusBarMessage(const QString &text)
     statusBar()->showMessage(text);
 }
 
+void MainWindow::checkForUpdates()
+{
+    QString notifyApp;
+    QStringList notifyArguments;
+    if (QFileInfo::exists("/usr/bin/kdialog")) {
+        notifyApp = "kdialog";
+        notifyArguments << "--icon" << windowIcon().name() << "--title" << "Orson" << "--passivepopup";
+    } else {
+        notifyApp = "notify-send";
+        notifyArguments << "-a" << "Orson" << "-i" << windowIcon().name() << "Orson";
+    }
+
+    // Title
+    if (ui->packagesView->model()->outdatedPackages().isEmpty()) {
+        notifyArguments << "No updates available";
+        m_trayIcon->setIcon(QIcon::fromTheme("update-none"));
+    } else {
+        notifyArguments << QString::number(ui->packagesView->model()->outdatedPackages().size()) + " updates available";
+        m_trayIcon->setIcon(QIcon::fromTheme("update-high"));
+    }
+
+    QProcess::execute(notifyApp, notifyArguments);
+}
+
 void MainWindow::loadPackageInfo(const Package *package)
 {
     // Licenses
@@ -445,6 +470,7 @@ void MainWindow::searchHistory(bool backward)
 void MainWindow::on_applyButton_clicked()
 {
     m_terminal.executeTasks();
+    m_trayIcon->setIcon(QIcon::fromTheme("state-sync"));
     ui->tasksView->model()->removeAllTasks();
     ui->reloadButton->setEnabled(false);
 }

@@ -250,6 +250,11 @@ QVector<Package *> PackagesModel::packages() const
     qFatal("Unknown mode");
 }
 
+QVector<Package *> PackagesModel::outdatedPackages() const
+{
+    return m_outdatedPackages;
+}
+
 void PackagesModel::reloadRepoPackages()
 {
     m_loadingDatabases = QtConcurrent::run(this, &PackagesModel::loadRepoPackages);
@@ -363,10 +368,19 @@ void PackagesModel::loadRepoPackages()
     // Load additional information for packages installed from AUR
 //    loadAurDatabase();
 
+    // Check for updates
+    emit databaseStatusChanged("Checking for updates");
+    foreach (Package *package, m_repoPackages) {
+        if (!package->availableUpdate().isEmpty())
+            m_outdatedPackages.append(package);
+    }
+
     emit databaseStatusChanged(QString::number(m_repoPackages.size())
                                + " packages avaible in official repositories, "
                                + QString::number(installedPackages)
-                               + " packages installed");
+                               + " packages installed, "
+                               + QString::number(m_outdatedPackages.size())
+                               + " updates available");
     emit databaseLoaded();
 }
 
