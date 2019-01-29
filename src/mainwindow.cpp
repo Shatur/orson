@@ -17,8 +17,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->packagesView->setTaskView(ui->tasksView);
 
     connect(ui->tasksView, &TasksView::taskOpened, this, &MainWindow::showPackagesTab);
-    connect(ui->tasksView->model(), &TasksModel::taskAdded, this, &MainWindow::addTasks);
-    connect(ui->tasksView->model(), &TasksModel::taskRemoved, this, &MainWindow::addTasks);
+    connect(ui->tasksView->model(), &TasksModel::taskAdded, this, &MainWindow::processAddingTask);
+    connect(ui->tasksView->model(), &TasksModel::taskRemoved, this, &MainWindow::processAddingTask);
     connect(ui->packagesView->model(), &PackagesModel::databaseStatusChanged, this, &MainWindow::setStatusBarMessage);
     connect(ui->packagesView->model(), &PackagesModel::firstPackageAvailable, this, &MainWindow::selectFirstPackage);
     connect(ui->packagesView->model(), &PackagesModel::databaseLoaded, this, &MainWindow::processLoadedDatabase);
@@ -52,179 +52,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_searchModeComboBox_currentIndexChanged(int index)
-{
-    const auto mode = static_cast<PackagesModel::Mode>(index);
-
-    // Disable search by description for AUR
-    if (mode == PackagesModel::AUR) {
-        qobject_cast<QStandardItemModel *>(ui->searchByComboBox->model())->item(3)->setEnabled(false);
-        if (ui->searchByComboBox->currentIndex() == 3)
-            ui->searchByComboBox->setCurrentIndex(0);
-    } else {
-        qobject_cast<QStandardItemModel *>(ui->searchByComboBox->model())->item(3)->setEnabled(true);
-    }
-
-    ui->packagesView->model()->setMode(mode);
-    on_searchPackagesEdit_returnPressed(); // Search packages
-}
-
-void MainWindow::on_searchPackagesEdit_returnPressed()
-{
-    const auto filterType = static_cast<PackagesView::FilterType>(ui->searchByComboBox->currentIndex());
-    ui->packagesView->filter(ui->searchPackagesEdit->text(), filterType);
-}
-
-void MainWindow::on_packagesView_currentPackageChanged(Package *package)
-{
-    // Reset loaded tabs information
-    ui->infoTab->setProperty("loaded", false);
-    ui->depsTab->setProperty("loaded", false);
-    ui->filesTab->setProperty("loaded", false);
-
-    // Load package info header
-    ui->iconLabel->setPixmap(package->icon().pixmap(64, 64));
-    ui->nameLabel->setText(package->name());
-    ui->descriptionLabel->setText(package->description());
-
-    // Show available update in header
-    const QString availableUpdate = package->availableUpdate();
-    if (availableUpdate.isEmpty())
-        ui->versionLabel->setText(package->version());
-    else
-        ui->versionLabel->setText(R"(<span style="color:red">)" + package->version() + "</span> ⇒ " + availableUpdate);
-
-    // Disable the tab with files for uninstalled packages
-    if (package->isInstalled())
-        ui->packageTabsWidget->setTabEnabled(2, true);
-    else
-        ui->packageTabsWidget->setTabEnabled(2, false);
-
-    // Disable "Open in browser" button for local packages
-    if (package->repo() == "local")
-        ui->browserButton->setDisabled(true);
-    else
-        ui->browserButton->setDisabled(false);
-
-    // Reload opened tab
-    switch (ui->packageTabsWidget->currentIndex()) {
-    case 0:
-        loadPackageInfo(package);
-        return;
-    case 1:
-        loadPackageDeps(package);
-        return;
-    case 2:
-        if (package->isInstalled())
-            loadPackageFiles(package);
-        else
-            ui->packageTabsWidget->setCurrentIndex(0);
-        return;
-    default:
-        return;
-    }
-}
-
-void MainWindow::findDepend(QAbstractButton *button)
-{
-    // Clear filter
-    ui->searchPackagesEdit->clear();
-    if (ui->searchModeComboBox->currentIndex() != PackagesModel::Repo)
-        ui->searchModeComboBox->setCurrentIndex(PackagesModel::Repo);
-    else
-        on_searchPackagesEdit_returnPressed();
-
-    // Search package in repo first
-    const bool found = ui->packagesView->find(button->toolTip());
-    if (!found) {
-        // Search in AUR
-        ui->searchPackagesEdit->setText(button->toolTip());
-        ui->searchModeComboBox->setCurrentIndex(PackagesModel::AUR);
-    }
-}
-
-void MainWindow::selectFirstPackage()
-{
-    ui->packagesView->setCurrentIndex(ui->packagesView->model()->index(0, 0));
-    setStatusBarMessage("Loading installed packages");
-}
-
-void MainWindow::showPackagesTab()
-{
-    ui->tabWidget->setCurrentIndex(0);
-}
-
-void MainWindow::on_packageTabsWidget_currentChanged(int index)
-{
-    const Package *package = ui->packagesView->currentPackage();
-
-    switch (index) {
-    case 0:
-        if (!ui->infoTab->property("loaded").toBool())
-            loadPackageInfo(package);
-        return;
-    case 1:
-        if (!ui->depsTab->property("loaded").toBool())
-            loadPackageDeps(package);
-        return;
-    case 2:
-        if (!ui->filesTab->property("loaded").toBool())
-            loadPackageFiles(package);
-        return;
-    default:
-        return;
-    }
-}
-
-void MainWindow::on_updateButton_clicked()
-{
-    m_terminal.updateDatabase();
-}
-
-void MainWindow::on_reloadButton_clicked()
-{
-    ui->reloadButton->setEnabled(false);
-    ui->packagesView->model()->reloadRepoPackages();
-}
-
-void MainWindow::on_reloadHistoryButton_clicked()
-{
-    const PacmanSettings pacmanSettings;
-    QFile historyFile(pacmanSettings.logFile());
-
-    if (!historyFile.exists()) {
-        QMessageBox errorBox(QMessageBox::Critical, "Error", "File " + pacmanSettings.logFile() + " does not exist");
-        errorBox.exec();
-        return;
-    }
-
-    if (!historyFile.open(QIODevice::ReadOnly)) {
-        QMessageBox errorBox(QMessageBox::Critical, "Error", "Unable to read " + pacmanSettings.logFile());
-        errorBox.exec();
-        return;
-    }
-
-    ui->historyEdit->setPlainText(historyFile.readAll());
-    ui->historyEdit->moveCursor(QTextCursor::End);
-}
-
-void MainWindow::on_findNextButton_clicked()
-{
-    searchHistory();
-}
-
-void MainWindow::on_findPreviousButton_clicked()
-{
-    searchHistory(true);
-}
-
-void MainWindow::on_openHistoryFolderButton_clicked()
-{
-    const PacmanSettings pacmanSettings;
-    const QFileInfo logFile = pacmanSettings.logFile();
-    QDesktopServices::openUrl(logFile.dir().path());
-}
-
 void MainWindow::on_tabWidget_currentChanged(int index)
 {
     // Load history dynamically
@@ -232,18 +59,6 @@ void MainWindow::on_tabWidget_currentChanged(int index)
         on_reloadHistoryButton_clicked();
         ui->historyEdit->setProperty("loaded", true);
     }
-}
-
-void MainWindow::on_browserButton_clicked()
-{
-    QUrl url;
-    const Package *package = ui->packagesView->currentPackage();
-    if (package->repo() == "aur")
-        url = "https://aur.archlinux.org/packages/" + package->name();
-    else
-        url = "https://www.archlinux.org/packages/" + package->repo() + "/" + package->arch() + "/" + package->name();
-
-    QDesktopServices::openUrl(url);
 }
 
 void MainWindow::on_installLocalAction_triggered()
@@ -320,6 +135,224 @@ void MainWindow::processTerminalStart()
 {
     m_trayIcon->setIcon(QIcon::fromTheme("state-sync"));
     ui->reloadButton->setEnabled(false);
+}
+
+void MainWindow::on_searchModeComboBox_currentIndexChanged(int index)
+{
+    const auto mode = static_cast<PackagesModel::Mode>(index);
+
+    // Disable search by description for AUR
+    if (mode == PackagesModel::AUR) {
+        qobject_cast<QStandardItemModel *>(ui->searchByComboBox->model())->item(3)->setEnabled(false);
+        if (ui->searchByComboBox->currentIndex() == 3)
+            ui->searchByComboBox->setCurrentIndex(0);
+    } else {
+        qobject_cast<QStandardItemModel *>(ui->searchByComboBox->model())->item(3)->setEnabled(true);
+    }
+
+    ui->packagesView->model()->setMode(mode);
+    on_searchPackagesEdit_returnPressed(); // Search packages
+}
+
+void MainWindow::on_searchPackagesEdit_returnPressed()
+{
+    const auto filterType = static_cast<PackagesView::FilterType>(ui->searchByComboBox->currentIndex());
+    ui->packagesView->filter(ui->searchPackagesEdit->text(), filterType);
+}
+
+void MainWindow::on_packagesView_currentPackageChanged(Package *package)
+{
+    // Reset loaded tabs information
+    ui->infoTab->setProperty("loaded", false);
+    ui->depsTab->setProperty("loaded", false);
+    ui->filesTab->setProperty("loaded", false);
+
+    // Load package info header
+    ui->iconLabel->setPixmap(package->icon().pixmap(64, 64));
+    ui->nameLabel->setText(package->name());
+    ui->descriptionLabel->setText(package->description());
+
+    // Show available update in header
+    const QString availableUpdate = package->availableUpdate();
+    if (availableUpdate.isEmpty())
+        ui->versionLabel->setText(package->version());
+    else
+        ui->versionLabel->setText(R"(<span style="color:red">)" + package->version() + "</span> ⇒ " + availableUpdate);
+
+    // Disable the tab with files for uninstalled packages
+    if (package->isInstalled())
+        ui->packageTabsWidget->setTabEnabled(2, true);
+    else
+        ui->packageTabsWidget->setTabEnabled(2, false);
+
+    // Disable "Open in browser" button for local packages
+    if (package->repo() == "local")
+        ui->browserButton->setDisabled(true);
+    else
+        ui->browserButton->setDisabled(false);
+
+    // Reload opened tab
+    switch (ui->packageTabsWidget->currentIndex()) {
+    case 0:
+        loadPackageInfo(package);
+        return;
+    case 1:
+        loadPackageDeps(package);
+        return;
+    case 2:
+        if (package->isInstalled())
+            loadPackageFiles(package);
+        else
+            ui->packageTabsWidget->setCurrentIndex(0);
+        return;
+    default:
+        return;
+    }
+}
+
+void MainWindow::on_packageTabsWidget_currentChanged(int index)
+{
+    const Package *package = ui->packagesView->currentPackage();
+
+    switch (index) {
+    case 0:
+        if (!ui->infoTab->property("loaded").toBool())
+            loadPackageInfo(package);
+        return;
+    case 1:
+        if (!ui->depsTab->property("loaded").toBool())
+            loadPackageDeps(package);
+        return;
+    case 2:
+        if (!ui->filesTab->property("loaded").toBool())
+            loadPackageFiles(package);
+        return;
+    default:
+        return;
+    }
+}
+
+void MainWindow::on_browserButton_clicked()
+{
+    QUrl url;
+    const Package *package = ui->packagesView->currentPackage();
+    if (package->repo() == "aur")
+        url = "https://aur.archlinux.org/packages/" + package->name();
+    else
+        url = "https://www.archlinux.org/packages/" + package->repo() + "/" + package->arch() + "/" + package->name();
+
+    QDesktopServices::openUrl(url);
+}
+
+void MainWindow::on_updateButton_clicked()
+{
+    m_terminal.updateDatabase();
+}
+
+void MainWindow::on_reloadButton_clicked()
+{
+    ui->reloadButton->setEnabled(false);
+    ui->packagesView->model()->reloadRepoPackages();
+}
+
+void MainWindow::findDepend(QAbstractButton *button)
+{
+    // Clear filter
+    ui->searchPackagesEdit->clear();
+    if (ui->searchModeComboBox->currentIndex() != PackagesModel::Repo)
+        ui->searchModeComboBox->setCurrentIndex(PackagesModel::Repo);
+    else
+        on_searchPackagesEdit_returnPressed();
+
+    // Search package in repo first
+    const bool found = ui->packagesView->find(button->toolTip());
+    if (!found) {
+        // Search in AUR
+        ui->searchPackagesEdit->setText(button->toolTip());
+        ui->searchModeComboBox->setCurrentIndex(PackagesModel::AUR);
+    }
+}
+
+void MainWindow::selectFirstPackage()
+{
+    ui->packagesView->setCurrentIndex(ui->packagesView->model()->index(0, 0));
+    setStatusBarMessage("Loading installed packages");
+}
+
+void MainWindow::showPackagesTab()
+{
+    ui->tabWidget->setCurrentIndex(0);
+}
+
+void MainWindow::on_reloadHistoryButton_clicked()
+{
+    const PacmanSettings pacmanSettings;
+    QFile historyFile(pacmanSettings.logFile());
+
+    if (!historyFile.exists()) {
+        QMessageBox errorBox(QMessageBox::Critical, "Error", "File " + pacmanSettings.logFile() + " does not exist");
+        errorBox.exec();
+        return;
+    }
+
+    if (!historyFile.open(QIODevice::ReadOnly)) {
+        QMessageBox errorBox(QMessageBox::Critical, "Error", "Unable to read " + pacmanSettings.logFile());
+        errorBox.exec();
+        return;
+    }
+
+    ui->historyEdit->setPlainText(historyFile.readAll());
+    ui->historyEdit->moveCursor(QTextCursor::End);
+}
+
+void MainWindow::on_findNextButton_clicked()
+{
+    searchHistory();
+}
+
+void MainWindow::on_findPreviousButton_clicked()
+{
+    searchHistory(true);
+}
+
+void MainWindow::on_openHistoryFolderButton_clicked()
+{
+    const PacmanSettings pacmanSettings;
+    const QFileInfo logFile = pacmanSettings.logFile();
+    QDesktopServices::openUrl(logFile.dir().path());
+}
+
+void MainWindow::on_applyButton_clicked()
+{
+    m_terminal.executeTasks();
+    ui->tasksView->model()->removeAllTasks();
+}
+
+void MainWindow::on_noConfirmCheckBox_toggled(bool checked)
+{
+    m_terminal.setNoConfirm(checked);
+    m_terminal.setTasks(ui->tasksView->model());
+    ui->commandsEdit->setPlainText(m_terminal.commands());
+}
+
+void MainWindow::processAddingTask()
+{
+    // Count tasks
+    int tasksCount = 0;
+    foreach (Task *category, ui->tasksView->model()->categories())
+        tasksCount += category->children().size();
+
+    // Show count on tab
+    if (tasksCount == 0) {
+        ui->tabWidget->setTabText(2, "Tasks");
+        ui->applyButton->setEnabled(false);
+    } else {
+        ui->tabWidget->setTabText(2, "Tasks (" + QString::number(tasksCount) + ")");
+        ui->applyButton->setEnabled(true);
+    }
+
+    m_terminal.setTasks(ui->tasksView->model());
+    ui->commandsEdit->setPlainText(m_terminal.commands());
 }
 
 void MainWindow::loadPackageInfo(const Package *package)
@@ -495,37 +528,4 @@ void MainWindow::searchHistory(bool backward)
         ui->searchHistoryEdit->setStyleSheet("");
     else
         ui->searchHistoryEdit->setStyleSheet("color:red");
-}
-
-void MainWindow::on_applyButton_clicked()
-{
-    m_terminal.executeTasks();
-    ui->tasksView->model()->removeAllTasks();
-}
-
-void MainWindow::on_noConfirmCheckBox_toggled(bool checked)
-{
-    m_terminal.setNoConfirm(checked);
-    m_terminal.setTasks(ui->tasksView->model());
-    ui->commandsEdit->setPlainText(m_terminal.commands());
-}
-
-void MainWindow::addTasks()
-{
-    // Count tasks
-    int tasksCount = 0;
-    foreach (Task *category, ui->tasksView->model()->categories())
-        tasksCount += category->children().size();
-
-    // Show count on tab
-    if (tasksCount == 0) {
-        ui->tabWidget->setTabText(2, "Tasks");
-        ui->applyButton->setEnabled(false);
-    } else {
-        ui->tabWidget->setTabText(2, "Tasks (" + QString::number(tasksCount) + ")");
-        ui->applyButton->setEnabled(true);
-    }
-
-    m_terminal.setTasks(ui->tasksView->model());
-    ui->commandsEdit->setPlainText(m_terminal.commands());
 }

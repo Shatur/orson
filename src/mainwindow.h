@@ -23,14 +23,13 @@ public:
     ~MainWindow();
 
 private slots:
+    // General
     void on_tabWidget_currentChanged(int index);
-    void on_browserButton_clicked();
     void on_installLocalAction_triggered();
     void on_installLocalDependAction_triggered();
 
     void activateTray(QSystemTrayIcon::ActivationReason reason);
     void setStatusBarMessage(const QString &text);
-
     void processLoadedDatabase();
     void processTerminalStart();
 
@@ -39,6 +38,7 @@ private slots:
     void on_searchPackagesEdit_returnPressed();
     void on_packagesView_currentPackageChanged(Package *package);
     void on_packageTabsWidget_currentChanged(int index);
+    void on_browserButton_clicked();
     void on_updateButton_clicked();
     void on_reloadButton_clicked();
 
@@ -56,7 +56,7 @@ private slots:
     void on_applyButton_clicked();
     void on_noConfirmCheckBox_toggled(bool checked);
 
-    void addTasks();
+    void processAddingTask();
 
 private:
     // Package info tabs
