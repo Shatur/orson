@@ -165,6 +165,11 @@ void MainWindow::on_packageTabsWidget_currentChanged(int index)
     }
 }
 
+void MainWindow::on_updateButton_clicked()
+{
+    m_terminal.updateDatabase();
+}
+
 void MainWindow::on_reloadButton_clicked()
 {
     ui->reloadButton->setEnabled(false);

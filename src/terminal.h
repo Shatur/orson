@@ -14,6 +14,7 @@ public:
 
     void setTasks(TasksModel *model);
     void executeTasks();
+    void updateDatabase();
     QString commands() const;
 
     bool isNoConfirm() const;
@@ -25,7 +26,7 @@ signals:
 
 private:
     QPair<QString, QStringList> getTerminalProgram();
-    QProcess m_console;
+    QProcess m_terminal;
     QString m_commands;
     bool m_noConfirm = true;
 };

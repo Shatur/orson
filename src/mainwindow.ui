@@ -29,6 +29,20 @@
         <item>
          <layout class="QHBoxLayout" name="searchPackagesLayout">
           <item>
+           <widget class="QToolButton" name="updateButton">
+            <property name="toolTip">
+             <string>Check for updates</string>
+            </property>
+            <property name="text">
+             <string>Check for updates</string>
+            </property>
+            <property name="icon">
+             <iconset theme="document-save">
+              <normaloff>.</normaloff>.</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QToolButton" name="reloadButton">
             <property name="enabled">
              <bool>false</bool>

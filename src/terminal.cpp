@@ -3,18 +3,20 @@
 #include <QFileInfo>
 #include <QDebug>
 
+constexpr char waitForInput[] = " && echo && read -s -p 'Successfully! To close this window, press <Enter>...'";
+
 Terminal::Terminal()
 {
-    m_console.setProcessChannelMode(QProcess::MergedChannels);
-    m_console.setProgram("konsole");
+    m_terminal.setProcessChannelMode(QProcess::MergedChannels);
+    m_terminal.setProgram("konsole");
 
     // Add data available signal
-    connect(&m_console, &QProcess::readyReadStandardOutput, [&] {
-        emit dataAvailable(m_console.readAllStandardOutput());
+    connect(&m_terminal, &QProcess::readyReadStandardOutput, [&] {
+        emit dataAvailable(m_terminal.readAllStandardOutput());
     });
 
     // Add finished signal
-    connect(&m_console, qOverload<int>(&QProcess::finished), this, &Terminal::finished);
+    connect(&m_terminal, qOverload<int>(&QProcess::finished), this, &Terminal::finished);
 }
 
 void Terminal::setTasks(TasksModel *model)
@@ -73,12 +75,20 @@ void Terminal::setTasks(TasksModel *model)
 
 void Terminal::executeTasks()
 {
-    constexpr char waitForInput[] = " && read -r -s -n 1";
+    auto [terminal, terminalArguments] = getTerminalProgram();
+    m_terminal.setProgram(terminal);
+    m_terminal.setArguments(terminalArguments << m_commands + waitForInput);
+    m_terminal.start();
+}
+
+void Terminal::updateDatabase()
+{
+    const QString command = QStringLiteral("sudo pacman -Sy");
 
     auto [terminal, terminalArguments] = getTerminalProgram();
-    m_console.setProgram(terminal);
-    m_console.setArguments(terminalArguments << m_commands + waitForInput);
-    m_console.start();
+    m_terminal.setProgram(terminal);
+    m_terminal.setArguments(terminalArguments << command + waitForInput);
+    m_terminal.start();
 }
 
 QPair<QString, QStringList> Terminal::getTerminalProgram()
