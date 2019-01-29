@@ -13,7 +13,8 @@ public:
     Terminal();
 
     void setTasks(TasksModel *model);
-    void start();
+    void executeTasks();
+    QString commands() const;
 
 signals:
     void dataAvailable(const QString &data);

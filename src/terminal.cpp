@@ -70,7 +70,7 @@ void Terminal::setTasks(TasksModel *model)
     }
 }
 
-void Terminal::start()
+void Terminal::executeTasks()
 {
     constexpr char waitForInput[] = " && read -r -s -n 1";
 
@@ -93,4 +93,9 @@ QPair<QString, QStringList> Terminal::getTerminalProgram()
     // Add shell execution
     program.second << "$SHELL" << "-c";
     return program;
+}
+
+QString Terminal::commands() const
+{
+    return m_commands;
 }

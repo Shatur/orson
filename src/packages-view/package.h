@@ -21,6 +21,7 @@ public:
     QString name() const;
     QString repo() const;
     QString version() const;
+    QString availableUpdate() const;
     QString description() const;
     QString arch() const;
     QString url() const;

@@ -4,6 +4,7 @@
 #include <QLocale>
 #include <QDateTime>
 #include <QJsonArray>
+#include <QDebug>
 
 void Package::setSyncData(alpm_pkg_t *data)
 {
@@ -67,6 +68,28 @@ QString Package::version() const
         return alpm_pkg_get_version(m_syncData);
 
     return m_aurData.value("Version").toString();
+}
+
+QString Package::availableUpdate() const
+{
+    if (m_localData == nullptr)
+        return QString();
+
+    const char *localVersion = alpm_pkg_get_version(m_localData);
+
+    // Check version in remote repository
+    if (m_syncData != nullptr) {
+        const char *repoVersion = alpm_pkg_get_version(m_syncData);
+        if (qstrcmp(localVersion, repoVersion) < 0)
+            return repoVersion;
+    }
+
+    // Check version in AUR
+    const QString aurVersion = m_aurData.value("Version").toString();
+    if (aurVersion > localVersion)
+        return aurVersion;
+
+    return QString();
 }
 
 QString Package::description() const

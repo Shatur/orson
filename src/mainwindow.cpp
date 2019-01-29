@@ -15,12 +15,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->packagesView->setTaskView(ui->tasksView);
 
     connect(ui->tasksView, &TasksView::taskOpened, this, &MainWindow::showPackagesTab);
-    connect(ui->tasksView->model(), &TasksModel::taskAdded, this, &MainWindow::checkTasksCount);
-    connect(ui->tasksView->model(), &TasksModel::taskRemoved, this, &MainWindow::checkTasksCount);
+    connect(ui->tasksView->model(), &TasksModel::taskAdded, this, &MainWindow::addTasks);
+    connect(ui->tasksView->model(), &TasksModel::taskRemoved, this, &MainWindow::addTasks);
     connect(ui->packagesView->model(), &PackagesModel::databaseStatusChanged, this, &MainWindow::setStatusBarMessage);
     connect(ui->packagesView->model(), &PackagesModel::firstPackageAvailable, this, &MainWindow::selectFirstPackage);
     connect(ui->packagesView->model(), &PackagesModel::databaseLoaded, this, &MainWindow::enableReloading);
-    connect(&m_pacman, &Terminal::finished, this, &MainWindow::on_reloadButton_clicked);
+    connect(&m_terminal, &Terminal::finished, this, &MainWindow::on_reloadButton_clicked);
 
     // Select package when clicking on dependencies
     depsButtonGroup = new QButtonGroup(this);
@@ -68,7 +68,8 @@ void MainWindow::on_packagesView_currentPackageChanged(Package *package)
 
     // Load package info header
     ui->iconLabel->setPixmap(package->icon().pixmap(64, 64));
-    ui->nameLabel->setText(package->name() + " " + package->version());
+    ui->nameLabel->setText(package->name());
+    ui->versionLabel->setText(package->version() + " " + package->availableUpdate());
     ui->descriptionLabel->setText(package->description());
 
     // Disable the tab with files for uninstalled packages
@@ -405,13 +406,12 @@ void MainWindow::searchHistory(bool backward)
 
 void MainWindow::on_applyButton_clicked()
 {
-    m_pacman.setTasks(ui->tasksView->model());
-    m_pacman.start();
+    m_terminal.executeTasks();
     ui->tasksView->model()->removeAllTasks();
     ui->reloadButton->setEnabled(false);
 }
 
-void MainWindow::checkTasksCount()
+void MainWindow::addTasks()
 {
     // Count tasks
     int tasksCount = 0;
@@ -426,4 +426,7 @@ void MainWindow::checkTasksCount()
         ui->tabWidget->setTabText(2, "Tasks (" + QString::number(tasksCount) + ")");
         ui->applyButton->setEnabled(true);
     }
+
+    m_terminal.setTasks(ui->tasksView->model());
+    ui->commandsEdit->setPlainText(m_terminal.commands());
 }

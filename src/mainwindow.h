@@ -48,7 +48,7 @@ private slots:
     // Tasks tab
     void on_applyButton_clicked();
 
-    void checkTasksCount();
+    void addTasks();
 
 private:
     // Package info tabs
@@ -63,7 +63,7 @@ private:
 
     Ui::MainWindow *ui;
     QButtonGroup *depsButtonGroup;
-    Terminal m_pacman;
+    Terminal m_terminal;
 
 };
 
