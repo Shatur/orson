@@ -19,7 +19,7 @@ QVariant FilesModel::data(const QModelIndex &index, int role) const
     auto *item = static_cast<File *>(index.internalPointer());
 
     switch (role) {
-    case Qt::BackgroundColorRole:
+    case Qt::BackgroundRole:
         return item->backgroundColor();
     case Qt::DisplayRole:
         return item->text(index.column());

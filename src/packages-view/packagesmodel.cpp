@@ -68,7 +68,7 @@ QVariant PackagesModel::data(const QModelIndex &index, int role) const
         }
 
         qFatal("Unknown column");
-    case Qt::BackgroundColorRole:
+    case Qt::BackgroundRole:
         if (!package->availableUpdate().isEmpty())
             return QColor(255, 0, 0, 127);
 
