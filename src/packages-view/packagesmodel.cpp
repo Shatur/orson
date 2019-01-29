@@ -345,6 +345,7 @@ void PackagesModel::loadRepoPackages()
 
         qDeleteAll(m_repoPackages);
         m_repoPackages.clear();
+        m_outdatedPackages.clear();
         alpm_release(m_handle);
 
         endResetModel();
