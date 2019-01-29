@@ -25,47 +25,57 @@ PackagesModel::~PackagesModel()
 
 QVariant PackagesModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid() || role != Qt::DisplayRole)
+    if (!index.isValid())
         return QVariant();
 
     const Package *package = static_cast<Package *>(index.internalPointer());
 
-    switch (m_mode) {
-    case Repo:
-        switch (index.column()) {
-        case 0:
-            if (!package->isInstalled())
-                return QString();
-            return QStringLiteral("Installed");
-        case 1:
-            return package->name();
-        case 2:
-            return package->version();
-        case 3:
-            return package->formattedInstalledSize();
-        case 4:
-            return package->repo();
+    switch (role) {
+    case Qt::DisplayRole:
+        switch (m_mode) {
+        case Repo:
+            switch (index.column()) {
+            case 0:
+                if (!package->isInstalled())
+                    return QString();
+                return QStringLiteral("Installed");
+            case 1:
+                return package->name();
+            case 2:
+                return package->version();
+            case 3:
+                return package->formattedInstalledSize();
+            case 4:
+                return package->repo();
+            }
+            break;
+        case AUR:
+            switch (index.column()) {
+            case 0:
+                if (!package->isInstalled())
+                    return QString();
+                return QStringLiteral("Installed");
+            case 1:
+                return package->name();
+            case 2:
+                return package->version();
+            case 3:
+                return package->votes();
+            case 4:
+                return package->popularity();
+            }
+            break;
         }
-        break;
-    case AUR:
-        switch (index.column()) {
-        case 0:
-            if (!package->isInstalled())
-                return QString();
-            return QStringLiteral("Installed");
-        case 1:
-            return package->name();
-        case 2:
-            return package->version();
-        case 3:
-            return package->votes();
-        case 4:
-            return package->popularity();
-        }
-        break;
-    }
 
-    qFatal("Unknown column");
+        qFatal("Unknown column");
+    case Qt::BackgroundColorRole:
+        if (!package->availableUpdate().isEmpty())
+            return QColor(255, 0, 0, 127);
+
+        [[fallthrough]];
+    default:
+        return QVariant();
+    }
 }
 
 QVariant PackagesModel::headerData(int section, Qt::Orientation orientation, int role) const

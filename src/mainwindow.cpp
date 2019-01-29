@@ -69,8 +69,14 @@ void MainWindow::on_packagesView_currentPackageChanged(Package *package)
     // Load package info header
     ui->iconLabel->setPixmap(package->icon().pixmap(64, 64));
     ui->nameLabel->setText(package->name());
-    ui->versionLabel->setText(package->version() + " " + package->availableUpdate());
     ui->descriptionLabel->setText(package->description());
+
+    // Show available update in header
+    const QString availableUpdate = package->availableUpdate();
+    if (availableUpdate.isEmpty())
+        ui->versionLabel->setText(package->version());
+    else
+        ui->versionLabel->setText(R"(<span style="color:red">)" + package->version() + "</span> ⇒ " + availableUpdate);
 
     // Disable the tab with files for uninstalled packages
     if (package->isInstalled())

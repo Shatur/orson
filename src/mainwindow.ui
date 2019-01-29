@@ -21,9 +21,6 @@
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QTabWidget" name="tabWidget">
-      <property name="currentIndex">
-       <number>2</number>
-      </property>
       <widget class="QWidget" name="packagesWidget">
        <attribute name="title">
         <string>Packages</string>
@@ -701,8 +698,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>97</width>
-                 <height>96</height>
+                 <width>684</width>
+                 <height>341</height>
                 </rect>
                </property>
                <layout class="QFormLayout" name="depsContentLayout">
