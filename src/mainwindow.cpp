@@ -254,6 +254,9 @@ void MainWindow::on_browserButton_clicked()
 void MainWindow::on_installLocalAction_triggered()
 {
     const QString fileName = QFileDialog::getOpenFileName(this, tr("Open Package"), "/home", tr("Pacman package (*.pkg.tar.xz);;All files"));
+    if (fileName.isEmpty())
+        return;
+
     m_terminal.installPackage(fileName);
     m_trayIcon->setIcon(QIcon::fromTheme("state-sync"));
 }
@@ -261,6 +264,9 @@ void MainWindow::on_installLocalAction_triggered()
 void MainWindow::on_installLocalDependAction_triggered()
 {
     const QString fileName = QFileDialog::getOpenFileName(this, tr("Open Package"), "/home", tr("Pacman package (*.pkg.tar.xz);;All files"));
+    if (fileName.isEmpty())
+        return;
+
     m_terminal.installPackage(fileName, true);
     m_trayIcon->setIcon(QIcon::fromTheme("state-sync"));
 }
