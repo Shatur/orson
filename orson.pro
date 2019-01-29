@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT += core gui widgets concurrent
+QT += core gui widgets concurrent dbus
 TARGET = orson
 TEMPLATE = app
 CONFIG += c++1z
