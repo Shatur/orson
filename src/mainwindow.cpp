@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "pacmansettings.h"
+#include "singleapplication.h"
 
 #include <QPushButton>
 #include <QStandardItemModel>
@@ -29,6 +30,19 @@ MainWindow::MainWindow(QWidget *parent) :
     // Select the first package if it is not already selected (when first package loaded faster than window)
     if (ui->packagesView->model()->index(0, 0).isValid() && ui->packagesView->selectionModel()->selectedRows().isEmpty())
         selectFirstPackage();
+
+    // System tray menu
+    m_trayMenu = new QMenu(this);
+    m_trayMenu->addAction(QIcon::fromTheme("window"), tr("Show window"), this, &MainWindow::show);
+    m_trayMenu->addAction(ui->updateButton->icon(), ui->updateButton->text(), this, &MainWindow::on_updateButton_clicked);
+    m_trayMenu->addAction(ui->reloadButton->icon(), ui->reloadButton->text(), this, &MainWindow::on_reloadButton_clicked);
+    m_trayMenu->addAction(QIcon::fromTheme("application-exit"), tr("Exit"), SingleApplication::instance(), &SingleApplication::quit);
+
+    // System tray icon
+    m_trayIcon = new QSystemTrayIcon(QIcon::fromTheme("update-none"), this);
+    m_trayIcon->setContextMenu(m_trayMenu);
+    m_trayIcon->show();
+    connect(m_trayIcon, &QSystemTrayIcon::activated, this, &MainWindow::activateTray);
 }
 
 MainWindow::~MainWindow()
@@ -233,6 +247,19 @@ void MainWindow::on_browserButton_clicked()
         url = "https://www.archlinux.org/packages/" + package->repo() + "/" + package->arch() + "/" + package->name();
 
     QDesktopServices::openUrl(url);
+}
+
+void MainWindow::activateTray(QSystemTrayIcon::ActivationReason reason)
+{
+    if (reason == QSystemTrayIcon::Trigger) {
+        if (!this->isVisible()) {
+            show();
+            activateWindow();
+            raise();
+        } else {
+            hide();
+        }
+    }
 }
 
 void MainWindow::setStatusBarMessage(const QString &text)

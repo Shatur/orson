@@ -8,6 +8,7 @@
 #include <QMainWindow>
 #include <QButtonGroup>
 #include <QLabel>
+#include <QSystemTrayIcon>
 
 namespace Ui {
 class MainWindow;
@@ -25,6 +26,7 @@ private slots:
     void on_tabWidget_currentChanged(int index);
     void on_browserButton_clicked();
 
+    void activateTray(QSystemTrayIcon::ActivationReason reason);
     void setStatusBarMessage(const QString &text);
 
     // Packages tab
@@ -65,8 +67,9 @@ private:
 
     Ui::MainWindow *ui;
     QButtonGroup *depsButtonGroup;
+    QSystemTrayIcon *m_trayIcon;
+    QMenu *m_trayMenu;
     Terminal m_terminal;
-
 };
 
 #endif // MAINWINDOW_H
