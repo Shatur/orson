@@ -16,6 +16,9 @@ public:
     void executeTasks();
     QString commands() const;
 
+    bool isNoConfirm() const;
+    void setNoConfirm(bool noconfirm);
+
 signals:
     void dataAvailable(const QString &data);
     void finished(int exitCode);
@@ -24,6 +27,7 @@ private:
     QPair<QString, QStringList> getTerminalProgram();
     QProcess m_console;
     QString m_commands;
+    bool m_noConfirm = true;
 };
 
 #endif // TERMINAL_H

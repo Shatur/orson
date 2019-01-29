@@ -66,7 +66,8 @@ void Terminal::setTasks(TasksModel *model)
             break;
         }
 
-        m_commands.append("--noconfirm");
+        if (m_noConfirm)
+            m_commands.append("--noconfirm");
     }
 }
 
@@ -93,6 +94,16 @@ QPair<QString, QStringList> Terminal::getTerminalProgram()
     // Add shell execution
     program.second << "$SHELL" << "-c";
     return program;
+}
+
+bool Terminal::isNoConfirm() const
+{
+    return m_noConfirm;
+}
+
+void Terminal::setNoConfirm(bool noconfirm)
+{
+    m_noConfirm = noconfirm;
 }
 
 QString Terminal::commands() const

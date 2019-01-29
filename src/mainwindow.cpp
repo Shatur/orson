@@ -411,6 +411,13 @@ void MainWindow::on_applyButton_clicked()
     ui->reloadButton->setEnabled(false);
 }
 
+void MainWindow::on_noConfirmCheckBox_toggled(bool checked)
+{
+    m_terminal.setNoConfirm(checked);
+    m_terminal.setTasks(ui->tasksView->model());
+    ui->commandsEdit->setPlainText(m_terminal.commands());
+}
+
 void MainWindow::addTasks()
 {
     // Count tasks

@@ -988,6 +988,16 @@
          </widget>
         </item>
         <item>
+         <widget class="QCheckBox" name="noConfirmCheckBox">
+          <property name="text">
+           <string>No confirm (--noconfirm)</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="applyButton">
           <property name="enabled">
            <bool>false</bool>

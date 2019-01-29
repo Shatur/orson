@@ -47,6 +47,7 @@ private slots:
 
     // Tasks tab
     void on_applyButton_clicked();
+    void on_noConfirmCheckBox_toggled(bool checked);
 
     void addTasks();
 
