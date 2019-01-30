@@ -3,12 +3,14 @@
 
 #include "files-view/filesmodel.h"
 #include "packages-view/packagesmodel.h"
+#include "tasksdialog.h"
 #include "terminal.h"
 
 #include <QMainWindow>
 #include <QButtonGroup>
 #include <QLabel>
 #include <QSystemTrayIcon>
+#include <QActionGroup>
 
 namespace Ui {
 class MainWindow;
@@ -28,32 +30,31 @@ private slots:
     void on_installLocalDependAction_triggered();
     void on_openHistoryFileAction_triggered();
     void on_openHistoryFolderAction_triggered();
+    void on_noConfirmAction_toggled(bool checked);
+
+    void setAfterTasksCompletionAction(QAction *action);
+
+    // Buttons
+    void on_applyButton_clicked();
+    void on_updateButton_clicked();
+    void on_reloadButton_clicked();
+    void on_browserButton_clicked();
 
     // General
-    void activateTray(QSystemTrayIcon::ActivationReason reason);
-    void setStatusBarMessage(const QString &text);
-    void processLoadedDatabase();
-    void processTerminalStart();
-
-    // Packages tab
     void on_searchModeComboBox_currentIndexChanged(int index);
     void on_searchPackagesEdit_returnPressed();
     void on_packagesView_currentPackageChanged(Package *package);
     void on_packageTabsWidget_currentChanged(int index);
-    void on_browserButton_clicked();
-    void on_updateButton_clicked();
-    void on_reloadButton_clicked();
 
+    void activateTray(QSystemTrayIcon::ActivationReason reason);
+    void setStatusBarMessage(const QString &text);
     void findDepend(QAbstractButton* button);
-    void selectFirstPackage();
-    void showPackagesTab();
+    void updateApplyButton();
 
-    // Tasks tab
-    void on_applyButton_clicked();
-    void on_noConfirmCheckBox_toggled(bool checked);
-    void on_afterCompletionComboBox_currentIndexChanged(int index);
+    void processLoadedDatabase();
+    void processTerminalStart();
+    void processFirstPackageAvailable();
 
-    void processAddingTask();
 private:
     // Package info tabs
     void loadPackageInfo(const Package *package);
@@ -65,10 +66,12 @@ private:
     void loadDepsButtons(int row, const QVector<Depend> &deps);
 
     Ui::MainWindow *ui;
-    QButtonGroup *depsButtonGroup;
+    TasksDialog *m_tasksDialog;
+    QButtonGroup *m_depsButtonGroup;
     QSystemTrayIcon *m_trayIcon;
     QMenu *m_trayMenu;
-    Terminal m_terminal;
+    QActionGroup *m_afterCompletionGroup;
+    Terminal *m_terminal;
 };
 
 #endif // MAINWINDOW_H

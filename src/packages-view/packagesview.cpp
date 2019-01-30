@@ -106,16 +106,15 @@ void PackagesView::filter(const QString &text, PackagesView::FilterType type)
     m_filtered = true;
 }
 
-void PackagesView::setTaskView(TasksView *taskView)
+// Need to dynamically change context menu elements
+void PackagesView::setTasksModel(TasksModel *tasksModel)
 {
-    m_taskView = taskView;
+    m_tasksModel = tasksModel;
 
     // Setup context menu
     m_menu->clear();
-    foreach (const Task *category, m_taskView->model()->categories())
+    foreach (const Task *category, m_tasksModel->categories())
         m_menu->addAction(category->icon(), category->name());
-
-    connect(m_taskView, &TasksView::taskOpened, this, &PackagesView::find);
 }
 
 bool PackagesView::find(const QString &packageName)
@@ -171,7 +170,7 @@ void PackagesView::changeCurrent(const QModelIndex &current)
 void PackagesView::addTask(QAction *action)
 {
     const auto category = static_cast<Task::Category>(m_menu->actions().indexOf(action));
-    m_taskView->model()->addTask(currentPackage(), category);
+    m_tasksModel->addTask(currentPackage(), category);
 }
 
 void PackagesView::contextMenuEvent(QContextMenuEvent *event)
@@ -180,11 +179,11 @@ void PackagesView::contextMenuEvent(QContextMenuEvent *event)
     if (package == nullptr)
         return;
 
-    if (m_taskView == nullptr)
+    if (m_tasksModel == nullptr)
         qFatal("Task view is not specified");
 
     // Disable an action if the selected package has already been added to its category
-    Task *task = m_taskView->model()->find(package->name());
+    Task *task = m_tasksModel->find(package->name());
     for (int category = 0; category < m_menu->actions().size(); ++category) {
         if (task != nullptr && category == task->parent()->categoryType())
             m_menu->actions().at(category)->setEnabled(false);

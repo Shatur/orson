@@ -146,6 +146,15 @@ QVector<Task *> TasksModel::tasks(Task::Category category) const
     return categories().at(category)->children();
 }
 
+int TasksModel::allTasksCount() const
+{
+    int tasksCount = 0;
+    foreach (Task *category, m_rootItem->children())
+        tasksCount += category->children().size();
+
+    return tasksCount;
+}
+
 Task *TasksModel::find(QString packageName) const
 {
     foreach (Task *category, m_rootItem->children()) {

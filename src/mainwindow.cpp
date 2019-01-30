@@ -15,24 +15,32 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->packagesView->setTaskView(ui->tasksView);
-
-    connect(ui->tasksView, &TasksView::taskOpened, this, &MainWindow::showPackagesTab);
-    connect(ui->tasksView->model(), &TasksModel::taskAdded, this, &MainWindow::processAddingTask);
-    connect(ui->tasksView->model(), &TasksModel::taskRemoved, this, &MainWindow::processAddingTask);
     connect(ui->packagesView->model(), &PackagesModel::databaseStatusChanged, this, &MainWindow::setStatusBarMessage);
-    connect(ui->packagesView->model(), &PackagesModel::firstPackageAvailable, this, &MainWindow::selectFirstPackage);
+    connect(ui->packagesView->model(), &PackagesModel::firstPackageAvailable, this, &MainWindow::processFirstPackageAvailable);
     connect(ui->packagesView->model(), &PackagesModel::databaseLoaded, this, &MainWindow::processLoadedDatabase);
-    connect(&m_terminal, &Terminal::finished, this, &MainWindow::on_reloadButton_clicked);
-    connect(&m_terminal, &Terminal::started, this, &MainWindow::processTerminalStart);
+
+    // Setup terminal executor
+    m_terminal = new Terminal(this);
+    connect(m_terminal, &Terminal::finished, this, &MainWindow::on_reloadButton_clicked);
+    connect(m_terminal, &Terminal::started, this, &MainWindow::processTerminalStart);
+
+    // Load tasks dialog
+    m_tasksDialog = new TasksDialog(m_terminal, this);
+    ui->packagesView->setTasksModel(m_tasksDialog->view()->model());
+    connect(m_tasksDialog->view()->model(), &TasksModel::taskAdded, this, &MainWindow::updateApplyButton);
+    connect(m_tasksDialog->view()->model(), &TasksModel::taskRemoved, this, &MainWindow::updateApplyButton);
+
+    // Make after completion actions exclusive
+    m_afterCompletionGroup = new QActionGroup(this);
+    m_afterCompletionGroup->addAction(ui->closeTerminalAction);
+    m_afterCompletionGroup->addAction(ui->waitForInputAction);
+    m_afterCompletionGroup->addAction(ui->shutdownAction);
+    m_afterCompletionGroup->addAction(ui->rebootAction);
+    connect(m_afterCompletionGroup, &QActionGroup::triggered, this, &MainWindow::setAfterTasksCompletionAction);
 
     // Select package when clicking on dependencies
-    depsButtonGroup = new QButtonGroup(this);
-    connect(depsButtonGroup, qOverload<QAbstractButton *>(&QButtonGroup::buttonClicked), this, &MainWindow::findDepend);
-
-    // Select the first package if it is not already selected (when first package loaded faster than window)
-    if (ui->packagesView->model()->index(0, 0).isValid() && ui->packagesView->selectionModel()->selectedRows().isEmpty())
-        selectFirstPackage();
+    m_depsButtonGroup = new QButtonGroup(this);
+    connect(m_depsButtonGroup, qOverload<QAbstractButton *>(&QButtonGroup::buttonClicked), this, &MainWindow::findDepend);
 
     // System tray menu
     m_trayMenu = new QMenu(this);
@@ -46,6 +54,10 @@ MainWindow::MainWindow(QWidget *parent) :
     m_trayIcon->setContextMenu(m_trayMenu);
     m_trayIcon->show();
     connect(m_trayIcon, &QSystemTrayIcon::activated, this, &MainWindow::activateTray);
+
+    // Select the first package if it is not already selected (when first package loaded faster than window)
+    if (ui->packagesView->model()->index(0, 0).isValid() && ui->packagesView->selectionModel()->selectedRows().isEmpty())
+        processFirstPackageAvailable();
 }
 
 MainWindow::~MainWindow()
@@ -63,7 +75,7 @@ void MainWindow::on_installLocalAction_triggered()
     if (!dialog.exec())
         return;
 
-    m_terminal.installPackage(dialog.selectedFiles().at(0));
+    m_terminal->installPackage(dialog.selectedFiles().at(0));
 }
 
 void MainWindow::on_installLocalDependAction_triggered()
@@ -76,7 +88,7 @@ void MainWindow::on_installLocalDependAction_triggered()
     if (!dialog.exec())
         return;
 
-    m_terminal.installPackage(dialog.selectedFiles().at(0), true);
+    m_terminal->installPackage(dialog.selectedFiles().at(0), true);
 }
 
 void MainWindow::on_openHistoryFileAction_triggered()
@@ -93,54 +105,44 @@ void MainWindow::on_openHistoryFolderAction_triggered()
     QDesktopServices::openUrl(logFile.dir().path());
 }
 
-void MainWindow::activateTray(QSystemTrayIcon::ActivationReason reason)
+void MainWindow::on_noConfirmAction_toggled(bool checked)
 {
-    if (reason == QSystemTrayIcon::Trigger) {
-        if (!this->isVisible()) {
-            show();
-            activateWindow();
-            raise();
-        } else {
-            hide();
-        }
-    }
+    m_terminal->setNoConfirm(checked);
 }
 
-void MainWindow::setStatusBarMessage(const QString &text)
+void MainWindow::setAfterTasksCompletionAction(QAction *action)
 {
-    statusBar()->showMessage(text);
+    auto afterCompletion = static_cast<Terminal::AfterCompletion>(m_afterCompletionGroup->actions().indexOf(action));
+    m_terminal->setAfterTasksCompletion(afterCompletion);
 }
 
-void MainWindow::processLoadedDatabase()
+void MainWindow::on_applyButton_clicked()
 {
-    QDBusInterface notify("org.freedesktop.Notifications", "/org/freedesktop/Notifications", "org.freedesktop.Notifications");
-    QVariantList notifyArguments;
-    notifyArguments << "Orson"; // Program name
-    notifyArguments << QVariant(QVariant::UInt);
-    notifyArguments << windowIcon().name(); // Icon
-    notifyArguments << "Updates"; // Title
-
-    // Body
-    if (ui->packagesView->model()->outdatedPackages().isEmpty()) {
-        notifyArguments << "No updates available";
-        m_trayIcon->setIcon(QIcon::fromTheme("update-none"));
-    } else {
-        notifyArguments << QString::number(ui->packagesView->model()->outdatedPackages().size()) + " updates available";
-        m_trayIcon->setIcon(QIcon::fromTheme("update-high"));
-    }
-
-    notifyArguments << QStringList();
-    notifyArguments << QVariantMap();
-    notifyArguments << 4000; // Show interval
-    notify.callWithArgumentList(QDBus::AutoDetect, "Notify", notifyArguments);
-
-    ui->reloadButton->setEnabled(true);
+    if (m_tasksDialog->exec())
+        m_terminal->executeTasks();
 }
 
-void MainWindow::processTerminalStart()
+void MainWindow::on_updateButton_clicked()
 {
-    m_trayIcon->setIcon(QIcon::fromTheme("state-sync"));
+    m_terminal->updateDatabase();
+}
+
+void MainWindow::on_reloadButton_clicked()
+{
     ui->reloadButton->setEnabled(false);
+    ui->packagesView->model()->reloadRepoPackages();
+}
+
+void MainWindow::on_browserButton_clicked()
+{
+    QUrl url;
+    const Package *package = ui->packagesView->currentPackage();
+    if (package->repo() == "aur")
+        url = "https://aur.archlinux.org/packages/" + package->name();
+    else
+        url = "https://www.archlinux.org/packages/" + package->repo() + "/" + package->arch() + "/" + package->name();
+
+    QDesktopServices::openUrl(url);
 }
 
 void MainWindow::on_searchModeComboBox_currentIndexChanged(int index)
@@ -238,27 +240,22 @@ void MainWindow::on_packageTabsWidget_currentChanged(int index)
     }
 }
 
-void MainWindow::on_browserButton_clicked()
+void MainWindow::activateTray(QSystemTrayIcon::ActivationReason reason)
 {
-    QUrl url;
-    const Package *package = ui->packagesView->currentPackage();
-    if (package->repo() == "aur")
-        url = "https://aur.archlinux.org/packages/" + package->name();
-    else
-        url = "https://www.archlinux.org/packages/" + package->repo() + "/" + package->arch() + "/" + package->name();
-
-    QDesktopServices::openUrl(url);
+    if (reason == QSystemTrayIcon::Trigger) {
+        if (!this->isVisible()) {
+            show();
+            activateWindow();
+            raise();
+        } else {
+            hide();
+        }
+    }
 }
 
-void MainWindow::on_updateButton_clicked()
+void MainWindow::setStatusBarMessage(const QString &text)
 {
-    m_terminal.updateDatabase();
-}
-
-void MainWindow::on_reloadButton_clicked()
-{
-    ui->reloadButton->setEnabled(false);
-    ui->packagesView->model()->reloadRepoPackages();
+    statusBar()->showMessage(text);
 }
 
 void MainWindow::findDepend(QAbstractButton *button)
@@ -279,54 +276,55 @@ void MainWindow::findDepend(QAbstractButton *button)
     }
 }
 
-void MainWindow::selectFirstPackage()
+void MainWindow::updateApplyButton()
+{
+    const int tasksCount = m_tasksDialog->view()->model()->allTasksCount();
+
+    if (tasksCount > 0) {
+        ui->applyButton->setToolTip("Apply tasks (" + QString::number(tasksCount) + ")");
+        ui->applyButton->setEnabled(true);
+    } else {
+        ui->applyButton->setToolTip("Apply tasks");
+        ui->applyButton->setEnabled(false);
+    }
+}
+
+void MainWindow::processLoadedDatabase()
+{
+    QDBusInterface notify("org.freedesktop.Notifications", "/org/freedesktop/Notifications", "org.freedesktop.Notifications");
+    QVariantList notifyArguments;
+    notifyArguments << "Orson"; // Program name
+    notifyArguments << QVariant(QVariant::UInt);
+    notifyArguments << windowIcon().name(); // Icon
+    notifyArguments << "Updates"; // Title
+
+    // Body
+    if (ui->packagesView->model()->outdatedPackages().isEmpty()) {
+        notifyArguments << "No updates available";
+        m_trayIcon->setIcon(QIcon::fromTheme("update-none"));
+    } else {
+        notifyArguments << QString::number(ui->packagesView->model()->outdatedPackages().size()) + " updates available";
+        m_trayIcon->setIcon(QIcon::fromTheme("update-high"));
+    }
+
+    notifyArguments << QStringList();
+    notifyArguments << QVariantMap();
+    notifyArguments << 3000; // Show interval
+    notify.callWithArgumentList(QDBus::AutoDetect, "Notify", notifyArguments);
+
+    ui->reloadButton->setEnabled(true);
+}
+
+void MainWindow::processTerminalStart()
+{
+    m_trayIcon->setIcon(QIcon::fromTheme("state-sync"));
+    ui->reloadButton->setEnabled(false);
+}
+
+void MainWindow::processFirstPackageAvailable()
 {
     ui->packagesView->setCurrentIndex(ui->packagesView->model()->index(0, 0));
     setStatusBarMessage("Loading installed packages");
-}
-
-void MainWindow::showPackagesTab()
-{
-    ui->tabWidget->setCurrentIndex(0);
-}
-
-void MainWindow::on_applyButton_clicked()
-{
-    m_terminal.executeTasks();
-    ui->tasksView->model()->removeAllTasks();
-}
-
-void MainWindow::on_noConfirmCheckBox_toggled(bool checked)
-{
-    m_terminal.setNoConfirm(checked);
-    m_terminal.setTasks(ui->tasksView->model());
-    ui->commandsEdit->setPlainText(m_terminal.commands());
-}
-
-void MainWindow::on_afterCompletionComboBox_currentIndexChanged(int index)
-{
-    auto afterCompletion = static_cast<Terminal::AfterCompletion>(index);
-    m_terminal.setAfterTasksCompletion(afterCompletion);
-}
-
-void MainWindow::processAddingTask()
-{
-    // Count tasks
-    int tasksCount = 0;
-    foreach (Task *category, ui->tasksView->model()->categories())
-        tasksCount += category->children().size();
-
-    // Show count on tab
-    if (tasksCount == 0) {
-        ui->tabWidget->setTabText(2, "Tasks");
-        ui->applyButton->setEnabled(false);
-    } else {
-        ui->tabWidget->setTabText(2, "Tasks (" + QString::number(tasksCount) + ")");
-        ui->applyButton->setEnabled(true);
-    }
-
-    m_terminal.setTasks(ui->tasksView->model());
-    ui->commandsEdit->setPlainText(m_terminal.commands());
 }
 
 void MainWindow::loadPackageInfo(const Package *package)
@@ -475,7 +473,7 @@ void MainWindow::loadDepsButtons(int row, const QVector<Depend> &deps)
             button->setText(depend.name() + depend.mod() + depend.version());
         else
             button->setText(depend.name() + depend.mod() + depend.version() + ": " + depend.description());
-        depsButtonGroup->addButton(button);
+        m_depsButtonGroup->addButton(button);
         packagesLayout->addWidget(button);
     }
     packagesLabel->show();

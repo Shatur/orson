@@ -27,6 +27,7 @@ public:
 
     QVector<Task *> categories() const;
     QVector<Task *> tasks(Task::Category category) const;
+    int allTasksCount() const;
     Task *find(QString packageName) const;
     int categoriesCount() const;
 

@@ -17,7 +17,7 @@ public:
         Reboot
     };
 
-    Terminal();
+    Terminal(QObject *parent = nullptr);
 
     void setTasks(TasksModel *model);
     void executeTasks();

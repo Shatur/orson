@@ -18,6 +18,7 @@ DEFINES += \
 SOURCES += \
     src/main.cpp \
     src/mainwindow.cpp \
+    src/tasksdialog.cpp \
     src/terminal.cpp \
     src/pacmansettings.cpp \
     src/packages-view/depend.cpp \
@@ -33,6 +34,7 @@ SOURCES += \
 
 HEADERS += \
     src/mainwindow.h \
+    src/tasksdialog.h \
     src/terminal.h \
     src/pacmansettings.h \
     src/packages-view/depend.h \
@@ -47,7 +49,8 @@ HEADERS += \
     src/tasks-view/tasksview.h
 
 FORMS += \
-    src/mainwindow.ui
+    src/mainwindow.ui \
+    src/tasksdialog.ui
 
 LIBS += -lalpm
 

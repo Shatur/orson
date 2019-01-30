@@ -7,7 +7,8 @@ constexpr char waitForInput[] = " && echo && read -s -p 'Successfully! To close 
 constexpr char shutdown[] = " && sudo shutdown 0";
 constexpr char reboot[] = " && sudo reboot";
 
-Terminal::Terminal()
+Terminal::Terminal(QObject *parent) :
+    QObject(parent)
 {
     m_terminal.setProcessChannelMode(QProcess::MergedChannels);
     m_terminal.setProgram("konsole");

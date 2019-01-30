@@ -21,7 +21,7 @@ public:
     explicit PackagesView(QWidget *parent = nullptr);
 
     void filter(const QString &text, FilterType type = NameDescription);
-    void setTaskView(TasksView *taskView);
+    void setTasksModel(TasksModel *tasksModel);
     bool find(const QString &packageName);
     Package *currentPackage() const;
     PackagesModel *model() const;
@@ -38,7 +38,7 @@ private:
     void setModel(QAbstractItemModel *model) override;
 
     QMenu *m_menu;
-    TasksView *m_taskView = nullptr;
+    TasksModel *m_tasksModel = nullptr;
     bool m_filtered = false;
 };
 
