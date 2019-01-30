@@ -23,11 +23,13 @@ public:
     ~MainWindow();
 
 private slots:
-    // General
-    void on_tabWidget_currentChanged(int index);
+    // Menu bar
     void on_installLocalAction_triggered();
     void on_installLocalDependAction_triggered();
+    void on_openHistoryFileAction_triggered();
+    void on_openHistoryFolderAction_triggered();
 
+    // General
     void activateTray(QSystemTrayIcon::ActivationReason reason);
     void setStatusBarMessage(const QString &text);
     void processLoadedDatabase();
@@ -46,20 +48,12 @@ private slots:
     void selectFirstPackage();
     void showPackagesTab();
 
-    // History tab
-    void on_reloadHistoryButton_clicked();
-    void on_findNextButton_clicked();
-    void on_findPreviousButton_clicked();
-    void on_openHistoryFolderButton_clicked();
-
     // Tasks tab
     void on_applyButton_clicked();
     void on_noConfirmCheckBox_toggled(bool checked);
-
-    void processAddingTask();
-
     void on_afterCompletionComboBox_currentIndexChanged(int index);
 
+    void processAddingTask();
 private:
     // Package info tabs
     void loadPackageInfo(const Package *package);
@@ -69,7 +63,6 @@ private:
     // Helper functions
     void displayInfo(bool display, const QString &text, QLabel *titleLabel, QLabel *label);
     void loadDepsButtons(int row, const QVector<Depend> &deps);
-    void searchHistory(bool backward = false);
 
     Ui::MainWindow *ui;
     QButtonGroup *depsButtonGroup;

@@ -53,15 +53,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_tabWidget_currentChanged(int index)
-{
-    // Load history dynamically
-    if (index == 1 && !ui->historyEdit->property("loaded").toBool()) {
-        on_reloadHistoryButton_clicked();
-        ui->historyEdit->setProperty("loaded", true);
-    }
-}
-
 void MainWindow::on_installLocalAction_triggered()
 {
     QFileDialog dialog(this, tr("Select package"));
@@ -86,6 +77,20 @@ void MainWindow::on_installLocalDependAction_triggered()
         return;
 
     m_terminal.installPackage(dialog.selectedFiles().at(0), true);
+}
+
+void MainWindow::on_openHistoryFileAction_triggered()
+{
+    const PacmanSettings pacmanSettings;
+    const QFileInfo logFile = pacmanSettings.logFile();
+    QDesktopServices::openUrl(logFile.filePath());
+}
+
+void MainWindow::on_openHistoryFolderAction_triggered()
+{
+    const PacmanSettings pacmanSettings;
+    const QFileInfo logFile = pacmanSettings.logFile();
+    QDesktopServices::openUrl(logFile.dir().path());
 }
 
 void MainWindow::activateTray(QSystemTrayIcon::ActivationReason reason)
@@ -285,44 +290,6 @@ void MainWindow::showPackagesTab()
     ui->tabWidget->setCurrentIndex(0);
 }
 
-void MainWindow::on_reloadHistoryButton_clicked()
-{
-    const PacmanSettings pacmanSettings;
-    QFile historyFile(pacmanSettings.logFile());
-
-    if (!historyFile.exists()) {
-        QMessageBox errorBox(QMessageBox::Critical, "Error", "File " + pacmanSettings.logFile() + " does not exist");
-        errorBox.exec();
-        return;
-    }
-
-    if (!historyFile.open(QIODevice::ReadOnly)) {
-        QMessageBox errorBox(QMessageBox::Critical, "Error", "Unable to read " + pacmanSettings.logFile());
-        errorBox.exec();
-        return;
-    }
-
-    ui->historyEdit->setPlainText(historyFile.readAll());
-    ui->historyEdit->moveCursor(QTextCursor::End);
-}
-
-void MainWindow::on_findNextButton_clicked()
-{
-    searchHistory();
-}
-
-void MainWindow::on_findPreviousButton_clicked()
-{
-    searchHistory(true);
-}
-
-void MainWindow::on_openHistoryFolderButton_clicked()
-{
-    const PacmanSettings pacmanSettings;
-    const QFileInfo logFile = pacmanSettings.logFile();
-    QDesktopServices::openUrl(logFile.dir().path());
-}
-
 void MainWindow::on_applyButton_clicked()
 {
     m_terminal.executeTasks();
@@ -334,6 +301,12 @@ void MainWindow::on_noConfirmCheckBox_toggled(bool checked)
     m_terminal.setNoConfirm(checked);
     m_terminal.setTasks(ui->tasksView->model());
     ui->commandsEdit->setPlainText(m_terminal.commands());
+}
+
+void MainWindow::on_afterCompletionComboBox_currentIndexChanged(int index)
+{
+    auto afterCompletion = static_cast<Terminal::AfterCompletion>(index);
+    m_terminal.setAfterTasksCompletion(afterCompletion);
 }
 
 void MainWindow::processAddingTask()
@@ -506,33 +479,4 @@ void MainWindow::loadDepsButtons(int row, const QVector<Depend> &deps)
         packagesLayout->addWidget(button);
     }
     packagesLabel->show();
-}
-
-void MainWindow::searchHistory(bool backward)
-{
-    if (ui->searchHistoryEdit->text().isEmpty()) {
-        ui->searchHistoryEdit->setStyleSheet("");
-        return;
-    }
-
-    QTextDocument::FindFlags flags;
-    if (backward)
-        flags |= QTextDocument::FindBackward;
-
-    // Check pressed buttons
-    if (ui->searchCaseButton->isChecked())
-        flags |= QTextDocument::FindCaseSensitively;
-    if (ui->searchExactButton->isChecked())
-        flags |= QTextDocument::FindWholeWords;
-
-    if (ui->historyEdit->find(ui->searchHistoryEdit->text(), flags))
-        ui->searchHistoryEdit->setStyleSheet("");
-    else
-        ui->searchHistoryEdit->setStyleSheet("color:red");
-}
-
-void MainWindow::on_afterCompletionComboBox_currentIndexChanged(int index)
-{
-    auto afterCompletion = static_cast<Terminal::AfterCompletion>(index);
-    m_terminal.setAfterTasksCompletion(afterCompletion);
 }

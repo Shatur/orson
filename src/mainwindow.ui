@@ -22,7 +22,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="packagesWidget">
        <attribute name="title">
@@ -715,8 +715,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>97</width>
-                 <height>96</height>
+                 <width>684</width>
+                 <height>311</height>
                 </rect>
                </property>
                <layout class="QFormLayout" name="depsContentLayout">
@@ -855,127 +855,6 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="historyWidget">
-       <attribute name="title">
-        <string>History</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_4">
-        <item>
-         <widget class="QPlainTextEdit" name="historyEdit">
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="historySearchLayout">
-          <item>
-           <widget class="QLineEdit" name="searchHistoryEdit">
-            <property name="styleSheet">
-             <string notr="true"/>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="findPreviousButton">
-            <property name="toolTip">
-             <string>Go to the next entry</string>
-            </property>
-            <property name="text">
-             <string>Previous</string>
-            </property>
-            <property name="icon">
-             <iconset theme="go-up">
-              <normaloff>.</normaloff>.</iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="findNextButton">
-            <property name="toolTip">
-             <string>Go to previous entry</string>
-            </property>
-            <property name="text">
-             <string>Next</string>
-            </property>
-            <property name="icon">
-             <iconset theme="go-down">
-              <normaloff>.</normaloff>.</iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="searchExactButton">
-            <property name="toolTip">
-             <string>Makes find match only complete words</string>
-            </property>
-            <property name="text">
-             <string>Exact</string>
-            </property>
-            <property name="icon">
-             <iconset theme="xapp-search-entire-word-symbolic">
-              <normaloff>.</normaloff>.</iconset>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="searchCaseButton">
-            <property name="toolTip">
-             <string>Case sensitive</string>
-            </property>
-            <property name="text">
-             <string>Case</string>
-            </property>
-            <property name="icon">
-             <iconset theme="format-text-superscript">
-              <normaloff>.</normaloff>.</iconset>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="reloadHistoryButton">
-            <property name="toolTip">
-             <string>Reload pacman.log</string>
-            </property>
-            <property name="text">
-             <string>Reload</string>
-            </property>
-            <property name="icon">
-             <iconset theme="reload">
-              <normaloff>.</normaloff>.</iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="openHistoryFolderButton">
-            <property name="toolTip">
-             <string>Open folder with pacman.log</string>
-            </property>
-            <property name="text">
-             <string>Folder</string>
-            </property>
-            <property name="icon">
-             <iconset theme="folder">
-              <normaloff>.</normaloff>.</iconset>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
       <widget class="QWidget" name="tasksWidget">
        <attribute name="title">
         <string>Tasks</string>
@@ -1088,14 +967,31 @@
      <height>30</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuFile">
+   <widget class="QMenu" name="fileMenu">
     <property name="title">
      <string>&amp;File</string>
     </property>
     <addaction name="installLocalAction"/>
     <addaction name="installLocalDependAction"/>
    </widget>
-   <addaction name="menuFile"/>
+   <widget class="QMenu" name="toolsMenu">
+    <property name="title">
+     <string>&amp;Tools</string>
+    </property>
+    <widget class="QMenu" name="openHistoryMenu">
+     <property name="title">
+      <string>Open history</string>
+     </property>
+     <property name="icon">
+      <iconset theme="history"/>
+     </property>
+     <addaction name="openHistoryFileAction"/>
+     <addaction name="openHistoryFolderAction"/>
+    </widget>
+    <addaction name="openHistoryMenu"/>
+   </widget>
+   <addaction name="fileMenu"/>
+   <addaction name="toolsMenu"/>
   </widget>
   <action name="installLocalAction">
    <property name="icon">
@@ -1113,6 +1009,22 @@
    </property>
    <property name="text">
     <string>Install &amp;from local package as depend</string>
+   </property>
+  </action>
+  <action name="openHistoryFileAction">
+   <property name="icon">
+    <iconset theme="text-editor"/>
+   </property>
+   <property name="text">
+    <string>Log file</string>
+   </property>
+  </action>
+  <action name="openHistoryFolderAction">
+   <property name="icon">
+    <iconset theme="folder"/>
+   </property>
+   <property name="text">
+    <string>Log folder</string>
    </property>
   </action>
  </widget>
@@ -1144,31 +1056,7 @@
   <tabstop>tabWidget</tabstop>
   <tabstop>depsScrollArea</tabstop>
   <tabstop>filesView</tabstop>
-  <tabstop>searchHistoryEdit</tabstop>
-  <tabstop>findPreviousButton</tabstop>
-  <tabstop>findNextButton</tabstop>
-  <tabstop>searchExactButton</tabstop>
-  <tabstop>searchCaseButton</tabstop>
-  <tabstop>historyEdit</tabstop>
-  <tabstop>openHistoryFolderButton</tabstop>
  </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>searchHistoryEdit</sender>
-   <signal>returnPressed()</signal>
-   <receiver>findPreviousButton</receiver>
-   <slot>click()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>295</x>
-     <y>59</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>595</x>
-     <y>59</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
