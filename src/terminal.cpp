@@ -4,6 +4,8 @@
 #include <QDebug>
 
 constexpr char waitForInput[] = " && echo && read -s -p 'Successfully! To close this window, press <Enter>...'";
+constexpr char shutdown[] = " && sudo shutdown 0";
+constexpr char reboot[] = " && sudo reboot";
 
 Terminal::Terminal()
 {
@@ -78,7 +80,21 @@ void Terminal::executeTasks()
 {
     auto [terminal, terminalArguments] = getTerminalProgram();
     m_terminal.setProgram(terminal);
-    m_terminal.setArguments(terminalArguments << m_commands + waitForInput);
+    switch (m_afterTasksCompletion) {
+    case WaitForInput:
+        m_terminal.setArguments(terminalArguments << m_commands + waitForInput);
+        break;
+    case Shutdown:
+        m_terminal.setArguments(terminalArguments << m_commands + shutdown);
+        break;
+    case Reboot:
+        m_terminal.setArguments(terminalArguments << m_commands + reboot);
+        break;
+    default:
+        m_terminal.setArguments(terminalArguments << m_commands);
+        break;
+    }
+
     m_terminal.start();
 }
 
@@ -117,6 +133,16 @@ QPair<QString, QStringList> Terminal::getTerminalProgram()
     // Add shell execution
     program.second << "$SHELL" << "-c";
     return program;
+}
+
+Terminal::AfterCompletion Terminal::afterTasksCompletion() const
+{
+    return m_afterTasksCompletion;
+}
+
+void Terminal::setAfterTasksCompletion(const AfterCompletion &afterTasksCompletion)
+{
+    m_afterTasksCompletion = afterTasksCompletion;
 }
 
 bool Terminal::isNoConfirm() const

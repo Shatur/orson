@@ -530,3 +530,9 @@ void MainWindow::searchHistory(bool backward)
     else
         ui->searchHistoryEdit->setStyleSheet("color:red");
 }
+
+void MainWindow::on_afterCompletionComboBox_currentIndexChanged(int index)
+{
+    auto afterCompletion = static_cast<Terminal::AfterCompletion>(index);
+    m_terminal.setAfterTasksCompletion(afterCompletion);
+}

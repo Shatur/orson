@@ -10,6 +10,13 @@ class Terminal : public QObject
     Q_OBJECT
 
 public:
+    enum AfterCompletion {
+        CloseTerminal,
+        WaitForInput,
+        Shutdown,
+        Reboot
+    };
+
     Terminal();
 
     void setTasks(TasksModel *model);
@@ -21,6 +28,9 @@ public:
     bool isNoConfirm() const;
     void setNoConfirm(bool noconfirm);
 
+    AfterCompletion afterTasksCompletion() const;
+    void setAfterTasksCompletion(const AfterCompletion &afterTasksCompletion);
+
 signals:
     void dataAvailable(const QString &data);
     void started();
@@ -30,6 +40,7 @@ private:
     QPair<QString, QStringList> getTerminalProgram();
     QProcess m_terminal;
     QString m_commands;
+    AfterCompletion m_afterTasksCompletion = WaitForInput;
     bool m_noConfirm = true;
 };
 

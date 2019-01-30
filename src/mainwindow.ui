@@ -21,6 +21,9 @@
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>2</number>
+      </property>
       <widget class="QWidget" name="packagesWidget">
        <attribute name="title">
         <string>Packages</string>
@@ -712,8 +715,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>684</width>
-                 <height>311</height>
+                 <width>97</width>
+                 <height>96</height>
                 </rect>
                </property>
                <layout class="QFormLayout" name="depsContentLayout">
@@ -986,6 +989,67 @@
          </widget>
         </item>
         <item>
+         <widget class="QCheckBox" name="noConfirmCheckBox">
+          <property name="text">
+           <string>No confirm (--noconfirm)</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="afterCompletionLayout">
+          <item>
+           <widget class="QLabel" name="afterCompletionLabel">
+            <property name="text">
+             <string>After completion:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="afterCompletionComboBox">
+            <property name="currentIndex">
+             <number>1</number>
+            </property>
+            <item>
+             <property name="text">
+              <string>Close terminal</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Wait for input</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Shutdown</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Reboot</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <spacer name="afterCompletionSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
          <widget class="QPlainTextEdit" name="commandsEdit">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -995,16 +1059,6 @@
           </property>
           <property name="placeholderText">
            <string>Commands</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="noConfirmCheckBox">
-          <property name="text">
-           <string>No confirm (--noconfirm)</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -1045,18 +1099,20 @@
   </widget>
   <action name="installLocalAction">
    <property name="icon">
-    <iconset theme="package-x-generic"/>
+    <iconset theme="package-x-generic">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
-    <string>Install from local package</string>
+    <string>&amp;Install from local package</string>
    </property>
   </action>
   <action name="installLocalDependAction">
    <property name="icon">
-    <iconset theme="package-x-generic"/>
+    <iconset theme="package-x-generic">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
-    <string>Install from local package as depend</string>
+    <string>Install &amp;from local package as depend</string>
    </property>
   </action>
  </widget>

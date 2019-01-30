@@ -58,6 +58,8 @@ private slots:
 
     void processAddingTask();
 
+    void on_afterCompletionComboBox_currentIndexChanged(int index);
+
 private:
     // Package info tabs
     void loadPackageInfo(const Package *package);
