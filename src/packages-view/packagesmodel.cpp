@@ -380,7 +380,7 @@ void PackagesModel::loadRepoPackages()
                                + " packages avaible in official repositories, "
                                + QString::number(installedPackages)
                                + " packages installed, "
-                               + QString::number(m_outdatedPackages.size())
+                               + (m_outdatedPackages.size() != 0 ? QString::number(m_outdatedPackages.size()) : "no")
                                + " updates available");
     emit databaseLoaded();
 }

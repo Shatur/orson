@@ -33,7 +33,8 @@
          <string>Apply</string>
         </property>
         <property name="icon">
-         <iconset theme="dialog-apply"/>
+         <iconset theme="dialog-apply">
+          <normaloff>.</normaloff>.</iconset>
         </property>
        </widget>
       </item>
@@ -46,7 +47,8 @@
          <string>Check for updates</string>
         </property>
         <property name="icon">
-         <iconset theme="mail-send-receive"/>
+         <iconset theme="mail-send-receive">
+          <normaloff>.</normaloff>.</iconset>
         </property>
        </widget>
       </item>
