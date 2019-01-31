@@ -36,7 +36,7 @@ private slots:
 
     // Buttons
     void on_applyButton_clicked();
-    void on_updateButton_clicked();
+    void on_syncButton_clicked();
     void on_reloadButton_clicked();
     void on_browserButton_clicked();
 

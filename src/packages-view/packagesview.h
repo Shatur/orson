@@ -22,6 +22,7 @@ public:
 
     void filter(const QString &text, FilterType type = NameDescription);
     void setTasksModel(TasksModel *tasksModel);
+    void upgradeAll();
     bool find(const QString &packageName);
     Package *currentPackage() const;
     PackagesModel *model() const;

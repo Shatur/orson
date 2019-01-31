@@ -45,7 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // System tray menu
     m_trayMenu = new QMenu(this);
     m_trayMenu->addAction(QIcon::fromTheme("window"), tr("Show window"), this, &MainWindow::show);
-    m_trayMenu->addAction(ui->updateButton->icon(), ui->updateButton->text(), this, &MainWindow::on_updateButton_clicked);
+    m_trayMenu->addAction(ui->syncButton->icon(), ui->syncButton->text(), this, &MainWindow::on_syncButton_clicked);
     m_trayMenu->addAction(ui->reloadButton->icon(), ui->reloadButton->text(), this, &MainWindow::on_reloadButton_clicked);
     m_trayMenu->addAction(QIcon::fromTheme("application-exit"), tr("Exit"), SingleApplication::instance(), &SingleApplication::quit);
 
@@ -122,9 +122,9 @@ void MainWindow::on_applyButton_clicked()
         m_terminal->executeTasks();
 }
 
-void MainWindow::on_updateButton_clicked()
+void MainWindow::on_syncButton_clicked()
 {
-    m_terminal->updateDatabase();
+    m_terminal->syncDatabase();
 }
 
 void MainWindow::on_reloadButton_clicked()

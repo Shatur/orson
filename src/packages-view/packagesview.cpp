@@ -115,6 +115,13 @@ void PackagesView::setTasksModel(TasksModel *tasksModel)
     m_menu->clear();
     foreach (const Task *category, m_tasksModel->categories())
         m_menu->addAction(category->icon(), category->name());
+
+    m_menu->actions().at(Task::UpgradeAll)->setEnabled(false); // Disable upgrade action by default
+}
+
+void PackagesView::upgradeAll()
+{
+
 }
 
 bool PackagesView::find(const QString &packageName)
@@ -170,6 +177,11 @@ void PackagesView::changeCurrent(const QModelIndex &current)
 void PackagesView::addTask(QAction *action)
 {
     const auto category = static_cast<Task::Category>(m_menu->actions().indexOf(action));
+    if (category == Task::UpgradeAll) {
+        foreach (Package *package, model()->outdatedPackages())
+            m_tasksModel->addTask(package, Task::UpgradeAll);
+    }
+
     m_tasksModel->addTask(currentPackage(), category);
 }
 
@@ -211,6 +223,12 @@ void PackagesView::contextMenuEvent(QContextMenuEvent *event)
         m_menu->actions().at(Task::InstallExplicity)->setVisible(true);
         m_menu->actions().at(Task::InstallAsDepend)->setVisible(true);
     }
+
+    // Enable upgrade only if updates available and not added to upgrade
+    if (!model()->outdatedPackages().isEmpty() && m_tasksModel->tasks(Task::UpgradeAll).isEmpty())
+        m_menu->actions().at(Task::UpgradeAll)->setEnabled(true);
+    else
+        m_menu->actions().at(Task::UpgradeAll)->setEnabled(false);
 
     m_menu->exec(event->globalPos());
 }

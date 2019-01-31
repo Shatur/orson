@@ -2,6 +2,7 @@
 
 #include <QMenu>
 #include <QContextMenuEvent>
+#include <QDebug>
 
 TasksView::TasksView(QWidget *parent) :
     QTreeView(parent)
@@ -47,8 +48,14 @@ void TasksView::hideCategory(Task::Category category)
 void TasksView::removeCurrentTask()
 {
     Task *task = currentTask();
-    if (task->categoryType() == Task::Null)
-        model()->removeTask(task);
+    const Task::Category category = task->categoryType();
+    if (category == Task::Null) {
+        // Do not allow to remove tasks from "Upgrade all" category
+        if (task->parent()->categoryType() != Task::UpgradeAll)
+            model()->removeTask(task);
+    } else {
+        model()->removeTasks(category);
+    }
 }
 
 void TasksView::contextMenuEvent(QContextMenuEvent *event)
@@ -58,8 +65,10 @@ void TasksView::contextMenuEvent(QContextMenuEvent *event)
         return;
 
     // Do not show context menu for categories
-    if (task->categoryType() != Task::Null)
-        return;
+    if (task->parent()->categoryType() == Task::UpgradeAll)
+        m_menu->actions().at(0)->setEnabled(false);
+    else
+        m_menu->actions().at(0)->setEnabled(true);
 
     m_menu->exec(event->globalPos());
 }
@@ -70,6 +79,7 @@ void TasksView::keyPressEvent(QKeyEvent *event)
         removeCurrentTask();
     else
         QTreeView::keyPressEvent(event);
+
 }
 
 void TasksView::setModel(QAbstractItemModel *model)

@@ -120,6 +120,18 @@ void TasksModel::removeTask(Task *task)
     emit taskRemoved(parentTask->categoryType());
 }
 
+void TasksModel::removeTasks(Task::Category category)
+{
+    const QModelIndex categoryIndex = index(category, 0, QModelIndex());
+    Task *categoryTask = m_rootItem->children().at(category);
+
+    beginRemoveRows(categoryIndex, 0, categoryTask->children().size());
+    categoryTask->removeChildren();
+    endRemoveRows();
+
+    emit taskRemoved(category);
+}
+
 void TasksModel::removeAllTasks()
 {
     for (Task *category : m_rootItem->children()) {

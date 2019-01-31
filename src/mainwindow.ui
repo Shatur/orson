@@ -39,7 +39,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="updateButton">
+       <widget class="QToolButton" name="syncButton">
         <property name="toolTip">
          <string>Check for updates</string>
         </property>
@@ -723,7 +723,7 @@
              <x>0</x>
              <y>0</y>
              <width>704</width>
-             <height>328</height>
+             <height>333</height>
             </rect>
            </property>
            <layout class="QFormLayout" name="depsContentLayout">
@@ -1015,7 +1015,7 @@
  <tabstops>
   <tabstop>searchPackagesEdit</tabstop>
   <tabstop>applyButton</tabstop>
-  <tabstop>updateButton</tabstop>
+  <tabstop>syncButton</tabstop>
   <tabstop>reloadButton</tabstop>
   <tabstop>searchModeComboBox</tabstop>
   <tabstop>searchByComboBox</tabstop>

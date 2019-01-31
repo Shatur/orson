@@ -9,6 +9,7 @@ Task::Task(const Package *package) :
 // Create root item with categories
 Task::Task()
 {
+    addChild(new Task(UpgradeAll));
     addChild(new Task(InstallExplicity));
     addChild(new Task(InstallAsDepend));
     addChild(new Task(Reinstall));
@@ -72,6 +73,8 @@ void Task::removeChildren()
 QString Task::name() const
 {
     switch (m_category) {
+    case UpgradeAll:
+        return "Upgrade all";
     case InstallExplicity:
         return "Install explicity";
     case InstallAsDepend:
@@ -92,6 +95,8 @@ QString Task::name() const
 QIcon Task::icon() const
 {
     switch (m_category) {
+    case UpgradeAll:
+        return QIcon::fromTheme("go-up");
     case InstallExplicity:
         return QIcon::fromTheme("edit-download");
     case InstallAsDepend:

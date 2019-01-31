@@ -23,6 +23,7 @@ public:
 
     void addTask(const Package *package, Task::Category destinationCategory);
     void removeTask(Task *task);
+    void removeTasks(Task::Category category);
     void removeAllTasks();
 
     QVector<Task *> categories() const;

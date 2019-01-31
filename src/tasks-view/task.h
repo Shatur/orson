@@ -8,6 +8,7 @@ class Task
 public:
     enum Category {
         Null = -1,
+        UpgradeAll,
         InstallExplicity,
         InstallAsDepend,
         Reinstall,

@@ -39,6 +39,9 @@ void Terminal::setTasks(TasksModel *model)
         // Pacman command
         m_commands.append(pacmanProgram);
         switch (category->categoryType()) {
+        case Task::UpgradeAll:
+            m_commands.append("-Su");
+            continue;
         case Task::InstallExplicity:
         case Task::InstallAsDepend:
         case Task::Reinstall:
@@ -111,7 +114,7 @@ void Terminal::installPackage(const QString &name, bool asDepend)
     m_terminal.start();
 }
 
-void Terminal::updateDatabase()
+void Terminal::syncDatabase()
 {
     const QString command = QStringLiteral("sudo pacman -Sy");
 

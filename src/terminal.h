@@ -22,7 +22,7 @@ public:
     void setTasks(TasksModel *model);
     void executeTasks();
     void installPackage(const QString &name, bool asDepend = false);
-    void updateDatabase();
+    void syncDatabase();
     QString commands() const;
 
     bool isNoConfirm() const;
