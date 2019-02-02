@@ -3,7 +3,6 @@
 
 #include "files-view/filesmodel.h"
 #include "packages-view/packagesmodel.h"
-#include "tasksdialog.h"
 #include "terminal.h"
 
 #include <QMainWindow>
@@ -66,7 +65,6 @@ private:
     void loadDepsButtons(int row, const QVector<Depend> &deps);
 
     Ui::MainWindow *ui;
-    TasksDialog *m_tasksDialog;
     QButtonGroup *m_depsButtonGroup;
     QSystemTrayIcon *m_trayIcon;
     QMenu *m_trayMenu;

@@ -6,8 +6,8 @@
 class Task
 {
 public:
-    enum Category {
-        Null = -1,
+    enum Type {
+        Item = -1,
         UpgradeAll,
         InstallExplicity,
         InstallAsDepend,
@@ -17,8 +17,9 @@ public:
         Uninstall
     };
 
-    explicit Task(const Package *package);
-    Task();
+    explicit Task(Package *m_package);
+    explicit Task(Type type);
+    Task() = default;
     ~Task();
 
     // Model-specific functions
@@ -31,20 +32,18 @@ public:
     void removeChildren();
 
     // Item properties
-    QString name() const;
-    QIcon icon() const;
-    Category categoryType() const;
+    Type type() const;
+    Package *package() const;
 
+    static QString categoryName(Type category);
+    static QIcon categoryIcon(Type category);
 
 private:
-    explicit Task(Category categoryType);
-
     Task *m_parent = nullptr;
     QVector<Task *> m_children;
 
-    Category m_category = Null;
-    QString m_name;
-    QIcon m_icon;
+    Type m_category = Item;
+    Package *m_package = nullptr;
 };
 
 #endif // TASK_H

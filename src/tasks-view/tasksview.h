@@ -16,8 +16,6 @@ public:
     Task *currentTask();
 
 private slots:
-    void showCategory(Task::Category category);
-    void hideCategory(Task::Category category);
     void removeCurrentTask();
 
 private:

@@ -2,6 +2,7 @@
 #define TASKSMODEL_H
 
 #include "task.h"
+#include "../packages-view/packagesview.h"
 
 #include <QAbstractItemModel>
 
@@ -21,23 +22,18 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
-    void addTask(const Package *package, Task::Category destinationCategory);
+    void setTasks(PackagesView *packagesView);
     void removeTask(Task *task);
-    void removeTasks(Task::Category category);
-    void removeAllTasks();
-
-    QVector<Task *> categories() const;
-    QVector<Task *> tasks(Task::Category category) const;
-    int allTasksCount() const;
-    Task *find(QString packageName) const;
-    int categoriesCount() const;
+    QVector<Task *> tasks();
 
 signals:
-    void taskAdded(Task::Category category);
-    void taskRemoved(Task::Category category);
+    void taskRemoved(Task *task);
 
 private:
+    void addCategory(Task::Type category, const QVector<Package *> &packages);
+
     Task *m_rootItem;
+    PackagesView *m_PackagesView;
 };
 
 #endif // TASKSMODEL_H

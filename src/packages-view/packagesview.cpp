@@ -10,13 +10,21 @@ PackagesView::PackagesView(QWidget *parent) :
 {
     // Setup menu
     m_menu = new QMenu(this);
-    connect(m_menu, &QMenu::triggered, this, &PackagesView::addTask);
+    m_menu->addAction(Task::categoryIcon(Task::UpgradeAll), Task::categoryName(Task::UpgradeAll));
+    m_menu->addAction(Task::categoryIcon(Task::InstallExplicity), Task::categoryName(Task::InstallExplicity));
+    m_menu->addAction(Task::categoryIcon(Task::InstallAsDepend), Task::categoryName(Task::InstallAsDepend));
+    m_menu->addAction(Task::categoryIcon(Task::Reinstall), Task::categoryName(Task::Reinstall));
+    m_menu->addAction(Task::categoryIcon(Task::MarkAsExplicity), Task::categoryName(Task::MarkAsExplicity));
+    m_menu->addAction(Task::categoryIcon(Task::MarkAsDepend), Task::categoryName(Task::MarkAsDepend));
+    m_menu->addAction(Task::categoryIcon(Task::Uninstall), Task::categoryName(Task::Uninstall));
+    connect(m_menu, &QMenu::triggered, this, &PackagesView::processMenuAction);
 
     // Setup items
     sortByColumn(-1, Qt::AscendingOrder); // Show item unsorted by default
     setModel(new PackagesModel(this));
     header()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    connect(selectionModel(), &QItemSelectionModel::currentChanged, this, &PackagesView::changeCurrent);
+    connect(selectionModel(), &QItemSelectionModel::currentChanged, this, &PackagesView::processSelectionChanging);
+    connect(model(), &PackagesModel::modelAboutToBeReset, this, &PackagesView::clearAllOperations);
 
     // Emit current package changed signal on data change
     connect(model(), &PackagesModel::packageChanged, [&](Package *package) {
@@ -106,24 +114,6 @@ void PackagesView::filter(const QString &text, PackagesView::FilterType type)
     m_filtered = true;
 }
 
-// Need to dynamically change context menu elements
-void PackagesView::setTasksModel(TasksModel *tasksModel)
-{
-    m_tasksModel = tasksModel;
-
-    // Setup context menu
-    m_menu->clear();
-    foreach (const Task *category, m_tasksModel->categories())
-        m_menu->addAction(category->icon(), category->name());
-
-    m_menu->actions().at(Task::UpgradeAll)->setEnabled(false); // Disable upgrade action by default
-}
-
-void PackagesView::upgradeAll()
-{
-
-}
-
 bool PackagesView::find(const QString &packageName)
 {
     clearSelection();
@@ -163,7 +153,119 @@ PackagesModel *PackagesView::model() const
     return qobject_cast<PackagesModel *>(QTreeView::model());
 }
 
-void PackagesView::changeCurrent(const QModelIndex &current)
+QVector<Package *> PackagesView::uninstall() const
+{
+    return m_uninstall;
+}
+
+QVector<Package *> PackagesView::markAsDepend() const
+{
+    return m_markAsDepend;
+}
+
+QVector<Package *> PackagesView::markAsExplicity() const
+{
+    return m_markAsExplicity;
+}
+
+QVector<Package *> PackagesView::reinstall() const
+{
+    return m_reinstall;
+}
+
+QVector<Package *> PackagesView::installAsDepend() const
+{
+    return m_installAsDepend;
+}
+
+QVector<Package *> PackagesView::installExplicity() const
+{
+    return m_installExplicity;
+}
+
+bool PackagesView::isUpgradePackages() const
+{
+    return m_upgradePackages;
+}
+
+void PackagesView::setUpgradePackages(bool upgrade)
+{
+    m_upgradePackages = upgrade;
+
+    emit operationsCountChanged();
+}
+
+int PackagesView::operationsCount()
+{
+    int count = 0;
+
+    if (m_upgradePackages)
+        ++count;
+
+    count += m_installExplicity.size();
+    count += m_installAsDepend.size();
+    count += m_reinstall.size();
+    count += m_markAsExplicity.size();
+    count += m_markAsDepend.size();
+    count += m_uninstall.size();
+
+    return count;
+}
+
+void PackagesView::removeOperation(Task *task)
+{
+    switch (task->type()) {
+    case Task::UpgradeAll:
+        m_upgradePackages = false;
+        break;
+    case Task::Item:
+        switch (task->parent()->type()) {
+        case Task::InstallExplicity:
+            m_installExplicity.removeOne(task->package());
+            break;
+        case Task::InstallAsDepend:
+            m_installAsDepend.removeOne(task->package());
+            break;
+        case Task::Reinstall:
+            m_reinstall.removeOne(task->package());
+            break;
+        case Task::MarkAsExplicity:
+            m_markAsExplicity.removeOne(task->package());
+            break;
+        case Task::MarkAsDepend:
+            m_markAsExplicity.removeOne(task->package());
+            break;
+        case Task::Uninstall:
+            m_uninstall.removeOne(task->package());
+            break;
+        default:
+            break;
+        }
+        break;
+    case Task::InstallExplicity:
+        m_installExplicity.clear();
+        break;
+    case Task::InstallAsDepend:
+        m_installAsDepend.clear();
+        break;
+    case Task::Reinstall:
+        m_reinstall.clear();
+        break;
+    case Task::MarkAsExplicity:
+        m_markAsExplicity.clear();
+        break;
+    case Task::MarkAsDepend:
+        m_markAsExplicity.clear();
+        break;
+    case Task::Uninstall:
+        m_uninstall.clear();
+        break;
+    }
+
+    emit operationsCountChanged();
+}
+
+void PackagesView::processSelectionChanging(const QModelIndex &current)
 {
     auto *package = static_cast<Package *>(current.internalPointer());
 
@@ -174,34 +276,56 @@ void PackagesView::changeCurrent(const QModelIndex &current)
     emit currentPackageChanged(package);
 }
 
-void PackagesView::addTask(QAction *action)
+void PackagesView::processMenuAction(QAction *action)
 {
-    const auto category = static_cast<Task::Category>(m_menu->actions().indexOf(action));
-    if (category == Task::UpgradeAll) {
-        foreach (Package *package, model()->outdatedPackages())
-            m_tasksModel->addTask(package, Task::UpgradeAll);
-    }
+    const auto category = static_cast<Task::Type>(m_menu->actions().indexOf(action));
 
-    m_tasksModel->addTask(currentPackage(), category);
+    switch (category) {
+    case Task::UpgradeAll:
+        setUpgradePackages(true);
+        break;
+    case Task::InstallExplicity:
+        addCurrentToTasks(m_installExplicity);
+        break;
+    case Task::InstallAsDepend:
+        addCurrentToTasks(m_installAsDepend);
+        break;
+    case Task::Reinstall:
+        addCurrentToTasks(m_reinstall);
+        break;
+    case Task::MarkAsExplicity:
+        addCurrentToTasks(m_markAsExplicity);
+        break;
+    case Task::MarkAsDepend:
+        addCurrentToTasks(m_markAsDepend);
+        break;
+    case Task::Uninstall:
+        addCurrentToTasks(m_uninstall);
+        break;
+    default:
+        break;
+    }
+}
+
+void PackagesView::clearAllOperations()
+{
+    m_upgradePackages = false;
+
+    m_installExplicity.clear();
+    m_installAsDepend.clear();
+    m_reinstall.clear();
+    m_markAsExplicity.clear();
+    m_markAsDepend.clear();
+    m_uninstall.clear();
+
+    emit operationsCountChanged();
 }
 
 void PackagesView::contextMenuEvent(QContextMenuEvent *event)
 {
-    const auto *package = static_cast<Package *>(indexAt(event->pos()).internalPointer());
+    auto *package = static_cast<Package *>(indexAt(event->pos()).internalPointer());
     if (package == nullptr)
         return;
-
-    if (m_tasksModel == nullptr)
-        qFatal("Task view is not specified");
-
-    // Disable an action if the selected package has already been added to its category
-    Task *task = m_tasksModel->find(package->name());
-    for (int category = 0; category < m_menu->actions().size(); ++category) {
-        if (task != nullptr && category == task->parent()->categoryType())
-            m_menu->actions().at(category)->setEnabled(false);
-        else
-            m_menu->actions().at(category)->setEnabled(true);
-    }
 
     // Setup menu actions
     if (package->isInstalled()) {
@@ -224,8 +348,16 @@ void PackagesView::contextMenuEvent(QContextMenuEvent *event)
         m_menu->actions().at(Task::InstallAsDepend)->setVisible(true);
     }
 
+    // Check if package exists in category
+    m_menu->actions().at(Task::InstallExplicity)->setEnabled(!m_installExplicity.contains(package));
+    m_menu->actions().at(Task::InstallAsDepend)->setEnabled(!m_installAsDepend.contains(package));
+    m_menu->actions().at(Task::Reinstall)->setEnabled(!m_reinstall.contains(package));
+    m_menu->actions().at(Task::MarkAsExplicity)->setEnabled(!m_markAsExplicity.contains(package));
+    m_menu->actions().at(Task::MarkAsDepend)->setEnabled(!m_markAsDepend.contains(package));
+    m_menu->actions().at(Task::Uninstall)->setEnabled(!m_uninstall.contains(package));
+
     // Enable upgrade only if updates available and not added to upgrade
-    if (!model()->outdatedPackages().isEmpty() && m_tasksModel->tasks(Task::UpgradeAll).isEmpty())
+    if (!model()->outdatedPackages().isEmpty() && !m_upgradePackages)
         m_menu->actions().at(Task::UpgradeAll)->setEnabled(true);
     else
         m_menu->actions().at(Task::UpgradeAll)->setEnabled(false);
@@ -236,4 +368,33 @@ void PackagesView::contextMenuEvent(QContextMenuEvent *event)
 void PackagesView::setModel(QAbstractItemModel *model)
 {
     QTreeView::setModel(model);
+}
+
+void PackagesView::addCurrentToTasks(QVector<Package *> &category)
+{
+    Package *package = currentPackage();
+    removeFromTasks(package);
+    category.append(package);
+
+    emit operationsCountChanged();
+}
+
+void PackagesView::removeFromTasks(Package *package)
+{
+    if (m_installExplicity.removeOne(package))
+        return;
+
+    if (m_installAsDepend.removeOne(package))
+        return;
+
+    if (m_reinstall.removeOne(package))
+        return;
+
+    if (m_markAsExplicity.removeOne(package))
+        return;
+
+    if (m_markAsDepend.removeOne(package))
+        return;
+
+    m_uninstall.removeOne(package);
 }

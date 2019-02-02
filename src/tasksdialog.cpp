@@ -3,13 +3,16 @@
 
 #include <QPushButton>
 
-TasksDialog::TasksDialog(Terminal *terminal, QWidget *parent) :
+TasksDialog::TasksDialog(Terminal *terminal, PackagesView *view, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::TasksDialog),
-    m_terminal(terminal)
+    m_terminal(terminal),
+    m_packagesView(view)
 {
     ui->setupUi(this);
-    connect(ui->tasksView->model(), &TasksModel::taskRemoved, this, &TasksDialog::processTaskRemoving);
+    ui->tasksView->model()->setTasks(m_packagesView);
+    ui->tasksView->expandAll();
+    connect(m_packagesView, &PackagesView::operationsCountChanged, this, &TasksDialog::processTaskRemoving);
 
     // Change OK button text and icon
     QPushButton *okButton = ui->buttonBox->button(QDialogButtonBox::Ok);
@@ -35,7 +38,7 @@ TasksView *TasksDialog::view()
 
 void TasksDialog::processTaskRemoving()
 {
-    if (ui->tasksView->model()->allTasksCount() > 0)
+    if (m_packagesView->operationsCount() > 0)
         ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
     else
         ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);

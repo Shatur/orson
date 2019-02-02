@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "tasksdialog.h"
 #include "pacmansettings.h"
 #include "singleapplication.h"
 
@@ -18,17 +19,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->packagesView->model(), &PackagesModel::databaseStatusChanged, this, &MainWindow::setStatusBarMessage);
     connect(ui->packagesView->model(), &PackagesModel::firstPackageAvailable, this, &MainWindow::processFirstPackageAvailable);
     connect(ui->packagesView->model(), &PackagesModel::databaseLoaded, this, &MainWindow::processLoadedDatabase);
+    connect(ui->packagesView, &PackagesView::operationsCountChanged, this, &MainWindow::updateApplyButton);
 
     // Setup terminal executor
     m_terminal = new Terminal(this);
     connect(m_terminal, &Terminal::finished, this, &MainWindow::on_reloadButton_clicked);
     connect(m_terminal, &Terminal::started, this, &MainWindow::processTerminalStart);
-
-    // Load tasks dialog
-    m_tasksDialog = new TasksDialog(m_terminal, this);
-    ui->packagesView->setTasksModel(m_tasksDialog->view()->model());
-    connect(m_tasksDialog->view()->model(), &TasksModel::taskAdded, this, &MainWindow::updateApplyButton);
-    connect(m_tasksDialog->view()->model(), &TasksModel::taskRemoved, this, &MainWindow::updateApplyButton);
 
     // Make after completion actions exclusive
     m_afterCompletionGroup = new QActionGroup(this);
@@ -118,7 +114,8 @@ void MainWindow::setAfterTasksCompletionAction(QAction *action)
 
 void MainWindow::on_applyButton_clicked()
 {
-    if (m_tasksDialog->exec())
+    TasksDialog dialog(m_terminal, ui->packagesView, this);
+    if (dialog.exec())
         m_terminal->executeTasks();
 }
 
@@ -278,7 +275,7 @@ void MainWindow::findDepend(QAbstractButton *button)
 
 void MainWindow::updateApplyButton()
 {
-    const int tasksCount = m_tasksDialog->view()->model()->allTasksCount();
+    const int tasksCount = ui->packagesView->operationsCount();
 
     if (tasksCount > 0) {
         ui->applyButton->setToolTip("Apply tasks (" + QString::number(tasksCount) + ")");

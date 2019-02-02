@@ -8,12 +8,6 @@ TasksView::TasksView(QWidget *parent) :
     QTreeView(parent)
 {
     setModel(new TasksModel(this));
-    connect(model(), &TasksModel::taskAdded, this, &TasksView::showCategory);
-    connect(model(), &TasksModel::taskRemoved, this, &TasksView::hideCategory);
-
-    // Hide all categories by default
-    for (int i = 0; i < model()->rowCount(QModelIndex()); ++i)
-        setRowHidden(i, QModelIndex(), true);
 
     // Setup context menu
     m_menu = new QMenu(this);
@@ -30,32 +24,16 @@ Task *TasksView::currentTask()
     return static_cast<Task *>(currentIndex().internalPointer());
 }
 
-void TasksView::showCategory(Task::Category category)
-{
-    const QModelIndex index = model()->index(category, 0, QModelIndex());
-
-    setRowHidden(category, QModelIndex(), false);
-    setExpanded(index, true);
-}
-
-// Hide category only if it is empty
-void TasksView::hideCategory(Task::Category category)
-{
-    if (model()->tasks(category).isEmpty())
-        setRowHidden(category, QModelIndex(), true);
-}
-
 void TasksView::removeCurrentTask()
 {
     Task *task = currentTask();
-    const Task::Category category = task->categoryType();
-    if (category == Task::Null) {
-        // Do not allow to remove tasks from "Upgrade all" category
-        if (task->parent()->categoryType() != Task::UpgradeAll)
-            model()->removeTask(task);
-    } else {
-        model()->removeTasks(category);
-    }
+    const Task::Type category = task->type();
+
+    // Do not allow to remove packages from upgrade all category
+    if (category == Task::Item && task->parent()->type() == Task::UpgradeAll)
+        return;
+
+    model()->removeTask(task);
 }
 
 void TasksView::contextMenuEvent(QContextMenuEvent *event)
@@ -65,7 +43,7 @@ void TasksView::contextMenuEvent(QContextMenuEvent *event)
         return;
 
     // Do not show context menu for categories
-    if (task->parent()->categoryType() == Task::UpgradeAll)
+    if (task->parent()->type() == Task::UpgradeAll)
         m_menu->actions().at(0)->setEnabled(false);
     else
         m_menu->actions().at(0)->setEnabled(true);

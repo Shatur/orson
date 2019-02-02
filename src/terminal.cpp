@@ -28,7 +28,7 @@ void Terminal::setTasks(TasksModel *model)
     m_commands.clear();
     constexpr char pacmanProgram[] = "pikaur ";
 
-    foreach (Task *category, model->categories()) {
+    foreach (Task *category, model->tasks()) {
         if (category->children().isEmpty())
             continue;
 
@@ -38,7 +38,7 @@ void Terminal::setTasks(TasksModel *model)
 
         // Pacman command
         m_commands.append(pacmanProgram);
-        switch (category->categoryType()) {
+        switch (category->type()) {
         case Task::UpgradeAll:
             m_commands.append("-Su");
             continue;
@@ -60,10 +60,10 @@ void Terminal::setTasks(TasksModel *model)
 
         // Add packages list
         foreach (Task *task, category->children())
-            m_commands.append(task->name() + " ");
+            m_commands.append(task->package()->name() + " ");
 
         // Reason
-        switch (category->categoryType()) {
+        switch (category->type()) {
         case Task::InstallAsDepend:
         case Task::MarkAsDepend:
             m_commands.append("--asdeps ");

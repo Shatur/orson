@@ -19,9 +19,13 @@ QVariant TasksModel::data(const QModelIndex &index, int role) const
     Task *item = static_cast<Task *>(index.internalPointer());
     switch (role) {
     case Qt::DisplayRole:
-        return item->name();
+        if (item->type() == Task::Item)
+            return item->package()->name();
+        return item->categoryName(item->type());
     case Qt::DecorationRole:
-        return item->icon();
+        if (item->type() == Task::Item)
+            return item->package()->icon();
+        return item->categoryIcon(item->type());
     default:
         return QVariant();
     }
@@ -80,31 +84,24 @@ int TasksModel::columnCount(const QModelIndex &) const
     return 1;
 }
 
-void TasksModel::addTask(const Package *package, Task::Category destinationCategory)
+void TasksModel::setTasks(PackagesView *packagesView)
 {
-    const QModelIndex destinationParentIndex = index(destinationCategory, 0, QModelIndex());
-    Task *destinationParentTask = m_rootItem->children().at(destinationCategory);
+    beginResetModel();
+    m_rootItem->removeChildren();
 
-    Task *task = find(package->name());
-    if (task != nullptr) {
-        // Just move task if the package has been added to another category
-        const Task::Category sourceCategory = task->parent()->categoryType();
-        const QModelIndex sourceParentIndex = index(sourceCategory, 0, QModelIndex());
-        Task *sourceParentTask = m_rootItem->children().at(sourceCategory);
+    if (packagesView->isUpgradePackages())
+        addCategory(Task::UpgradeAll, packagesView->model()->outdatedPackages());
 
-        beginMoveRows(sourceParentIndex, task->row(), task->row(), destinationParentIndex, tasks(destinationCategory).size());
-        sourceParentTask->removeChild(task);
-        emit taskRemoved(sourceCategory);
-        destinationParentTask->addChild(task);
-        endMoveRows();
-    } else {
-        // Add new task
-        beginInsertRows(destinationParentIndex, destinationParentTask->children().size(), destinationParentTask->children().size());
-        destinationParentTask->addChild(new Task(package));
-        endInsertRows();
-    }
+    addCategory(Task::InstallExplicity, packagesView->installExplicity());
+    addCategory(Task::InstallAsDepend, packagesView->installAsDepend());
+    addCategory(Task::Reinstall, packagesView->reinstall());
+    addCategory(Task::MarkAsExplicity, packagesView->markAsExplicity());
+    addCategory(Task::MarkAsDepend, packagesView->markAsDepend());
+    addCategory(Task::Uninstall, packagesView->uninstall());
 
-    emit taskAdded(destinationCategory);
+    endResetModel();
+
+    connect(this, &TasksModel::taskRemoved, packagesView, &PackagesView::removeOperation);
 }
 
 void TasksModel::removeTask(Task *task)
@@ -113,73 +110,27 @@ void TasksModel::removeTask(Task *task)
     const QModelIndex parentIndex = index(parentTask->row(), 0, QModelIndex());
 
     beginRemoveRows(parentIndex, task->row(), task->row());
+    emit taskRemoved(task);
     parentTask->removeChild(task);
-    delete task;
     endRemoveRows();
 
-    emit taskRemoved(parentTask->categoryType());
+    // Remove category if it is empty
+    if (parentTask != m_rootItem && parentTask->children().isEmpty())
+        removeTask(parentTask);
 }
 
-void TasksModel::removeTasks(Task::Category category)
-{
-    const QModelIndex categoryIndex = index(category, 0, QModelIndex());
-    Task *categoryTask = m_rootItem->children().at(category);
-
-    beginRemoveRows(categoryIndex, 0, categoryTask->children().size());
-    categoryTask->removeChildren();
-    endRemoveRows();
-
-    emit taskRemoved(category);
-}
-
-void TasksModel::removeAllTasks()
-{
-    for (Task *category : m_rootItem->children()) {
-        if (category->children().isEmpty())
-            continue;
-
-        const QModelIndex parentIndex = index(category->row(), 0, QModelIndex());
-
-        beginRemoveRows(parentIndex, 0, category->children().size());
-        category->removeChildren();
-        endRemoveRows();
-
-        emit taskRemoved(category->categoryType());
-    }
-}
-
-QVector<Task *> TasksModel::categories() const
+QVector<Task *> TasksModel::tasks()
 {
     return m_rootItem->children();
 }
 
-QVector<Task *> TasksModel::tasks(Task::Category category) const
+void TasksModel::addCategory(Task::Type category, const QVector<Package *> &packages)
 {
-    return categories().at(category)->children();
-}
+    if (packages.empty())
+        return;
 
-int TasksModel::allTasksCount() const
-{
-    int tasksCount = 0;
-    foreach (Task *category, m_rootItem->children())
-        tasksCount += category->children().size();
-
-    return tasksCount;
-}
-
-Task *TasksModel::find(QString packageName) const
-{
-    foreach (Task *category, m_rootItem->children()) {
-        foreach (Task *task, category->children()) {
-            if (task->name() == packageName)
-                return task;
-        }
-    }
-
-    return nullptr;
-}
-
-int TasksModel::categoriesCount() const
-{
-    return m_rootItem->children().size();
+    auto *taskCategory = new Task(category);
+    m_rootItem->addChild(taskCategory);
+    foreach (Package *package, packages)
+        taskCategory->addChild(new Task(package));
 }

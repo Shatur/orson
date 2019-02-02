@@ -15,7 +15,7 @@ class TasksDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit TasksDialog(Terminal *terminal, QWidget *parent = nullptr);
+    explicit TasksDialog(Terminal *terminal, PackagesView *view, QWidget *parent = nullptr);
     ~TasksDialog() override;
 
     virtual int exec() override;
@@ -29,6 +29,7 @@ private:
 
     Ui::TasksDialog *ui;
     Terminal *m_terminal;
+    PackagesView *m_packagesView;
 };
 
 #endif // TASKSDIALOG_H
