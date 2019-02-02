@@ -19,7 +19,7 @@ SOURCES += \
     src/main.cpp \
     src/mainwindow.cpp \
     src/tasksdialog.cpp \
-    src/terminal.cpp \
+    src/pacman.cpp \
     src/pacmansettings.cpp \
     src/packages-view/depend.cpp \
     src/packages-view/package.cpp \
@@ -35,7 +35,7 @@ SOURCES += \
 HEADERS += \
     src/mainwindow.h \
     src/tasksdialog.h \
-    src/terminal.h \
+    src/pacman.h \
     src/pacmansettings.h \
     src/packages-view/depend.h \
     src/packages-view/package.h \

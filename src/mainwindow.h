@@ -3,7 +3,7 @@
 
 #include "files-view/filesmodel.h"
 #include "packages-view/packagesmodel.h"
-#include "terminal.h"
+#include "pacman.h"
 
 #include <QMainWindow>
 #include <QButtonGroup>
@@ -69,7 +69,7 @@ private:
     QSystemTrayIcon *m_trayIcon;
     QMenu *m_trayMenu;
     QActionGroup *m_afterCompletionGroup;
-    Terminal *m_terminal;
+    Pacman *m_pacman;
 };
 
 #endif // MAINWINDOW_H

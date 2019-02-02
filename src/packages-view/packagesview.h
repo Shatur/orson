@@ -35,6 +35,7 @@ public:
 
     bool isUpgradePackages() const;
     void setUpgradePackages(bool isUpgradePackages);
+
     int operationsCount();
 
 public slots:

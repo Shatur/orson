@@ -3,7 +3,7 @@
 
 #include <QPushButton>
 
-TasksDialog::TasksDialog(Terminal *terminal, PackagesView *view, QWidget *parent) :
+TasksDialog::TasksDialog(Pacman *terminal, PackagesView *view, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::TasksDialog),
     m_terminal(terminal),
@@ -48,6 +48,6 @@ void TasksDialog::processTaskRemoving()
 
 void TasksDialog::updateCommandsText()
 {
-    m_terminal->setTasks(ui->tasksView->model());
+    m_terminal->setTasks(m_packagesView);
     ui->commandsEdit->setPlainText(m_terminal->commands());
 }

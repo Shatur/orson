@@ -22,9 +22,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->packagesView, &PackagesView::operationsCountChanged, this, &MainWindow::updateApplyButton);
 
     // Setup terminal executor
-    m_terminal = new Terminal(this);
-    connect(m_terminal, &Terminal::finished, this, &MainWindow::on_reloadButton_clicked);
-    connect(m_terminal, &Terminal::started, this, &MainWindow::processTerminalStart);
+    m_pacman = new Pacman(this);
+    connect(m_pacman, &Pacman::finished, this, &MainWindow::on_reloadButton_clicked);
+    connect(m_pacman, &Pacman::started, this, &MainWindow::processTerminalStart);
 
     // Make after completion actions exclusive
     m_afterCompletionGroup = new QActionGroup(this);
@@ -71,7 +71,7 @@ void MainWindow::on_installLocalAction_triggered()
     if (!dialog.exec())
         return;
 
-    m_terminal->installPackage(dialog.selectedFiles().at(0));
+    m_pacman->installPackage(dialog.selectedFiles().at(0));
 }
 
 void MainWindow::on_installLocalDependAction_triggered()
@@ -84,7 +84,7 @@ void MainWindow::on_installLocalDependAction_triggered()
     if (!dialog.exec())
         return;
 
-    m_terminal->installPackage(dialog.selectedFiles().at(0), true);
+    m_pacman->installPackage(dialog.selectedFiles().at(0), true);
 }
 
 void MainWindow::on_openHistoryFileAction_triggered()
@@ -103,25 +103,25 @@ void MainWindow::on_openHistoryFolderAction_triggered()
 
 void MainWindow::on_noConfirmAction_toggled(bool checked)
 {
-    m_terminal->setNoConfirm(checked);
+    m_pacman->setNoConfirm(checked);
 }
 
 void MainWindow::setAfterTasksCompletionAction(QAction *action)
 {
-    auto afterCompletion = static_cast<Terminal::AfterCompletion>(m_afterCompletionGroup->actions().indexOf(action));
-    m_terminal->setAfterTasksCompletion(afterCompletion);
+    auto afterCompletion = static_cast<Pacman::AfterCompletion>(m_afterCompletionGroup->actions().indexOf(action));
+    m_pacman->setAfterTasksCompletion(afterCompletion);
 }
 
 void MainWindow::on_applyButton_clicked()
 {
-    TasksDialog dialog(m_terminal, ui->packagesView, this);
+    TasksDialog dialog(m_pacman, ui->packagesView, this);
     if (dialog.exec())
-        m_terminal->executeTasks();
+        m_pacman->executeTasks();
 }
 
 void MainWindow::on_syncButton_clicked()
 {
-    m_terminal->syncDatabase();
+    m_pacman->syncDatabase();
 }
 
 void MainWindow::on_reloadButton_clicked()

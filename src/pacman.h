@@ -1,11 +1,11 @@
 #ifndef TERMINAL_H
 #define TERMINAL_H
 
-#include "tasks-view/tasksmodel.h"
+#include "packages-view/packagesview.h"
 
 #include <QProcess>
 
-class Terminal : public QObject
+class Pacman : public QObject
 {
     Q_OBJECT
 
@@ -17,9 +17,9 @@ public:
         Reboot
     };
 
-    Terminal(QObject *parent = nullptr);
+    Pacman(QObject *parent = nullptr);
 
-    void setTasks(TasksModel *model);
+    void setTasks(PackagesView *view);
     void executeTasks();
     void installPackage(const QString &name, bool asDepend = false);
     void syncDatabase();
@@ -38,6 +38,8 @@ signals:
 
 private:
     QPair<QString, QStringList> getTerminalProgram();
+    void addPackages(const QVector<Package *> &packages, const QString &command, const QString &arguments = QString());
+
     QProcess m_terminal;
     QString m_commands;
     AfterCompletion m_afterTasksCompletion = WaitForInput;

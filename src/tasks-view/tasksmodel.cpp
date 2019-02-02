@@ -119,11 +119,6 @@ void TasksModel::removeTask(Task *task)
         removeTask(parentTask);
 }
 
-QVector<Task *> TasksModel::tasks()
-{
-    return m_rootItem->children();
-}
-
 void TasksModel::addCategory(Task::Type category, const QVector<Package *> &packages)
 {
     if (packages.empty())

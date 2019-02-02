@@ -2,7 +2,7 @@
 #define TASKSDIALOG_H
 
 #include "tasks-view/tasksview.h"
-#include "terminal.h"
+#include "pacman.h"
 
 #include <QDialog>
 
@@ -15,7 +15,7 @@ class TasksDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit TasksDialog(Terminal *terminal, PackagesView *view, QWidget *parent = nullptr);
+    explicit TasksDialog(Pacman *terminal, PackagesView *view, QWidget *parent = nullptr);
     ~TasksDialog() override;
 
     virtual int exec() override;
@@ -28,7 +28,7 @@ private:
     void updateCommandsText();
 
     Ui::TasksDialog *ui;
-    Terminal *m_terminal;
+    Pacman *m_terminal;
     PackagesView *m_packagesView;
 };
 

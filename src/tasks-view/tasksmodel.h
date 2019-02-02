@@ -24,7 +24,6 @@ public:
 
     void setTasks(PackagesView *packagesView);
     void removeTask(Task *task);
-    QVector<Task *> tasks();
 
 signals:
     void taskRemoved(Task *task);
