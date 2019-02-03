@@ -4,7 +4,7 @@
 #include <QDebug>
 
 constexpr char pacmanProgram[] = "pikaur ";
-constexpr char waitForInput[] = " && echo && read -s -p 'Successfully! To close this window, press <Enter>...'";
+constexpr char waitForInput[] = " && echo && read -s -p 'Success! To close this window, press <Enter>...'";
 constexpr char shutdown[] = " && sudo shutdown 0";
 constexpr char reboot[] = " && sudo reboot";
 
