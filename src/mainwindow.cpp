@@ -132,12 +132,19 @@ void MainWindow::on_applyButton_clicked()
         m_pacman->executeTasks();
 }
 
-void MainWindow::on_syncButton_clicked(bool checked)
+void MainWindow::on_syncButton_toggled(bool checked)
 {
     ui->packagesView->setSyncRepositories(checked);
+
+    if (checked) {
+        ui->upgradeButton->setEnabled(true); // Enable upgrade button even if no updates available
+    } else if (ui->packagesView->model()->outdatedPackages().isEmpty()) {
+        ui->upgradeButton->setChecked(false);
+        ui->upgradeButton->setEnabled(false);
+    }
 }
 
-void MainWindow::on_upgradeButton_clicked(bool checked)
+void MainWindow::on_upgradeButton_toggled(bool checked)
 {
     ui->packagesView->setUpgradePackages(checked);
 }
@@ -147,6 +154,10 @@ void MainWindow::on_reloadButton_clicked()
     ui->reloadButton->setEnabled(false);
     ui->syncButton->setEnabled(false);
     ui->upgradeButton->setEnabled(false);
+
+    ui->syncButton->setChecked(false);
+    ui->upgradeButton->setChecked(false);
+
     ui->packagesView->model()->reloadRepoPackages();
 }
 

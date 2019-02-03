@@ -39,8 +39,8 @@ private slots:
 
     // Buttons
     void on_applyButton_clicked();
-    void on_syncButton_clicked(bool checked);
-    void on_upgradeButton_clicked(bool checked);
+    void on_syncButton_toggled(bool checked);
+    void on_upgradeButton_toggled(bool checked);
     void on_reloadButton_clicked();
     void on_browserButton_clicked();
 
