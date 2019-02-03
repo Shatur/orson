@@ -41,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // System tray menu
     m_trayMenu = new QMenu(this);
     m_trayMenu->addAction(QIcon::fromTheme("window"), tr("Show window"), this, &MainWindow::show);
+    m_trayMenu->addAction(QIcon::fromTheme("system-upgrade"), tr("Sync and upgrade"), this, &MainWindow::syncAndUpgrade);
     m_trayMenu->addAction(ui->upgradeButton->icon(), ui->upgradeButton->text(), this, &MainWindow::upgrade);
     m_trayMenu->addAction(ui->syncButton->icon(), ui->syncButton->text(), this, &MainWindow::syncRepositories);
     m_trayMenu->addAction(ui->reloadButton->icon(), ui->reloadButton->text(), this, &MainWindow::on_reloadButton_clicked);
@@ -105,6 +106,13 @@ void MainWindow::on_openHistoryFolderAction_triggered()
 void MainWindow::on_noConfirmAction_toggled(bool checked)
 {
     m_pacman->setNoConfirm(checked);
+}
+
+void MainWindow::syncAndUpgrade()
+{
+    ui->packagesView->setSyncRepositories(true);
+    ui->packagesView->setUpgradePackages(true);
+    on_applyButton_clicked();
 }
 
 void MainWindow::syncRepositories()

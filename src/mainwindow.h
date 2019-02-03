@@ -32,6 +32,7 @@ private slots:
     void on_noConfirmAction_toggled(bool checked);
 
     // Tray context menu
+    void syncAndUpgrade();
     void syncRepositories();
     void upgrade();
 
