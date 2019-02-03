@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->packagesView->model(), &PackagesModel::databaseStatusChanged, this, &MainWindow::setStatusBarMessage);
     connect(ui->packagesView->model(), &PackagesModel::firstPackageAvailable, this, &MainWindow::processFirstPackageAvailable);
     connect(ui->packagesView->model(), &PackagesModel::databaseLoaded, this, &MainWindow::processLoadedDatabase);
-    connect(ui->packagesView, &PackagesView::operationsCountChanged, this, &MainWindow::updateButtons);
+    connect(ui->packagesView, &PackagesView::operationsCountChanged, this, &MainWindow::updateApplyButton);
 
     // Setup terminal executor
     m_pacman = new Pacman(this);
@@ -293,7 +293,7 @@ void MainWindow::findDepend(QAbstractButton *button)
     }
 }
 
-void MainWindow::updateButtons()
+void MainWindow::updateApplyButton()
 {
     const int tasksCount = ui->packagesView->operationsCount();
 
@@ -304,17 +304,6 @@ void MainWindow::updateButtons()
         ui->applyButton->setToolTip("Apply tasks");
         ui->applyButton->setEnabled(false);
     }
-
-    if (ui->packagesView->isUpgradePackages())
-        ui->upgradeButton->setChecked(true);
-    else
-        ui->upgradeButton->setChecked(false);
-
-    if (ui->packagesView->isSyncRepositories())
-        ui->syncButton->setChecked(true);
-    else
-        ui->syncButton->setChecked(false);
-
 }
 
 void MainWindow::processLoadedDatabase()

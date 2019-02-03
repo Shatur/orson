@@ -53,7 +53,7 @@ private slots:
     void activateTray(QSystemTrayIcon::ActivationReason reason);
     void setStatusBarMessage(const QString &text);
     void findDepend(QAbstractButton* button);
-    void updateButtons();
+    void updateApplyButton();
 
     void processLoadedDatabase();
     void processTerminalStart();
