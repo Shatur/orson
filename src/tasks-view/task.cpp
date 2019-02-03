@@ -34,6 +34,8 @@ Package *Task::package() const
 QString Task::categoryName(Task::Type category)
 {
     switch (category) {
+    case Sync:
+        return "Sync repositories";
     case UpgradeAll:
         return "Upgrade all";
     case InstallExplicity:
@@ -56,6 +58,8 @@ QString Task::categoryName(Task::Type category)
 QIcon Task::categoryIcon(Task::Type category)
 {
     switch (category) {
+    case Sync:
+        return QIcon::fromTheme("mail-send-receive");
     case UpgradeAll:
         return QIcon::fromTheme("go-up");
     case InstallExplicity:

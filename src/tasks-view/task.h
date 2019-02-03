@@ -8,6 +8,7 @@ class Task
 public:
     enum Type {
         Item = -1,
+        Sync,
         UpgradeAll,
         InstallExplicity,
         InstallAsDepend,

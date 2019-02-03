@@ -28,9 +28,19 @@ void Pacman::setTasks(PackagesView *view)
 {
     m_commands.clear();
 
-    if (view->isUpgradePackages()) {
+    if (view->isSyncRepositories() && view->isUpgradePackages()) {
         m_commands.append(pacmanProgram);
-        m_commands.append("-Su ");
+        m_commands.append("-Syu ");
+    } else {
+        if (view->isSyncRepositories()) {
+            m_commands.append(pacmanProgram);
+            m_commands.append("-Sy ");
+        }
+
+        if (view->isUpgradePackages()) {
+            m_commands.append(pacmanProgram);
+            m_commands.append("-Su ");
+        }
     }
 
     addPackages(view->installExplicity(), "-S ");
@@ -39,6 +49,8 @@ void Pacman::setTasks(PackagesView *view)
     addPackages(view->markAsExplicity(), "-D ", "--asexplicity ");
     addPackages(view->markAsDepend(), "-D ", "--asdepend ");
     addPackages(view->uninstall(), "-R ");
+
+    m_commands.chop(1); // Remove last space character
 }
 
 void Pacman::executeTasks()

@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->packagesView->model(), &PackagesModel::databaseStatusChanged, this, &MainWindow::setStatusBarMessage);
     connect(ui->packagesView->model(), &PackagesModel::firstPackageAvailable, this, &MainWindow::processFirstPackageAvailable);
     connect(ui->packagesView->model(), &PackagesModel::databaseLoaded, this, &MainWindow::processLoadedDatabase);
-    connect(ui->packagesView, &PackagesView::operationsCountChanged, this, &MainWindow::updateApplyButton);
+    connect(ui->packagesView, &PackagesView::operationsCountChanged, this, &MainWindow::updateButtons);
 
     // Setup terminal executor
     m_pacman = new Pacman(this);
@@ -119,14 +119,21 @@ void MainWindow::on_applyButton_clicked()
         m_pacman->executeTasks();
 }
 
-void MainWindow::on_syncButton_clicked()
+void MainWindow::on_syncButton_clicked(bool checked)
 {
-    m_pacman->syncDatabase();
+    ui->packagesView->setSyncRepositories(checked);
+}
+
+void MainWindow::on_upgradeButton_clicked(bool checked)
+{
+    ui->packagesView->setUpgradePackages(checked);
 }
 
 void MainWindow::on_reloadButton_clicked()
 {
     ui->reloadButton->setEnabled(false);
+    ui->syncButton->setEnabled(false);
+    ui->upgradeButton->setEnabled(false);
     ui->packagesView->model()->reloadRepoPackages();
 }
 
@@ -273,7 +280,7 @@ void MainWindow::findDepend(QAbstractButton *button)
     }
 }
 
-void MainWindow::updateApplyButton()
+void MainWindow::updateButtons()
 {
     const int tasksCount = ui->packagesView->operationsCount();
 
@@ -284,6 +291,17 @@ void MainWindow::updateApplyButton()
         ui->applyButton->setToolTip("Apply tasks");
         ui->applyButton->setEnabled(false);
     }
+
+    if (ui->packagesView->isUpgradePackages())
+        ui->upgradeButton->setChecked(true);
+    else
+        ui->upgradeButton->setChecked(false);
+
+    if (ui->packagesView->isSyncRepositories())
+        ui->syncButton->setChecked(true);
+    else
+        ui->syncButton->setChecked(false);
+
 }
 
 void MainWindow::processLoadedDatabase()
@@ -309,7 +327,15 @@ void MainWindow::processLoadedDatabase()
     notifyArguments << 3000; // Show interval
     notify.callWithArgumentList(QDBus::AutoDetect, "Notify", notifyArguments);
 
+    // Enable buttons
     ui->reloadButton->setEnabled(true);
+    ui->syncButton->setEnabled(true);
+
+    // Enable upgrade button only if updates available
+    if (ui->packagesView->model()->outdatedPackages().isEmpty())
+        ui->upgradeButton->setEnabled(false);
+    else
+        ui->upgradeButton->setEnabled(true);
 }
 
 void MainWindow::processTerminalStart()

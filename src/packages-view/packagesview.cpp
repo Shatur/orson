@@ -10,6 +10,7 @@ PackagesView::PackagesView(QWidget *parent) :
 {
     // Setup menu
     m_menu = new QMenu(this);
+    m_menu->addAction(Task::categoryIcon(Task::Sync), Task::categoryName(Task::Sync));
     m_menu->addAction(Task::categoryIcon(Task::UpgradeAll), Task::categoryName(Task::UpgradeAll));
     m_menu->addAction(Task::categoryIcon(Task::InstallExplicity), Task::categoryName(Task::InstallExplicity));
     m_menu->addAction(Task::categoryIcon(Task::InstallAsDepend), Task::categoryName(Task::InstallAsDepend));
@@ -190,8 +191,24 @@ bool PackagesView::isUpgradePackages() const
 
 void PackagesView::setUpgradePackages(bool upgrade)
 {
-    m_upgradePackages = upgrade;
+    if (m_upgradePackages == upgrade)
+        return;
 
+    m_upgradePackages = upgrade;
+    emit operationsCountChanged();
+}
+
+bool PackagesView::isSyncRepositories() const
+{
+    return m_syncRepositories;
+}
+
+void PackagesView::setSyncRepositories(bool syncRepositories)
+{
+    if (m_syncRepositories == syncRepositories)
+        return;
+
+    m_syncRepositories = syncRepositories;
     emit operationsCountChanged();
 }
 
@@ -200,6 +217,9 @@ int PackagesView::operationsCount()
     int count = 0;
 
     if (m_upgradePackages)
+        ++count;
+
+    if (m_syncRepositories)
         ++count;
 
     count += m_installExplicity.size();
@@ -215,6 +235,9 @@ int PackagesView::operationsCount()
 void PackagesView::removeOperation(Task *task)
 {
     switch (task->type()) {
+    case Task::Sync:
+        m_syncRepositories = false;
+        break;
     case Task::UpgradeAll:
         m_upgradePackages = false;
         break;
@@ -281,6 +304,9 @@ void PackagesView::processMenuAction(QAction *action)
     const auto category = static_cast<Task::Type>(m_menu->actions().indexOf(action));
 
     switch (category) {
+    case Task::Sync:
+        setSyncRepositories(true);
+        break;
     case Task::UpgradeAll:
         setUpgradePackages(true);
         break;
@@ -310,6 +336,7 @@ void PackagesView::processMenuAction(QAction *action)
 void PackagesView::clearAllOperations()
 {
     m_upgradePackages = false;
+    m_syncRepositories = false;
 
     m_installExplicity.clear();
     m_installAsDepend.clear();
@@ -348,16 +375,16 @@ void PackagesView::contextMenuEvent(QContextMenuEvent *event)
         m_menu->actions().at(Task::InstallAsDepend)->setVisible(true);
     }
 
-    // Check if package exists in category
+    // Check if opeartions are already selected
     m_menu->actions().at(Task::InstallExplicity)->setEnabled(!m_installExplicity.contains(package));
     m_menu->actions().at(Task::InstallAsDepend)->setEnabled(!m_installAsDepend.contains(package));
     m_menu->actions().at(Task::Reinstall)->setEnabled(!m_reinstall.contains(package));
     m_menu->actions().at(Task::MarkAsExplicity)->setEnabled(!m_markAsExplicity.contains(package));
     m_menu->actions().at(Task::MarkAsDepend)->setEnabled(!m_markAsDepend.contains(package));
     m_menu->actions().at(Task::Uninstall)->setEnabled(!m_uninstall.contains(package));
+    m_menu->actions().at(Task::Sync)->setEnabled(!m_syncRepositories);
 
-    // Enable upgrade only if updates available and not added to upgrade
-    if (!model()->outdatedPackages().isEmpty() && !m_upgradePackages)
+    if ((!model()->outdatedPackages().isEmpty() || m_syncRepositories) && !m_upgradePackages)
         m_menu->actions().at(Task::UpgradeAll)->setEnabled(true);
     else
         m_menu->actions().at(Task::UpgradeAll)->setEnabled(false);

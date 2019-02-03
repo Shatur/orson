@@ -29,7 +29,7 @@ signals:
     void taskRemoved(Task *task);
 
 private:
-    void addCategory(Task::Type category, const QVector<Package *> &packages);
+    void addCategory(Task::Type category, const QVector<Package *> &packages = {});
 
     Task *m_rootItem;
     PackagesView *m_PackagesView;

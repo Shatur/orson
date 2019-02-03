@@ -89,15 +89,29 @@ void TasksModel::setTasks(PackagesView *packagesView)
     beginResetModel();
     m_rootItem->removeChildren();
 
+    if (packagesView->isSyncRepositories())
+        addCategory(Task::Sync);
+
     if (packagesView->isUpgradePackages())
         addCategory(Task::UpgradeAll, packagesView->model()->outdatedPackages());
 
-    addCategory(Task::InstallExplicity, packagesView->installExplicity());
-    addCategory(Task::InstallAsDepend, packagesView->installAsDepend());
-    addCategory(Task::Reinstall, packagesView->reinstall());
-    addCategory(Task::MarkAsExplicity, packagesView->markAsExplicity());
-    addCategory(Task::MarkAsDepend, packagesView->markAsDepend());
-    addCategory(Task::Uninstall, packagesView->uninstall());
+    if (!packagesView->installExplicity().isEmpty())
+        addCategory(Task::InstallExplicity, packagesView->installExplicity());
+
+    if (!packagesView->installAsDepend().isEmpty())
+        addCategory(Task::InstallAsDepend, packagesView->installAsDepend());
+
+    if (!packagesView->reinstall().isEmpty())
+        addCategory(Task::Reinstall, packagesView->reinstall());
+
+    if (!packagesView->markAsExplicity().isEmpty())
+        addCategory(Task::MarkAsExplicity, packagesView->markAsExplicity());
+
+    if (!packagesView->markAsDepend().isEmpty())
+        addCategory(Task::MarkAsDepend, packagesView->markAsDepend());
+
+    if (!packagesView->uninstall().isEmpty())
+        addCategory(Task::Uninstall, packagesView->uninstall());
 
     endResetModel();
 
@@ -121,9 +135,6 @@ void TasksModel::removeTask(Task *task)
 
 void TasksModel::addCategory(Task::Type category, const QVector<Package *> &packages)
 {
-    if (packages.empty())
-        return;
-
     auto *taskCategory = new Task(category);
     m_rootItem->addChild(taskCategory);
     foreach (Package *package, packages)

@@ -36,6 +36,9 @@ public:
     bool isUpgradePackages() const;
     void setUpgradePackages(bool isUpgradePackages);
 
+    bool isSyncRepositories() const;
+    void setSyncRepositories(bool isSyncRepositories);
+
     int operationsCount();
 
 public slots:
@@ -65,6 +68,7 @@ private:
     QVector<Package *> m_markAsDepend;
     QVector<Package *> m_uninstall;
     bool m_upgradePackages = false;
+    bool m_syncRepositories = false;
 
     bool m_filtered = false;
     QMenu *m_menu;

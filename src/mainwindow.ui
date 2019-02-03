@@ -40,6 +40,9 @@
       </item>
       <item>
        <widget class="QToolButton" name="syncButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="toolTip">
          <string>Check for updates</string>
         </property>
@@ -49,6 +52,25 @@
         <property name="icon">
          <iconset theme="mail-send-receive">
           <normaloff>.</normaloff>.</iconset>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="upgradeButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Sync repositories</string>
+        </property>
+        <property name="icon">
+         <iconset theme="go-up"/>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
