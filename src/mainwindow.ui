@@ -47,7 +47,7 @@
          <string>Check for updates</string>
         </property>
         <property name="text">
-         <string>Check for updates</string>
+         <string>Sync repositories</string>
         </property>
         <property name="icon">
          <iconset theme="mail-send-receive">
@@ -64,7 +64,7 @@
          <bool>false</bool>
         </property>
         <property name="text">
-         <string>Sync repositories</string>
+         <string>Upgrade all</string>
         </property>
         <property name="icon">
          <iconset theme="go-up"/>
@@ -1057,13 +1057,14 @@
  </customwidgets>
  <tabstops>
   <tabstop>searchPackagesEdit</tabstop>
+  <tabstop>packagesView</tabstop>
   <tabstop>applyButton</tabstop>
   <tabstop>syncButton</tabstop>
+  <tabstop>upgradeButton</tabstop>
   <tabstop>reloadButton</tabstop>
+  <tabstop>browserButton</tabstop>
   <tabstop>searchModeComboBox</tabstop>
   <tabstop>searchByComboBox</tabstop>
-  <tabstop>packagesView</tabstop>
-  <tabstop>browserButton</tabstop>
   <tabstop>packageTabsWidget</tabstop>
   <tabstop>infoScrollArea</tabstop>
   <tabstop>filesView</tabstop>

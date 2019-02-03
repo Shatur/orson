@@ -41,7 +41,8 @@ MainWindow::MainWindow(QWidget *parent) :
     // System tray menu
     m_trayMenu = new QMenu(this);
     m_trayMenu->addAction(QIcon::fromTheme("window"), tr("Show window"), this, &MainWindow::show);
-    m_trayMenu->addAction(ui->syncButton->icon(), ui->syncButton->text(), this, &MainWindow::on_syncButton_clicked);
+    m_trayMenu->addAction(ui->upgradeButton->icon(), ui->upgradeButton->text(), this, &MainWindow::upgrade);
+    m_trayMenu->addAction(ui->syncButton->icon(), ui->syncButton->text(), this, &MainWindow::syncRepositories);
     m_trayMenu->addAction(ui->reloadButton->icon(), ui->reloadButton->text(), this, &MainWindow::on_reloadButton_clicked);
     m_trayMenu->addAction(QIcon::fromTheme("application-exit"), tr("Exit"), SingleApplication::instance(), &SingleApplication::quit);
 
@@ -104,6 +105,18 @@ void MainWindow::on_openHistoryFolderAction_triggered()
 void MainWindow::on_noConfirmAction_toggled(bool checked)
 {
     m_pacman->setNoConfirm(checked);
+}
+
+void MainWindow::syncRepositories()
+{
+    ui->packagesView->setSyncRepositories(true);
+    on_applyButton_clicked();
+}
+
+void MainWindow::upgrade()
+{
+    ui->packagesView->setUpgradePackages(true);
+    on_applyButton_clicked();
 }
 
 void MainWindow::setAfterTasksCompletionAction(QAction *action)

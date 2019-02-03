@@ -31,6 +31,10 @@ private slots:
     void on_openHistoryFolderAction_triggered();
     void on_noConfirmAction_toggled(bool checked);
 
+    // Tray context menu
+    void syncRepositories();
+    void upgrade();
+
     void setAfterTasksCompletionAction(QAction *action);
 
     // Buttons
