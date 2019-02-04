@@ -1,8 +1,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "tasksdialog.h"
+#include "appsettings.h"
 #include "pacmansettings.h"
 #include "singleapplication.h"
+#include "settingsdialog.h"
 
 #include <QPushButton>
 #include <QStandardItemModel>
@@ -56,6 +58,8 @@ MainWindow::MainWindow(QWidget *parent) :
     // Select the first package if it is not already selected (when first package loaded faster than window)
     if (ui->packagesView->model()->index(0, 0).isValid() && ui->packagesView->selectionModel()->selectedRows().isEmpty())
         processFirstPackageAvailable();
+
+    loadSettings();
 }
 
 MainWindow::~MainWindow()
@@ -89,6 +93,11 @@ void MainWindow::on_installLocalDependAction_triggered()
     m_pacman->installPackage(dialog.selectedFiles().at(0), true);
 }
 
+void MainWindow::on_noConfirmAction_toggled(bool checked)
+{
+    m_pacman->setNoConfirm(checked);
+}
+
 void MainWindow::on_openHistoryFileAction_triggered()
 {
     const PacmanSettings pacmanSettings;
@@ -103,9 +112,11 @@ void MainWindow::on_openHistoryFolderAction_triggered()
     QDesktopServices::openUrl(logFile.dir().path());
 }
 
-void MainWindow::on_noConfirmAction_toggled(bool checked)
+void MainWindow::on_settingsAction_triggered()
 {
-    m_pacman->setNoConfirm(checked);
+    SettingsDialog dialog;
+    if (dialog.exec())
+        loadSettings();
 }
 
 void MainWindow::syncAndUpgrade()
@@ -131,6 +142,21 @@ void MainWindow::setAfterTasksCompletionAction(QAction *action)
 {
     auto afterCompletion = static_cast<Pacman::AfterCompletion>(m_afterCompletionGroup->actions().indexOf(action));
     m_pacman->setAfterTasksCompletion(afterCompletion);
+}
+
+void MainWindow::setTrayStatus(MainWindow::TrayStatus trayStatus)
+{
+    const AppSettings settings;
+    const QString iconName = settings.trayIconName(trayStatus);
+
+    if (QIcon::hasThemeIcon(iconName))
+        m_trayIcon->setIcon(QIcon::fromTheme(iconName));
+    else if (QFile::exists(iconName))
+        m_trayIcon->setIcon(QIcon(iconName));
+    else
+        m_trayIcon->setIcon(QIcon::fromTheme("dialog-error"));
+
+    m_trayStatus = trayStatus;
 }
 
 void MainWindow::on_applyButton_clicked()
@@ -337,10 +363,10 @@ void MainWindow::processLoadedDatabase()
     // Body
     if (ui->packagesView->model()->outdatedPackages().isEmpty()) {
         notifyArguments << "No updates available";
-        m_trayIcon->setIcon(QIcon::fromTheme("update-none"));
+        setTrayStatus(NoUpdates);
     } else {
         notifyArguments << QString::number(ui->packagesView->model()->outdatedPackages().size()) + " updates available";
-        m_trayIcon->setIcon(QIcon::fromTheme("update-high"));
+        setTrayStatus(UpdatesAvailable);
     }
 
     notifyArguments << QStringList();
@@ -361,7 +387,7 @@ void MainWindow::processLoadedDatabase()
 
 void MainWindow::processTerminalStart()
 {
-    m_trayIcon->setIcon(QIcon::fromTheme("state-sync"));
+    setTrayStatus(Updating);
     ui->reloadButton->setEnabled(false);
 }
 
@@ -521,4 +547,28 @@ void MainWindow::loadDepsButtons(int row, const QVector<Depend> &deps)
         packagesLayout->addWidget(button);
     }
     packagesLabel->show();
+}
+
+void MainWindow::loadSettings()
+{
+    const AppSettings settings;
+
+    const bool trayIconVisible = settings.isTrayIconVisible();
+    if (trayIconVisible)
+        setTrayStatus(m_trayStatus);
+    m_trayIcon->setVisible(trayIconVisible);
+    SingleApplication::setQuitOnLastWindowClosed(!trayIconVisible);
+
+    // Connection
+    QNetworkProxy proxy;
+    proxy.setType(settings.proxyType());
+    if (proxy.type() == QNetworkProxy::HttpProxy || proxy.type() == QNetworkProxy::Socks5Proxy) {
+        proxy.setHostName(settings.proxyHost());
+        proxy.setPort(settings.proxyPort());
+        if (settings.isProxyAuthEnabled()) {
+            proxy.setUser(settings.proxyUsername());
+            proxy.setPassword(settings.proxyPassword());
+        }
+    }
+    QNetworkProxy::setApplicationProxy(proxy);
 }

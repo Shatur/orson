@@ -20,6 +20,12 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+    enum TrayStatus {
+        NoUpdates,
+        Updating,
+        UpdatesAvailable
+    };
+
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
@@ -27,9 +33,10 @@ private slots:
     // Menu bar
     void on_installLocalAction_triggered();
     void on_installLocalDependAction_triggered();
+    void on_noConfirmAction_toggled(bool checked);
     void on_openHistoryFileAction_triggered();
     void on_openHistoryFolderAction_triggered();
-    void on_noConfirmAction_toggled(bool checked);
+    void on_settingsAction_triggered();
 
     // Tray context menu
     void syncAndUpgrade();
@@ -37,6 +44,7 @@ private slots:
     void upgrade();
 
     void setAfterTasksCompletionAction(QAction *action);
+    void setTrayStatus(TrayStatus trayStatus);
 
     // Buttons
     void on_applyButton_clicked();
@@ -69,6 +77,7 @@ private:
     // Helper functions
     void displayInfo(bool display, const QString &text, QLabel *titleLabel, QLabel *label);
     void loadDepsButtons(int row, const QVector<Depend> &deps);
+    void loadSettings();
 
     Ui::MainWindow *ui;
     QButtonGroup *m_depsButtonGroup;
@@ -76,6 +85,7 @@ private:
     QMenu *m_trayMenu;
     QActionGroup *m_afterCompletionGroup;
     Pacman *m_pacman;
+    TrayStatus m_trayStatus = Updating;
 };
 
 #endif // MAINWINDOW_H

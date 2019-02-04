@@ -19,8 +19,10 @@ SOURCES += \
     src/main.cpp \
     src/mainwindow.cpp \
     src/tasksdialog.cpp \
+    src/settingsdialog.cpp \
     src/pacman.cpp \
     src/pacmansettings.cpp \
+    src/appsettings.cpp \
     src/packages-view/depend.cpp \
     src/packages-view/package.cpp \
     src/packages-view/packagesmodel.cpp \
@@ -35,8 +37,10 @@ SOURCES += \
 HEADERS += \
     src/mainwindow.h \
     src/tasksdialog.h \
+    src/settingsdialog.h \
     src/pacman.h \
     src/pacmansettings.h \
+    src/appsettings.h \
     src/packages-view/depend.h \
     src/packages-view/package.h \
     src/packages-view/packagesmodel.h \
@@ -50,7 +54,8 @@ HEADERS += \
 
 FORMS += \
     src/mainwindow.ui \
-    src/tasksdialog.ui
+    src/tasksdialog.ui \
+    src/settingsdialog.ui
 
 LIBS += -lalpm
 

@@ -67,7 +67,8 @@
          <string>Upgrade all</string>
         </property>
         <property name="icon">
-         <iconset theme="go-up"/>
+         <iconset theme="go-up">
+          <normaloff>.</normaloff>.</iconset>
         </property>
         <property name="checkable">
          <bool>true</bool>
@@ -938,6 +939,7 @@
      <addaction name="openHistoryFolderAction"/>
     </widget>
     <addaction name="openHistoryMenu"/>
+    <addaction name="settingsAction"/>
    </widget>
    <widget class="QMenu" name="tasksMenu">
     <property name="title">
@@ -1039,6 +1041,14 @@
    </property>
    <property name="text">
     <string>&amp;Reboot</string>
+   </property>
+  </action>
+  <action name="settingsAction">
+   <property name="icon">
+    <iconset theme="preferences-system"/>
+   </property>
+   <property name="text">
+    <string>Settings</string>
    </property>
   </action>
  </widget>
