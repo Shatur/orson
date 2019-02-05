@@ -59,10 +59,14 @@ FORMS += \
 
 LIBS += -lalpm
 
-# Default rules for deployment
+# Rules for deployment
 bin.path = /usr/bin
 bin.files = $${TARGET}
-INSTALLS += bin
+
+desktop.path = /usr/share/applications
+desktop.files = dist/orson.desktop
+
+INSTALLS += bin desktop
 
 # Check with PVS Studio
 #CONFIG += pvs

@@ -1,0 +1,15 @@
+[Desktop Entry]
+Name=Orson
+GenericName=Package manager
+GenericName[ru]=Пакетный менеджер
+Comment=A graphic package manager
+Comment[ru]=Графический пакетный менеджер
+Keywords=pacman;packages;update;upgrade;install;
+Keywords[ru]=pacman;пакеты;обновить;установить;
+Exec=orson
+Icon=system-software-install
+Terminal=false
+StartupNotify=false
+Type=Application
+Categories=System;Network;Qt
+
