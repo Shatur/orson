@@ -4,9 +4,7 @@
 #include <QDebug>
 
 constexpr char pacmanProgram[] = "pikaur ";
-constexpr char waitForInput[] = " && echo && read -s -p 'Success! To close this window, press <Enter>...'";
-constexpr char shutdown[] = " && sudo shutdown 0";
-constexpr char reboot[] = " && sudo reboot";
+const QString errorFile = QStringLiteral("/tmp/orson.err");
 
 Pacman::Pacman(QObject *parent) :
     QObject(parent)
@@ -14,13 +12,8 @@ Pacman::Pacman(QObject *parent) :
     m_terminal.setProcessChannelMode(QProcess::MergedChannels);
     m_terminal.setProgram("konsole");
 
-    // Add data available signal
-    connect(&m_terminal, &QProcess::readyReadStandardOutput, [&] {
-        emit dataAvailable(m_terminal.readAllStandardOutput());
-    });
-
     // Add finished and started signal
-    connect(&m_terminal, qOverload<int>(&QProcess::finished), this, &Pacman::finished);
+    connect(&m_terminal, qOverload<int>(&QProcess::finished), this, &Pacman::getExitCode);
     connect(&m_terminal, &QProcess::started, this, &Pacman::started);
 }
 
@@ -57,20 +50,7 @@ void Pacman::executeTasks()
 {
     auto [terminal, terminalArguments] = getTerminalProgram();
     m_terminal.setProgram(terminal);
-    switch (m_afterTasksCompletion) {
-    case WaitForInput:
-        m_terminal.setArguments(terminalArguments << m_commands + waitForInput);
-        break;
-    case Shutdown:
-        m_terminal.setArguments(terminalArguments << m_commands + shutdown);
-        break;
-    case Reboot:
-        m_terminal.setArguments(terminalArguments << m_commands + reboot);
-        break;
-    default:
-        m_terminal.setArguments(terminalArguments << m_commands);
-        break;
-    }
+    m_terminal.setArguments(terminalArguments << m_commands + afterCompletionCommand(m_afterTasksCompletion));
 
     m_terminal.start();
 }
@@ -83,7 +63,7 @@ void Pacman::installPackage(const QString &name, bool asDepend)
 
     auto [terminal, terminalArguments] = getTerminalProgram();
     m_terminal.setProgram(terminal);
-    m_terminal.setArguments(terminalArguments << command + waitForInput);
+    m_terminal.setArguments(terminalArguments << command + afterCompletionCommand(WaitForInput));
     m_terminal.start();
 }
 
@@ -93,7 +73,7 @@ void Pacman::syncDatabase()
 
     auto [terminal, terminalArguments] = getTerminalProgram();
     m_terminal.setProgram(terminal);
-    m_terminal.setArguments(terminalArguments << command + waitForInput);
+    m_terminal.setArguments(terminalArguments << command + afterCompletionCommand(WaitForInput));
     m_terminal.start();
 }
 
@@ -131,6 +111,29 @@ void Pacman::addPackages(const QVector<Package *> &packages, const QString &comm
         m_commands.append("--noconfirm ");
 }
 
+QString Pacman::afterCompletionCommand(AfterCompletion afterCompletion)
+{
+    QString command;
+    switch (afterCompletion) {
+    case Shutdown:
+        command.append(" && sudo shutdown 0");
+        break;
+    case Reboot:
+        command.append(" && sudo reboot");
+        break;
+    default:
+        break;
+    }
+
+    command.append(" && echo");
+    command.append(" && read -s -p '" + tr("Success! To close this window, press <Enter>...") + "'");
+    command.append(" || (echo $? > " + errorFile);
+    command.append(" && echo");
+    command.append(" && read -s -p '" + tr("Failed! To close this window, press <Enter>...") + "')");
+
+    return command;
+}
+
 Pacman::AfterCompletion Pacman::afterTasksCompletion() const
 {
     return m_afterTasksCompletion;
@@ -139,6 +142,20 @@ Pacman::AfterCompletion Pacman::afterTasksCompletion() const
 void Pacman::setAfterTasksCompletion(const AfterCompletion &afterTasksCompletion)
 {
     m_afterTasksCompletion = afterTasksCompletion;
+}
+
+void Pacman::getExitCode()
+{
+    QFile errorFile("/tmp/orson.err");
+
+    if (!errorFile.exists()) {
+        emit finished(0);
+        return;
+    }
+
+    errorFile.open(QIODevice::ReadWrite);
+    emit finished(errorFile.readAll().toInt());
+    errorFile.remove();
 }
 
 bool Pacman::isNoConfirm() const

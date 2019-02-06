@@ -23,9 +23,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->packagesView->model(), &PackagesModel::databaseLoaded, this, &MainWindow::processLoadedDatabase);
     connect(ui->packagesView, &PackagesView::operationsCountChanged, this, &MainWindow::updateApplyButton);
 
-    // Setup terminal executor
+    // Setup terminal
     m_pacman = new Pacman(this);
-    connect(m_pacman, &Pacman::finished, this, &MainWindow::on_reloadButton_clicked);
+    connect(m_pacman, &Pacman::finished, this, &MainWindow::processTerminalFinish);
     connect(m_pacman, &Pacman::started, this, &MainWindow::processTerminalStart);
 
     // Make after completion actions exclusive
@@ -387,16 +387,28 @@ void MainWindow::processLoadedDatabase()
         ui->upgradeButton->setEnabled(true);
 }
 
+void MainWindow::processFirstPackageAvailable()
+{
+    ui->packagesView->setCurrentIndex(ui->packagesView->model()->index(0, 0));
+    setStatusBarMessage("Loading installed packages");
+}
+
 void MainWindow::processTerminalStart()
 {
     setTrayStatus(Updating);
     ui->reloadButton->setEnabled(false);
 }
 
-void MainWindow::processFirstPackageAvailable()
+void MainWindow::processTerminalFinish(int exitCode)
 {
-    ui->packagesView->setCurrentIndex(ui->packagesView->model()->index(0, 0));
-    setStatusBarMessage("Loading installed packages");
+    if (exitCode != 0) {
+        if (ui->packagesView->model()->outdatedPackages().isEmpty())
+            setTrayStatus(MainWindow::NoUpdates);
+        else
+            setTrayStatus(MainWindow::UpdatesAvailable);
+    } else {
+        on_reloadButton_clicked();
+    }
 }
 
 void MainWindow::loadPackageInfo(const Package *package)

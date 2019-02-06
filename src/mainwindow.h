@@ -65,8 +65,9 @@ private slots:
     void updateApplyButton();
 
     void processLoadedDatabase();
-    void processTerminalStart();
     void processFirstPackageAvailable();
+    void processTerminalStart();
+    void processTerminalFinish(int exitCode);
 
 private:
     // Package info tabs

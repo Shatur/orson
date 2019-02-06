@@ -949,7 +949,6 @@
      <property name="title">
       <string>&amp;After completion:</string>
      </property>
-     <addaction name="closeTerminalAction"/>
      <addaction name="waitForInputAction"/>
      <addaction name="shutdownAction"/>
      <addaction name="rebootAction"/>
@@ -1045,10 +1044,11 @@
   </action>
   <action name="settingsAction">
    <property name="icon">
-    <iconset theme="preferences-system"/>
+    <iconset theme="preferences-system">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
-    <string>Settings</string>
+    <string>&amp;Settings</string>
    </property>
   </action>
  </widget>

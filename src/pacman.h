@@ -11,7 +11,6 @@ class Pacman : public QObject
 
 public:
     enum AfterCompletion {
-        CloseTerminal,
         WaitForInput,
         Shutdown,
         Reboot
@@ -31,14 +30,17 @@ public:
     AfterCompletion afterTasksCompletion() const;
     void setAfterTasksCompletion(const AfterCompletion &afterTasksCompletion);
 
+private slots:
+    void getExitCode();
+
 signals:
-    void dataAvailable(const QString &data);
     void started();
     void finished(int exitCode);
 
 private:
     QPair<QString, QStringList> getTerminalProgram();
     void addPackages(const QVector<Package *> &packages, const QString &command, const QString &arguments = QString());
+    static QString afterCompletionCommand(AfterCompletion afterCompletion);
 
     QProcess m_terminal;
     QString m_commands;
