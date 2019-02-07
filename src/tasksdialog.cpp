@@ -31,11 +31,6 @@ int TasksDialog::exec()
     return QDialog::exec();
 }
 
-TasksView *TasksDialog::view()
-{
-    return ui->tasksView;
-}
-
 void TasksDialog::processTaskRemoving()
 {
     if (m_packagesView->operationsCount() > 0)
@@ -48,6 +43,5 @@ void TasksDialog::processTaskRemoving()
 
 void TasksDialog::updateCommandsText()
 {
-    m_terminal->setTasks(m_packagesView);
-    ui->commandsEdit->setPlainText(m_terminal->commands());
+    ui->commandsEdit->setPlainText(m_terminal->tasksCommands());
 }

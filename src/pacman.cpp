@@ -19,38 +19,44 @@ Pacman::Pacman(QObject *parent) :
 
 void Pacman::setTasks(PackagesView *view)
 {
-    m_commands.clear();
+    m_tasksView = view;
+}
 
-    if (view->isSyncRepositories() && view->isUpgradePackages()) {
-        m_commands.append(pacmanProgram);
-        m_commands.append("-Syu ");
+QString Pacman::tasksCommands()
+{
+    QString commands;
+
+    if (m_tasksView->isSyncRepositories() && m_tasksView->isUpgradePackages()) {
+        commands.append(pacmanProgram);
+        commands.append("-Syu ");
     } else {
-        if (view->isSyncRepositories()) {
-            m_commands.append(pacmanProgram);
-            m_commands.append("-Sy ");
+        if (m_tasksView->isSyncRepositories()) {
+            commands.append(pacmanProgram);
+            commands.append("-Sy ");
         }
 
-        if (view->isUpgradePackages()) {
-            m_commands.append(pacmanProgram);
-            m_commands.append("-Su ");
+        if (m_tasksView->isUpgradePackages()) {
+            commands.append(pacmanProgram);
+            commands.append("-Su ");
         }
     }
 
-    addPackages(view->installExplicity(), "-S ");
-    addPackages(view->installAsDepend(), "-S ", "--asdepend ");
-    addPackages(view->reinstall(), "-S ");
-    addPackages(view->markAsExplicity(), "-D ", "--asexplicity ");
-    addPackages(view->markAsDepend(), "-D ", "--asdepend ");
-    addPackages(view->uninstall(), "-R ");
+    appendPackagesCommand(commands, m_tasksView->installExplicity(), "-S ");
+    appendPackagesCommand(commands, m_tasksView->installAsDepend(), "-S ", "--asdepend ");
+    appendPackagesCommand(commands, m_tasksView->reinstall(), "-S ");
+    appendPackagesCommand(commands, m_tasksView->markAsExplicity(), "-D ", "--asexplicity ");
+    appendPackagesCommand(commands, m_tasksView->markAsDepend(), "-D ", "--asdepend ");
+    appendPackagesCommand(commands, m_tasksView->uninstall(), "-R ");
 
-    m_commands.chop(1); // Remove last space character
+    commands.chop(1); // Remove last space character
+    return commands;
 }
 
 void Pacman::executeTasks()
 {
     auto [terminal, terminalArguments] = getTerminalProgram();
     m_terminal.setProgram(terminal);
-    m_terminal.setArguments(terminalArguments << m_commands + afterCompletionCommand(m_afterTasksCompletion));
+    m_terminal.setArguments(terminalArguments << tasksCommands() + afterCompletionCommand(m_afterTasksCompletion));
 
     m_terminal.start();
 }
@@ -90,25 +96,25 @@ QPair<QString, QStringList> Pacman::getTerminalProgram()
     // Add shell execution
     program.second << "$SHELL" << "-c";
     return program;
-    }
+}
 
-void Pacman::addPackages(const QVector<Package *> &packages, const QString &command, const QString &arguments)
+void Pacman::appendPackagesCommand(QString &commands, const QVector<Package *> &packages, const QString &action, const QString &parameters)
 {
     if (packages.isEmpty())
         return;
 
-    if (!m_commands.isEmpty())
-        m_commands.append("&& ");
+    if (!commands.isEmpty())
+        commands.append("&& ");
 
-    m_commands.append(pacmanProgram);
-    m_commands.append(command);
-    m_commands.append(arguments);
+    commands.append(pacmanProgram);
+    commands.append(action);
+    commands.append(parameters);
 
     foreach (Package *package, packages)
-        m_commands.append(package->name() + " ");
+        commands.append(package->name() + " ");
 
     if (m_noConfirm)
-        m_commands.append("--noconfirm ");
+        commands.append("--noconfirm ");
 }
 
 QString Pacman::afterCompletionCommand(AfterCompletion afterCompletion)
@@ -166,9 +172,4 @@ bool Pacman::isNoConfirm() const
 void Pacman::setNoConfirm(bool noconfirm)
 {
     m_noConfirm = noconfirm;
-}
-
-QString Pacman::commands() const
-{
-    return m_commands;
 }

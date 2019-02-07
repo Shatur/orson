@@ -19,7 +19,6 @@ public:
     ~TasksDialog() override;
 
     virtual int exec() override;
-    TasksView *view();
 
 private slots:
     void processTaskRemoving();

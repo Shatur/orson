@@ -19,12 +19,15 @@ public:
 
     Pacman(QObject *parent = nullptr);
 
+    // Actions
     void setTasks(PackagesView *view);
+    QString tasksCommands();
     void executeTasks();
+
     void installPackage(const QString &name, bool asDepend = false);
     void syncDatabase();
-    QString commands() const;
 
+    // Parameters
     bool isNoConfirm() const;
     void setNoConfirm(bool noconfirm);
 
@@ -40,11 +43,11 @@ signals:
 
 private:
     QPair<QString, QStringList> getTerminalProgram();
-    void addPackages(const QVector<Package *> &packages, const QString &command, const QString &arguments = QString());
+    void appendPackagesCommand(QString &tasksCommands, const QVector<Package *> &packages, const QString &action, const QString &parameters = QString());
     static QString afterCompletionCommand(AfterCompletion afterCompletion);
 
+    PackagesView *m_tasksView;
     QProcess m_terminal;
-    QString m_commands;
     AfterCompletion m_afterTasksCompletion = WaitForInput;
     bool m_noConfirm = true;
 };

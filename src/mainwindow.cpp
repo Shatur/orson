@@ -25,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Setup terminal
     m_pacman = new Pacman(this);
+    m_pacman->setTasks(ui->packagesView);
     connect(m_pacman, &Pacman::finished, this, &MainWindow::processTerminalFinish);
     connect(m_pacman, &Pacman::started, this, &MainWindow::processTerminalStart);
 
