@@ -61,11 +61,22 @@ MainWindow::MainWindow(QWidget *parent) :
     if (ui->packagesView->model()->index(0, 0).isValid() && ui->packagesView->selectionModel()->selectedRows().isEmpty())
         processFirstPackageAvailable();
 
-    loadSettings();
+    // Load app settings
+    loadMainWindowSettings();
+    loadAppSettings();
 }
 
 MainWindow::~MainWindow()
 {
+    // Save window settings
+    AppSettings settings;
+    settings.setNoConfirm(ui->noConfirmAction->isChecked());
+    settings.setMainWindowGeometry(saveGeometry());
+
+    QAction *afterCompletionAction = m_afterCompletionGroup->checkedAction();
+    const auto afterCompletion = static_cast<Pacman::AfterCompletion>(m_afterCompletionGroup->actions().indexOf(afterCompletionAction));
+    settings.setAfterCompletion(afterCompletion);
+
     delete ui;
 }
 
@@ -118,7 +129,7 @@ void MainWindow::on_settingsAction_triggered()
 {
     SettingsDialog dialog;
     if (dialog.exec())
-        loadSettings();
+        loadAppSettings();
 }
 
 void MainWindow::syncAndUpgrade()
@@ -563,7 +574,7 @@ void MainWindow::loadDepsButtons(int row, const QVector<Depend> &deps)
     packagesLabel->show();
 }
 
-void MainWindow::loadSettings()
+void MainWindow::loadAppSettings()
 {
     const AppSettings settings;
 
@@ -585,4 +596,12 @@ void MainWindow::loadSettings()
         }
     }
     QNetworkProxy::setApplicationProxy(proxy);
+}
+
+void MainWindow::loadMainWindowSettings()
+{
+    const AppSettings settings;
+    restoreGeometry(settings.mainWindowGeometry());
+    ui->noConfirmAction->setChecked(settings.isNoConfirm());
+    m_afterCompletionGroup->actions().at(settings.afterCompletion())->setChecked(true);
 }

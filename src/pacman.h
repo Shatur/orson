@@ -15,6 +15,7 @@ public:
         Shutdown,
         Reboot
     };
+    Q_ENUM(AfterCompletion)
 
     Pacman(QObject *parent = nullptr);
 

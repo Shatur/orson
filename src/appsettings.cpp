@@ -13,6 +13,26 @@ AppSettings::AppSettings(QObject *parent) :
 {
 }
 
+bool AppSettings::isNoConfirm() const
+{
+    return value("NoConfirm", true).toBool();
+}
+
+void AppSettings::setNoConfirm(bool noConfirm)
+{
+    setValue("NoConfirm", noConfirm);
+}
+
+Pacman::AfterCompletion AppSettings::afterCompletion() const
+{
+    return value("AfterCompletion", Pacman::WaitForInput).value<Pacman::AfterCompletion>();
+}
+
+void AppSettings::setAfterCompletion(Pacman::AfterCompletion afterCompletion)
+{
+    setValue("AfterCompletion", afterCompletion);
+}
+
 void AppSettings::setupLocale()
 {
     loadLocale(locale());

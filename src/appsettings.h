@@ -14,6 +14,13 @@ class AppSettings : private QSettings
 public:
     AppSettings(QObject *parent = nullptr);
 
+    // Main window
+    bool isNoConfirm() const;
+    void setNoConfirm(bool noConfirm);
+
+    Pacman::AfterCompletion afterCompletion() const;
+    void setAfterCompletion(Pacman::AfterCompletion afterCompletion);
+
     // General settings
     void setupLocale();
     QLocale::Language locale() const;

@@ -78,7 +78,9 @@ private:
     // Helper functions
     void displayInfo(bool display, const QString &text, QLabel *titleLabel, QLabel *label);
     void loadDepsButtons(int row, const QVector<Depend> &deps);
-    void loadSettings();
+
+    void loadAppSettings();
+    void loadMainWindowSettings();
 
     Ui::MainWindow *ui;
     QButtonGroup *m_depsButtonGroup;
