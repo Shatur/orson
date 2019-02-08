@@ -7,11 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>509</width>
-    <height>372</height>
+    <height>427</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Confirm tasks</string>
+  </property>
+  <property name="windowIcon">
+   <iconset theme="utilities-terminal"/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -36,6 +39,32 @@
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="noConfirmCheckBox"/>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="afterCompletionlabel"/>
+     </item>
+     <item>
+      <widget class="QComboBox" name="afterCompletionComboBox"/>
+     </item>
+     <item>
+      <spacer name="afterCompletionSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QPlainTextEdit" name="commandsEdit">

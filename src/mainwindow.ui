@@ -1007,14 +1007,6 @@
     <string>&amp;No confirm (--noconfirm)</string>
    </property>
   </action>
-  <action name="closeTerminalAction">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;Close terminal</string>
-   </property>
-  </action>
   <action name="waitForInputAction">
    <property name="checkable">
     <bool>true</bool>

@@ -1,10 +1,11 @@
 #ifndef TASKSDIALOG_H
 #define TASKSDIALOG_H
 
-#include "tasks-view/tasksview.h"
+#include "packages-view/packagesview.h"
 #include "pacman.h"
 
 #include <QDialog>
+#include <QMenuBar>
 
 namespace Ui {
 class TasksDialog;
@@ -15,19 +16,22 @@ class TasksDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit TasksDialog(Pacman *terminal, PackagesView *view, QWidget *parent = nullptr);
+    TasksDialog(Pacman *terminal, PackagesView *view, QMenuBar *bar, QWidget *parent = nullptr);
     ~TasksDialog() override;
 
     virtual int exec() override;
 
 private slots:
+    void on_noConfirmCheckBox_toggled(bool checked);
+    void on_afterCompletionComboBox_currentIndexChanged(int index);
+
     void processTaskRemoving();
 
 private:
     void updateCommandsText();
 
     Ui::TasksDialog *ui;
-    Pacman *m_terminal;
+    Pacman *m_pacman;
     PackagesView *m_packagesView;
 };
 

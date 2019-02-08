@@ -31,7 +31,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Make after completion actions exclusive
     m_afterCompletionGroup = new QActionGroup(this);
-    m_afterCompletionGroup->addAction(ui->closeTerminalAction);
     m_afterCompletionGroup->addAction(ui->waitForInputAction);
     m_afterCompletionGroup->addAction(ui->shutdownAction);
     m_afterCompletionGroup->addAction(ui->rebootAction);
@@ -175,9 +174,13 @@ void MainWindow::setTrayStatus(MainWindow::TrayStatus trayStatus)
 
 void MainWindow::on_applyButton_clicked()
 {
-    TasksDialog dialog(m_pacman, ui->packagesView, this);
+    TasksDialog dialog(m_pacman, ui->packagesView, ui->menuBar, this);
     if (dialog.exec())
         m_pacman->executeTasks();
+
+    // Set pacman options back (thay may be changed in dialog)
+    on_noConfirmAction_toggled(ui->noConfirmAction->isChecked());
+    setAfterTasksCompletionAction(m_afterCompletionGroup->checkedAction());
 }
 
 void MainWindow::on_syncButton_toggled(bool checked)

@@ -3,10 +3,10 @@
 
 #include <QPushButton>
 
-TasksDialog::TasksDialog(Pacman *terminal, PackagesView *view, QWidget *parent) :
+TasksDialog::TasksDialog(Pacman *terminal, PackagesView *view, QMenuBar *bar, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::TasksDialog),
-    m_terminal(terminal),
+    m_pacman(terminal),
     m_packagesView(view)
 {
     ui->setupUi(this);
@@ -18,6 +18,22 @@ TasksDialog::TasksDialog(Pacman *terminal, PackagesView *view, QWidget *parent) 
     QPushButton *okButton = ui->buttonBox->button(QDialogButtonBox::Ok);
     okButton->setText("Launch in terminal");
     okButton->setIcon(QIcon::fromTheme("utilities-terminal"));
+
+    // Load tasks options from "Tools" menu
+    const QMenu *toolsMenu = bar->actions().at(1)->menu();
+
+    // No confirm checkbox
+    const QAction *noConfirmAction = toolsMenu->actions().at(0);
+    ui->noConfirmCheckBox->setChecked(noConfirmAction->isChecked());
+    ui->noConfirmCheckBox->setText(noConfirmAction->iconText());
+
+    // After completion actions
+    const QMenu *afterCompletionMenu = toolsMenu->actions().at(1)->menu();
+    ui->afterCompletionlabel->setText(afterCompletionMenu->menuAction()->iconText());
+    foreach (QAction *action, afterCompletionMenu->actions())
+        ui->afterCompletionComboBox->addItem(action->iconText());
+    const int currentIndex = afterCompletionMenu->actions().indexOf(afterCompletionMenu->actions().at(0)->actionGroup()->checkedAction());
+    ui->afterCompletionComboBox->setCurrentIndex(currentIndex);
 }
 
 TasksDialog::~TasksDialog()
@@ -29,6 +45,18 @@ int TasksDialog::exec()
 {
     updateCommandsText();
     return QDialog::exec();
+}
+
+void TasksDialog::on_noConfirmCheckBox_toggled(bool checked)
+{
+    m_pacman->setNoConfirm(checked);
+    updateCommandsText();
+}
+
+void TasksDialog::on_afterCompletionComboBox_currentIndexChanged(int index)
+{
+    const auto afterCompletion = static_cast<Pacman::AfterCompletion>(index);
+    m_pacman->setAfterTasksCompletion(afterCompletion);
 }
 
 void TasksDialog::processTaskRemoving()
@@ -43,5 +71,5 @@ void TasksDialog::processTaskRemoving()
 
 void TasksDialog::updateCommandsText()
 {
-    ui->commandsEdit->setPlainText(m_terminal->tasksCommands());
+    ui->commandsEdit->setPlainText(m_pacman->tasksCommands());
 }
