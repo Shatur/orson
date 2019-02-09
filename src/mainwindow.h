@@ -33,6 +33,7 @@ private slots:
     // Menu bar
     void on_installLocalAction_triggered();
     void on_installLocalDependAction_triggered();
+    void on_exitAction_triggered();
     void on_noConfirmAction_toggled(bool checked);
     void on_openHistoryFileAction_triggered();
     void on_openHistoryFolderAction_triggered();

@@ -922,6 +922,8 @@
     </property>
     <addaction name="installLocalAction"/>
     <addaction name="installLocalDependAction"/>
+    <addaction name="separator"/>
+    <addaction name="exitAction"/>
    </widget>
    <widget class="QMenu" name="toolsMenu">
     <property name="title">
@@ -1041,6 +1043,14 @@
    </property>
    <property name="text">
     <string>&amp;Settings</string>
+   </property>
+  </action>
+  <action name="exitAction">
+   <property name="icon">
+    <iconset theme="exit"/>
+   </property>
+   <property name="text">
+    <string>Exit</string>
    </property>
   </action>
  </widget>

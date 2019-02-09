@@ -106,6 +106,11 @@ void MainWindow::on_installLocalDependAction_triggered()
     m_pacman->installPackage(dialog.selectedFiles().at(0), true);
 }
 
+void MainWindow::on_exitAction_triggered()
+{
+    SingleApplication::exit();
+}
+
 void MainWindow::on_noConfirmAction_toggled(bool checked)
 {
     m_pacman->setNoConfirm(checked);
