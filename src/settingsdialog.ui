@@ -193,87 +193,87 @@
           <property name="title">
            <string>Tray icon</string>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_8">
-           <item>
-            <layout class="QHBoxLayout" name="noUpdatesIconLayout">
-             <item>
-              <widget class="QLabel" name="noUpdatesIconLabel">
-               <property name="text">
-                <string>No updates icon:</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="noUpdatesIconEdit"/>
-             </item>
-             <item>
-              <spacer name="noUpdatesIconSpacer">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="0" column="3">
+            <widget class="QLineEdit" name="noUpdatesIconEdit"/>
            </item>
-           <item>
-            <layout class="QHBoxLayout" name="updatingIconLayout">
-             <item>
-              <widget class="QLabel" name="updatingIconLabel">
-               <property name="text">
-                <string>Updating icon:</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="updatingIconEdit"/>
-             </item>
-             <item>
-              <spacer name="updatingIconSpacer">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
+           <item row="4" column="3">
+            <widget class="QLineEdit" name="updatesAvailableIconEdit"/>
            </item>
-           <item>
-            <layout class="QHBoxLayout" name="updatesAvailableIconLayout">
-             <item>
-              <widget class="QLabel" name="updatesAvailableIconLabel">
-               <property name="text">
-                <string>Updates available:</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="updatesAvailableIconEdit"/>
-             </item>
-             <item>
-              <spacer name="updatesAvailableIconSpacer">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
+           <item row="4" column="0">
+            <widget class="QLabel" name="updatesAvailableIconLabel">
+             <property name="text">
+              <string>Updates available:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="noUpdatesIconLabel">
+             <property name="text">
+              <string>No updates icon:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="3">
+            <widget class="QLineEdit" name="updatingIconEdit"/>
+           </item>
+           <item row="4" column="5">
+            <widget class="QToolButton" name="updatesAvailableIconButton">
+             <property name="text">
+              <string>Choose</string>
+             </property>
+             <property name="icon">
+              <iconset theme="folder"/>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="5">
+            <widget class="QToolButton" name="noUpdatesIconButton">
+             <property name="text">
+              <string>Choose</string>
+             </property>
+             <property name="icon">
+              <iconset theme="folder"/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="updatingIconLabel">
+             <property name="text">
+              <string>Updating icon:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="5">
+            <widget class="QToolButton" name="updatingIconEditButton">
+             <property name="text">
+              <string>Choose</string>
+             </property>
+             <property name="icon">
+              <iconset theme="folder"/>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QLabel" name="noUpdatesIconPreviewLabel">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="2">
+            <widget class="QLabel" name="updatesAvailableIconPreviewLabel">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="2">
+            <widget class="QLabel" name="updatingIconPreviewLabel">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>

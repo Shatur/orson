@@ -128,6 +128,36 @@ void SettingsDialog::on_proxyTypeComboBox_currentIndexChanged(int index)
     }
 }
 
+void SettingsDialog::on_noUpdatesIconButton_clicked()
+{
+    chooseIcon(ui->noUpdatesIconEdit);
+}
+
+void SettingsDialog::on_updatingIconEditButton_clicked()
+{
+    chooseIcon(ui->updatingIconEdit);
+}
+
+void SettingsDialog::on_updatesAvailableIconButton_clicked()
+{
+    chooseIcon(ui->updatesAvailableIconEdit);
+}
+
+void SettingsDialog::on_noUpdatesIconEdit_textChanged(const QString &fileName)
+{
+    showIconPreview(ui->noUpdatesIconPreviewLabel, fileName);
+}
+
+void SettingsDialog::on_updatingIconEdit_textChanged(const QString &fileName)
+{
+    showIconPreview(ui->updatingIconPreviewLabel, fileName);
+}
+
+void SettingsDialog::on_updatesAvailableIconEdit_textChanged(const QString &fileName)
+{
+    showIconPreview(ui->updatesAvailableIconPreviewLabel, fileName);
+}
+
 void SettingsDialog::on_shortcutsTreeWidget_itemSelectionChanged()
 {
     if (ui->shortcutsTreeWidget->currentItem()->childCount() == 0) {
@@ -176,4 +206,25 @@ void SettingsDialog::on_resetAllShortcutsButton_clicked()
         item->setText(1, item->data(1, Qt::UserRole).toString());
         ++it;
     }
+}
+
+void SettingsDialog::chooseIcon(QLineEdit *iconPathEdit)
+{
+    QFileDialog dialog(this, tr("Select icon"));
+    dialog.setNameFilter(tr("Images (*.png *.jpg *.bmp);;All files(*)"));
+    dialog.setDirectory(QDir::homePath());
+    dialog.setFileMode(QFileDialog::ExistingFile);
+
+    if (!dialog.exec())
+        return;
+
+    iconPathEdit->setText(dialog.selectedFiles().at(0));
+}
+
+void SettingsDialog::showIconPreview(QLabel *previewLabel, const QString &fileName)
+{
+    if (QIcon::hasThemeIcon(fileName))
+        previewLabel->setPixmap(QIcon::fromTheme(fileName).pixmap(24, 24));
+    else
+        previewLabel->setPixmap(QIcon(fileName).pixmap(24, 24));
 }

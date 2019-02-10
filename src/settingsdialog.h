@@ -4,6 +4,9 @@
 #include <QDialog>
 #include <QMenu>
 
+class QLineEdit;
+class QLabel;
+
 namespace Ui {
 class SettingsDialog;
 }
@@ -22,6 +25,13 @@ private slots:
     void on_resetSettingsButton_clicked();
     void on_proxyTypeComboBox_currentIndexChanged(int index);
 
+    void on_noUpdatesIconButton_clicked();
+    void on_updatingIconEditButton_clicked();
+    void on_updatesAvailableIconButton_clicked();
+    void on_noUpdatesIconEdit_textChanged(const QString &fileName);
+    void on_updatingIconEdit_textChanged(const QString &fileName);
+    void on_updatesAvailableIconEdit_textChanged(const QString &fileName);
+
     void on_shortcutsTreeWidget_itemSelectionChanged();
     void on_shortcutSequenceEdit_editingFinished();
     void on_acceptShortcutButton_clicked();
@@ -30,6 +40,9 @@ private slots:
     void on_resetAllShortcutsButton_clicked();
 
 private:
+    void chooseIcon(QLineEdit *iconPathEdit);
+    void showIconPreview(QLabel *previewLabel, const QString &fileName);
+
     Ui::SettingsDialog *ui;
 };
 
