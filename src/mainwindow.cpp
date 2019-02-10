@@ -5,6 +5,9 @@
 #include "pacmansettings.h"
 #include "singleapplication.h"
 #include "settingsdialog.h"
+#include "packages-view/package.h"
+#include "packages-view/packagesmodel.h"
+#include "files-view/filesmodel.h"
 
 #include <QPushButton>
 #include <QStandardItemModel>
@@ -12,6 +15,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QDBusInterface>
+#include <QButtonGroup>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),

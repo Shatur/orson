@@ -1,9 +1,9 @@
 #ifndef FILESMODEL_H
 #define FILESMODEL_H
 
-#include "file.h"
-
 #include <QAbstractItemModel>
+
+class File;
 
 class FilesModel : public QAbstractItemModel
 {

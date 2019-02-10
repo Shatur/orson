@@ -1,7 +1,9 @@
 #ifndef TASK_H
 #define TASK_H
 
-#include "../packages-view/package.h"
+#include <QIcon>
+
+class Package;
 
 class Task
 {

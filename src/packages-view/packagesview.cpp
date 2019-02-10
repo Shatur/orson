@@ -1,5 +1,7 @@
 #include "packagesview.h"
 #include "packagesmodel.h"
+#include "package.h"
+#include "../tasks-view/task.h"
 
 #include <QHeaderView>
 #include <QContextMenuEvent>

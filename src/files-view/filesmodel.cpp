@@ -1,4 +1,5 @@
 #include "filesmodel.h"
+#include "file.h"
 
 FilesModel::FilesModel(QObject *parent) :
     QAbstractItemModel(parent)

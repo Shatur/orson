@@ -1,9 +1,12 @@
-#ifndef TERMINAL_H
-#define TERMINAL_H
+#ifndef PACMAN_H
+#define PACMAN_H
 
-#include "packages-view/packagesview.h"
+#include <QObject>
+#include <QString>
 
-#include <QProcess>
+class QProcess;
+class PackagesView;
+class Package;
 
 class Pacman : public QObject
 {
@@ -47,9 +50,9 @@ private:
     static QString afterCompletionCommand(AfterCompletion afterCompletion);
 
     PackagesView *m_tasksView;
-    QProcess m_terminal;
+    QProcess *m_terminal;
     AfterCompletion m_afterTasksCompletion = WaitForInput;
     bool m_noConfirm = true;
 };
 
-#endif // TERMINAL_H
+#endif // PACMAN_H

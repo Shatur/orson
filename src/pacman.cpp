@@ -1,7 +1,10 @@
 #include "pacman.h"
+#include "packages-view/packagesview.h"
+#include "packages-view/package.h"
 
 #include <QFileInfo>
 #include <QDebug>
+#include <QProcess>
 
 constexpr char pacmanProgram[] = "pikaur ";
 const QString errorFile = QStringLiteral("/tmp/orson.err");
@@ -9,12 +12,13 @@ const QString errorFile = QStringLiteral("/tmp/orson.err");
 Pacman::Pacman(QObject *parent) :
     QObject(parent)
 {
-    m_terminal.setProcessChannelMode(QProcess::MergedChannels);
-    m_terminal.setProgram("konsole");
+    m_terminal = new QProcess(this);
+    m_terminal->setProcessChannelMode(QProcess::MergedChannels);
+    m_terminal->setProgram("konsole");
 
     // Add finished and started signal
-    connect(&m_terminal, qOverload<int>(&QProcess::finished), this, &Pacman::getExitCode);
-    connect(&m_terminal, &QProcess::started, this, &Pacman::started);
+    connect(m_terminal, qOverload<int>(&QProcess::finished), this, &Pacman::getExitCode);
+    connect(m_terminal, &QProcess::started, this, &Pacman::started);
 }
 
 void Pacman::setTasks(PackagesView *view)
@@ -55,10 +59,10 @@ QString Pacman::tasksCommands()
 void Pacman::executeTasks()
 {
     auto [terminal, terminalArguments] = getTerminalProgram();
-    m_terminal.setProgram(terminal);
-    m_terminal.setArguments(terminalArguments << tasksCommands() + afterCompletionCommand(m_afterTasksCompletion));
+    m_terminal->setProgram(terminal);
+    m_terminal->setArguments(terminalArguments << tasksCommands() + afterCompletionCommand(m_afterTasksCompletion));
 
-    m_terminal.start();
+    m_terminal->start();
 }
 
 void Pacman::installPackage(const QString &name, bool asDepend)
@@ -68,9 +72,9 @@ void Pacman::installPackage(const QString &name, bool asDepend)
         command += " --asdepend";
 
     auto [terminal, terminalArguments] = getTerminalProgram();
-    m_terminal.setProgram(terminal);
-    m_terminal.setArguments(terminalArguments << command + afterCompletionCommand(WaitForInput));
-    m_terminal.start();
+    m_terminal->setProgram(terminal);
+    m_terminal->setArguments(terminalArguments << command + afterCompletionCommand(WaitForInput));
+    m_terminal->start();
 }
 
 void Pacman::syncDatabase()
@@ -78,9 +82,9 @@ void Pacman::syncDatabase()
     const QString command = QStringLiteral("sudo pacman -Sy");
 
     auto [terminal, terminalArguments] = getTerminalProgram();
-    m_terminal.setProgram(terminal);
-    m_terminal.setArguments(terminalArguments << command + afterCompletionCommand(WaitForInput));
-    m_terminal.start();
+    m_terminal->setProgram(terminal);
+    m_terminal->setArguments(terminalArguments << command + afterCompletionCommand(WaitForInput));
+    m_terminal->start();
 }
 
 QPair<QString, QStringList> Pacman::getTerminalProgram()

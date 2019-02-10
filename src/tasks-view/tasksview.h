@@ -1,9 +1,10 @@
 #ifndef TASKSVIEW_H
 #define TASKSVIEW_H
 
-#include "tasksmodel.h"
-
 #include <QTreeView>
+
+class Task;
+class TasksModel;
 
 class TasksView : public QTreeView
 {

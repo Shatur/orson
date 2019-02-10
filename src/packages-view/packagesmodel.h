@@ -1,11 +1,13 @@
 #ifndef PACKAGESMODEL_H
 #define PACKAGESMODEL_H
 
-#include "package.h"
-
 #include <QAbstractItemModel>
 #include <QNetworkAccessManager>
 #include <QtConcurrent>
+
+#include <alpm.h>
+
+class Package;
 
 class PackagesModel : public QAbstractItemModel
 {

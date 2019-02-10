@@ -1,10 +1,9 @@
 #ifndef FILESVIEW_H
 #define FILESVIEW_H
 
-#include "filesmodel.h"
-
 #include <QTreeView>
-#include <QMenu>
+
+class FilesModel;
 
 class FilesView : public QTreeView
 {

@@ -1,4 +1,5 @@
 #include "packagesmodel.h"
+#include "package.h"
 #include "../pacmansettings.h"
 
 #include <QNetworkReply>

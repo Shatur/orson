@@ -4,6 +4,8 @@
 #include <QContextMenuEvent>
 #include <QDebug>
 
+#include "tasksmodel.h"
+
 TasksView::TasksView(QWidget *parent) :
     QTreeView(parent)
 {

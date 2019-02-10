@@ -6,6 +6,8 @@
 #include <QJsonArray>
 #include <QDebug>
 
+#include <alpm.h>
+
 void Package::setSyncData(alpm_pkg_t *data)
 {
     m_syncData = data;

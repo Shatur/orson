@@ -1,11 +1,11 @@
 #ifndef TASKSDIALOG_H
 #define TASKSDIALOG_H
 
-#include "packages-view/packagesview.h"
-#include "pacman.h"
-
 #include <QDialog>
-#include <QMenuBar>
+
+class QMenuBar;
+class Pacman;
+class PackagesView;
 
 namespace Ui {
 class TasksDialog;

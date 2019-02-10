@@ -1,5 +1,7 @@
 #include "depend.h"
 
+#include <alpm.h>
+
 Depend::Depend(alpm_depend_t *dependData) :
     m_alpmData(dependData)
 {

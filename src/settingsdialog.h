@@ -2,7 +2,6 @@
 #define SETTINGSDIALOG_H
 
 #include <QDialog>
-#include <QMenu>
 
 class QLineEdit;
 class QLabel;

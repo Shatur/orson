@@ -1,7 +1,11 @@
 #include "tasksdialog.h"
 #include "ui_tasksdialog.h"
+#include "pacman.h"
+#include "tasks-view/tasksmodel.h"
+#include "packages-view/packagesview.h"
 
 #include <QPushButton>
+#include <QMenuBar>
 
 TasksDialog::TasksDialog(Pacman *terminal, PackagesView *view, QMenuBar *bar, QWidget *parent) :
     QDialog(parent),

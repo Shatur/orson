@@ -1,15 +1,17 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "files-view/filesmodel.h"
-#include "packages-view/packagesmodel.h"
-#include "pacman.h"
+#include "packages-view/depend.h"
 
 #include <QMainWindow>
-#include <QButtonGroup>
-#include <QLabel>
 #include <QSystemTrayIcon>
-#include <QActionGroup>
+
+class QLabel;
+class QButtonGroup;
+class QAbstractButton;
+class QActionGroup;
+class Pacman;
+class Package;
 
 namespace Ui {
 class MainWindow;

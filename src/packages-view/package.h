@@ -7,6 +7,11 @@
 #include <QJsonObject>
 #include <QIcon>
 
+class __alpm_pkg_t;
+class __alpm_list_t;
+typedef __alpm_list_t alpm_list_t;
+typedef __alpm_pkg_t alpm_pkg_t;
+
 class Package
 {
 public:

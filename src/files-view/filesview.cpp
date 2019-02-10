@@ -1,11 +1,14 @@
 #include "filesview.h"
 #include "singleapplication.h"
+#include "filesmodel.h"
+#include "file.h"
 
 #include <QDesktopServices>
 #include <QContextMenuEvent>
 #include <QClipboard>
 #include <QMimeData>
 #include <QHeaderView>
+#include <QMenu>
 
 FilesView::FilesView(QWidget *parent) :
     QTreeView(parent)

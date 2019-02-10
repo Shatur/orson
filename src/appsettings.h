@@ -2,6 +2,7 @@
 #define APPSETTINGS_H
 
 #include "mainwindow.h"
+#include "pacman.h"
 
 #include <QSettings>
 #include <QLocale>

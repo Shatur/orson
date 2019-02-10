@@ -1,4 +1,7 @@
 #include "tasksmodel.h"
+#include "../packages-view/package.h"
+#include "../packages-view/packagesview.h"
+#include "../packages-view/packagesmodel.h"
 
 TasksModel::TasksModel(QObject *parent) :
     QAbstractItemModel(parent)

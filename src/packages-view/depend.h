@@ -1,9 +1,10 @@
 #ifndef DEPEND_H
 #define DEPEND_H
 
-#include <alpm.h>
-
 #include <QStringList>
+
+class _alpm_depend_t;
+typedef _alpm_depend_t alpm_depend_t;
 
 class Depend
 {

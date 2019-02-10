@@ -1,10 +1,11 @@
 #ifndef PACKAGESVIEW_H
 #define PACKAGESVIEW_H
 
-#include "packagesmodel.h"
-#include "../tasks-view/task.h"
-
 #include <QTreeView>
+
+class Task;
+class Package;
+class PackagesModel;
 
 class PackagesView : public QTreeView
 {

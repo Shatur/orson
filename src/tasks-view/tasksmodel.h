@@ -2,9 +2,10 @@
 #define TASKSMODEL_H
 
 #include "task.h"
-#include "../packages-view/packagesview.h"
 
 #include <QAbstractItemModel>
+
+class PackagesView;
 
 class TasksModel : public QAbstractItemModel
 {
