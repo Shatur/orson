@@ -198,7 +198,7 @@ void PackagesView::setUpgradePackages(bool upgrade)
         return;
 
     m_upgradePackages = upgrade;
-    emit operationsCountChanged();
+    emit operationsCountChanged(operationsCount());
 }
 
 bool PackagesView::isSyncRepositories() const
@@ -212,19 +212,15 @@ void PackagesView::setSyncRepositories(bool syncRepositories)
         return;
 
     m_syncRepositories = syncRepositories;
-    emit operationsCountChanged();
+    emit operationsCountChanged(operationsCount());
 }
 
 int PackagesView::operationsCount()
 {
     int count = 0;
 
-    if (m_upgradePackages)
-        ++count;
-
-    if (m_syncRepositories)
-        ++count;
-
+    count += m_upgradePackages;
+    count += m_syncRepositories;
     count += m_installExplicity.size();
     count += m_installAsDepend.size();
     count += m_reinstall.size();
@@ -288,7 +284,7 @@ void PackagesView::removeOperation(Task *task)
         break;
     }
 
-    emit operationsCountChanged();
+    emit operationsCountChanged(operationsCount());
 }
 
 void PackagesView::processSelectionChanging(const QModelIndex &current)
@@ -348,7 +344,7 @@ void PackagesView::clearAllOperations()
     m_markAsDepend.clear();
     m_uninstall.clear();
 
-    emit operationsCountChanged();
+    emit operationsCountChanged(0);
 }
 
 void PackagesView::contextMenuEvent(QContextMenuEvent *event)
@@ -417,7 +413,7 @@ void PackagesView::addCurrentToTasks(QVector<Package *> &category)
     removeFromTasks(package);
     category.append(package);
 
-    emit operationsCountChanged();
+    emit operationsCountChanged(operationsCount());
 }
 
 void PackagesView::removeFromTasks(Package *package)

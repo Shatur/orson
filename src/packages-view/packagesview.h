@@ -47,7 +47,7 @@ public slots:
 
 signals:
     void currentPackageChanged(Package *package);
-    void operationsCountChanged();
+    void operationsCountChanged(int count);
 
 private slots:
     void processSelectionChanging(const QModelIndex &current);

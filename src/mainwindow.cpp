@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->packagesView->model(), &PackagesModel::databaseStatusChanged, this, &MainWindow::setStatusBarMessage);
     connect(ui->packagesView->model(), &PackagesModel::firstPackageAvailable, this, &MainWindow::processFirstPackageAvailable);
     connect(ui->packagesView->model(), &PackagesModel::databaseLoaded, this, &MainWindow::processLoadedDatabase);
-    connect(ui->packagesView, &PackagesView::operationsCountChanged, this, &MainWindow::updateApplyButton);
+    connect(ui->packagesView, &PackagesView::operationsCountChanged, this, &MainWindow::processOperationsCountChanged);
 
     // Setup terminal
     m_pacman = new Pacman(this);
@@ -141,6 +141,12 @@ void MainWindow::on_settingsAction_triggered()
         loadAppSettings();
 }
 
+void MainWindow::setAfterTasksCompletionAction(QAction *action)
+{
+    auto afterCompletion = static_cast<Pacman::AfterCompletion>(m_afterCompletionGroup->actions().indexOf(action));
+    m_pacman->setAfterTasksCompletion(afterCompletion);
+}
+
 void MainWindow::syncAndUpgrade()
 {
     ui->packagesView->setSyncRepositories(true);
@@ -158,27 +164,6 @@ void MainWindow::upgrade()
 {
     ui->packagesView->setUpgradePackages(true);
     on_applyButton_clicked();
-}
-
-void MainWindow::setAfterTasksCompletionAction(QAction *action)
-{
-    auto afterCompletion = static_cast<Pacman::AfterCompletion>(m_afterCompletionGroup->actions().indexOf(action));
-    m_pacman->setAfterTasksCompletion(afterCompletion);
-}
-
-void MainWindow::setTrayStatus(MainWindow::TrayStatus trayStatus)
-{
-    const AppSettings settings;
-    const QString iconName = settings.trayIconName(trayStatus);
-
-    if (QIcon::hasThemeIcon(iconName))
-        m_trayIcon->setIcon(QIcon::fromTheme(iconName));
-    else if (QFile::exists(iconName))
-        m_trayIcon->setIcon(QIcon(iconName));
-    else
-        m_trayIcon->setIcon(QIcon::fromTheme("dialog-error"));
-
-    m_trayStatus = trayStatus;
 }
 
 void MainWindow::on_applyButton_clicked()
@@ -341,6 +326,21 @@ void MainWindow::activateTray(QSystemTrayIcon::ActivationReason reason)
     }
 }
 
+void MainWindow::setTrayStatus(MainWindow::TrayStatus trayStatus)
+{
+    const AppSettings settings;
+    const QString iconName = settings.trayIconName(trayStatus);
+
+    if (QIcon::hasThemeIcon(iconName))
+        m_trayIcon->setIcon(QIcon::fromTheme(iconName));
+    else if (QFile::exists(iconName))
+        m_trayIcon->setIcon(QIcon(iconName));
+    else
+        m_trayIcon->setIcon(QIcon::fromTheme("dialog-error"));
+
+    m_trayStatus = trayStatus;
+}
+
 void MainWindow::setStatusBarMessage(const QString &text)
 {
     statusBar()->showMessage(text);
@@ -361,19 +361,6 @@ void MainWindow::findDepend(QAbstractButton *button)
         // Search in AUR
         ui->searchPackagesEdit->setText(button->toolTip());
         ui->searchModeComboBox->setCurrentIndex(PackagesModel::AUR);
-    }
-}
-
-void MainWindow::updateApplyButton()
-{
-    const int tasksCount = ui->packagesView->operationsCount();
-
-    if (tasksCount > 0) {
-        ui->applyButton->setToolTip("Apply tasks (" + QString::number(tasksCount) + ")");
-        ui->applyButton->setEnabled(true);
-    } else {
-        ui->applyButton->setToolTip("Apply tasks");
-        ui->applyButton->setEnabled(false);
     }
 }
 
@@ -415,6 +402,20 @@ void MainWindow::processFirstPackageAvailable()
 {
     ui->packagesView->setCurrentIndex(ui->packagesView->model()->index(0, 0));
     setStatusBarMessage("Loading installed packages");
+}
+
+void MainWindow::processOperationsCountChanged(int tasksCount)
+{
+    if (tasksCount > 0) {
+        ui->applyButton->setToolTip("Apply tasks (" + QString::number(tasksCount) + ")");
+        ui->applyButton->setEnabled(true);
+    } else {
+        ui->applyButton->setToolTip("Apply tasks");
+        ui->applyButton->setEnabled(false);
+    }
+
+    ui->upgradeButton->setChecked(ui->packagesView->isUpgradePackages());
+    ui->syncButton->setChecked(ui->packagesView->isSyncRepositories());
 }
 
 void MainWindow::processTerminalStart()

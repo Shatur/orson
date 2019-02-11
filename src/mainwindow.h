@@ -41,13 +41,12 @@ private slots:
     void on_openHistoryFolderAction_triggered();
     void on_settingsAction_triggered();
 
+    void setAfterTasksCompletionAction(QAction *action);
+
     // Tray context menu
     void syncAndUpgrade();
     void syncRepositories();
     void upgrade();
-
-    void setAfterTasksCompletionAction(QAction *action);
-    void setTrayStatus(TrayStatus trayStatus);
 
     // Buttons
     void on_applyButton_clicked();
@@ -63,12 +62,13 @@ private slots:
     void on_packageTabsWidget_currentChanged(int index);
 
     void activateTray(QSystemTrayIcon::ActivationReason reason);
+    void setTrayStatus(TrayStatus trayStatus);
     void setStatusBarMessage(const QString &text);
     void findDepend(QAbstractButton* button);
-    void updateApplyButton();
 
     void processLoadedDatabase();
     void processFirstPackageAvailable();
+    void processOperationsCountChanged(int tasksCount);
     void processTerminalStart();
     void processTerminalFinish(int exitCode);
 
