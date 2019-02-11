@@ -61,6 +61,15 @@
       </item>
       <item>
        <property name="text">
+        <string>Pacman</string>
+       </property>
+       <property name="icon">
+        <iconset theme="kapman">
+         <normaloff>.</normaloff>.</iconset>
+       </property>
+      </item>
+      <item>
+       <property name="text">
         <string>Interface</string>
        </property>
        <property name="icon">
@@ -186,6 +195,74 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="pacmanPage">
+       <layout class="QVBoxLayout" name="verticalLayout_8">
+        <item>
+         <widget class="QGroupBox" name="pacmanGroupBox">
+          <property name="title">
+           <string>Pacman</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_9">
+           <item>
+            <layout class="QHBoxLayout" name="pacmanToolLayout">
+             <item>
+              <widget class="QLabel" name="pacmanToolLabel">
+               <property name="text">
+                <string>Pacman tool:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="pacmanToolComboBox">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="editable">
+                <bool>true</bool>
+               </property>
+               <item>
+                <property name="text">
+                 <string>pacman</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item>
+              <spacer name="pacmanToolSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <spacer name="pacmanSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
       <widget class="QWidget" name="interfacePage">
        <layout class="QVBoxLayout" name="verticalLayout_12">
         <item>
@@ -223,7 +300,8 @@
               <string>Choose</string>
              </property>
              <property name="icon">
-              <iconset theme="folder"/>
+              <iconset theme="folder">
+               <normaloff>.</normaloff>.</iconset>
              </property>
             </widget>
            </item>
@@ -233,7 +311,8 @@
               <string>Choose</string>
              </property>
              <property name="icon">
-              <iconset theme="folder"/>
+              <iconset theme="folder">
+               <normaloff>.</normaloff>.</iconset>
              </property>
             </widget>
            </item>
@@ -250,7 +329,8 @@
               <string>Choose</string>
              </property>
              <property name="icon">
-              <iconset theme="folder"/>
+              <iconset theme="folder">
+               <normaloff>.</normaloff>.</iconset>
              </property>
             </widget>
            </item>

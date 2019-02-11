@@ -46,7 +46,7 @@ signals:
 
 private:
     QPair<QString, QStringList> getTerminalProgram();
-    void appendPackagesCommand(QString &tasksCommands, const QVector<Package *> &packages, const QString &action, const QString &parameters = QString());
+    void appendPackagesCommand(QString &tasksCommands, const QString &pacmanTool, const QVector<Package *> &packages, const QString &action, const QString &parameters = QString());
     static QString afterCompletionCommand(AfterCompletion afterCompletion);
 
     PackagesView *m_tasksView;

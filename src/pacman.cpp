@@ -1,4 +1,5 @@
 #include "pacman.h"
+#include "appsettings.h"
 #include "packages-view/packagesview.h"
 #include "packages-view/package.h"
 
@@ -6,15 +7,12 @@
 #include <QDebug>
 #include <QProcess>
 
-constexpr char pacmanProgram[] = "pikaur ";
 const QString errorFile = QStringLiteral("/tmp/orson.err");
 
 Pacman::Pacman(QObject *parent) :
     QObject(parent)
 {
     m_terminal = new QProcess(this);
-    m_terminal->setProcessChannelMode(QProcess::MergedChannels);
-    m_terminal->setProgram("konsole");
 
     // Add finished and started signal
     connect(m_terminal, qOverload<int>(&QProcess::finished), this, &Pacman::getExitCode);
@@ -28,29 +26,31 @@ void Pacman::setTasks(PackagesView *view)
 
 QString Pacman::tasksCommands()
 {
+    const AppSettings settings;
+    const QString pacmanTool = settings.pacmanTool() + " ";
     QString commands;
 
     if (m_tasksView->isSyncRepositories() && m_tasksView->isUpgradePackages()) {
-        commands.append(pacmanProgram);
+        commands.append(pacmanTool);
         commands.append("-Syu ");
     } else {
         if (m_tasksView->isSyncRepositories()) {
-            commands.append(pacmanProgram);
+            commands.append(pacmanTool);
             commands.append("-Sy ");
         }
 
         if (m_tasksView->isUpgradePackages()) {
-            commands.append(pacmanProgram);
+            commands.append(pacmanTool);
             commands.append("-Su ");
         }
     }
 
-    appendPackagesCommand(commands, m_tasksView->installExplicity(), "-S ");
-    appendPackagesCommand(commands, m_tasksView->installAsDepend(), "-S ", "--asdepend ");
-    appendPackagesCommand(commands, m_tasksView->reinstall(), "-S ");
-    appendPackagesCommand(commands, m_tasksView->markAsExplicity(), "-D ", "--asexplicity ");
-    appendPackagesCommand(commands, m_tasksView->markAsDepend(), "-D ", "--asdepend ");
-    appendPackagesCommand(commands, m_tasksView->uninstall(), "-R ");
+    appendPackagesCommand(commands, pacmanTool, m_tasksView->installExplicity(), "-S ");
+    appendPackagesCommand(commands, pacmanTool, m_tasksView->installAsDepend(), "-S ", "--asdeps ");
+    appendPackagesCommand(commands, pacmanTool, m_tasksView->reinstall(), "-S ");
+    appendPackagesCommand(commands, pacmanTool, m_tasksView->markAsExplicit(), "-D ", "--asexplicit ");
+    appendPackagesCommand(commands, pacmanTool, m_tasksView->markAsDepend(), "-D ", "--asdeps ");
+    appendPackagesCommand(commands, pacmanTool, m_tasksView->uninstall(), "-R ");
 
     commands.chop(1); // Remove last space character
     return commands;
@@ -102,7 +102,7 @@ QPair<QString, QStringList> Pacman::getTerminalProgram()
     return program;
 }
 
-void Pacman::appendPackagesCommand(QString &commands, const QVector<Package *> &packages, const QString &action, const QString &parameters)
+void Pacman::appendPackagesCommand(QString &commands, const QString &pacmanTool, const QVector<Package *> &packages, const QString &action, const QString &parameters)
 {
     if (packages.isEmpty())
         return;
@@ -110,12 +110,13 @@ void Pacman::appendPackagesCommand(QString &commands, const QVector<Package *> &
     if (!commands.isEmpty())
         commands.append("&& ");
 
-    commands.append(pacmanProgram);
+    commands.append(pacmanTool);
     commands.append(action);
-    commands.append(parameters);
 
     foreach (Package *package, packages)
         commands.append(package->name() + " ");
+
+    commands.append(parameters);
 
     if (m_noConfirm)
         commands.append("--noconfirm ");

@@ -107,8 +107,8 @@ void TasksModel::setTasks(PackagesView *packagesView)
     if (!packagesView->reinstall().isEmpty())
         addCategory(Task::Reinstall, packagesView->reinstall());
 
-    if (!packagesView->markAsExplicity().isEmpty())
-        addCategory(Task::MarkAsExplicity, packagesView->markAsExplicity());
+    if (!packagesView->markAsExplicit().isEmpty())
+        addCategory(Task::MarkAsExplicity, packagesView->markAsExplicit());
 
     if (!packagesView->markAsDepend().isEmpty())
         addCategory(Task::MarkAsDepend, packagesView->markAsDepend());

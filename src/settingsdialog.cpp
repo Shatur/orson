@@ -22,6 +22,31 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     ui->startMinimizedCheckBox->setChecked(settings.isStartMinimized());
     ui->autostartCheckBox->setChecked(settings.isAutostartEnabled());
 
+    // Pacman settings
+    // Detect available AUR-helpers
+    if (QFileInfo::exists("/usr/bin/aura"))
+        ui->pacmanToolComboBox->addItem("aura");
+    if (QFileInfo::exists("/usr/bin/packer"))
+        ui->pacmanToolComboBox->addItem("packer");
+    if (QFileInfo::exists("/usr/bin/pakku"))
+        ui->pacmanToolComboBox->addItem("pakku");
+    if (QFileInfo::exists("/usr/bin/pikaur"))
+        ui->pacmanToolComboBox->addItem("pikaur");
+    if (QFileInfo::exists("/usr/bin/trizen"))
+        ui->pacmanToolComboBox->addItem("trizen");
+    if (QFileInfo::exists("/usr/bin/wrapaur"))
+        ui->pacmanToolComboBox->addItem("wrapaur");
+    if (QFileInfo::exists("/usr/bin/yay"))
+        ui->pacmanToolComboBox->addItem("yay");
+
+    // Load current pacman tool
+    const QString pacmanTool = settings.pacmanTool();
+    const int pacmanToolIndex = ui->pacmanToolComboBox->findText(pacmanTool);
+    if (pacmanToolIndex == -1)
+        ui->pacmanToolComboBox->setCurrentText(pacmanTool);
+    else
+        ui->pacmanToolComboBox->setCurrentIndex(pacmanToolIndex);
+
     // Interface settings
     ui->noUpdatesIconEdit->setText(settings.trayIconName(MainWindow::NoUpdates));
     ui->updatingIconEdit->setText(settings.trayIconName(MainWindow::Updating));
@@ -49,6 +74,9 @@ void SettingsDialog::on_SettingsDialog_accepted()
     settings.setStartMinimized(ui->startMinimizedCheckBox->isChecked());
     settings.setAutostartEnabled(ui->autostartCheckBox->isChecked());
 
+    // Pacman settings
+    settings.setPacmanTool(ui->pacmanToolComboBox->currentText());
+
     // Interface settings
     settings.setTrayIconName(MainWindow::NoUpdates, ui->noUpdatesIconEdit->text());
     settings.setTrayIconName(MainWindow::Updating, ui->updatingIconEdit->text());
@@ -70,6 +98,9 @@ void SettingsDialog::on_resetSettingsButton_clicked()
     ui->trayCheckBox->setChecked(true);
     ui->startMinimizedCheckBox->setChecked(false);
     ui->autostartCheckBox->setChecked(false);
+
+    // Pacman settings
+    ui->pacmanToolComboBox->setCurrentIndex(0);
 
     // Interface settings
     ui->noUpdatesIconEdit->setText(settings.defaultTrayIconName(MainWindow::NoUpdates));

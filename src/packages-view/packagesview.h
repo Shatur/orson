@@ -30,7 +30,7 @@ public:
     QVector<Package *> installExplicity() const;
     QVector<Package *> installAsDepend() const;
     QVector<Package *> reinstall() const;
-    QVector<Package *> markAsExplicity() const;
+    QVector<Package *> markAsExplicit() const;
     QVector<Package *> markAsDepend() const;
     QVector<Package *> uninstall() const;
 

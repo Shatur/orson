@@ -1,6 +1,7 @@
 #include "packagesview.h"
 #include "packagesmodel.h"
 #include "package.h"
+#include "../appsettings.h"
 #include "../tasks-view/task.h"
 
 #include <QHeaderView>
@@ -166,7 +167,7 @@ QVector<Package *> PackagesView::markAsDepend() const
     return m_markAsDepend;
 }
 
-QVector<Package *> PackagesView::markAsExplicity() const
+QVector<Package *> PackagesView::markAsExplicit() const
 {
     return m_markAsExplicity;
 }
@@ -386,10 +387,21 @@ void PackagesView::contextMenuEvent(QContextMenuEvent *event)
     m_menu->actions().at(Task::Uninstall)->setEnabled(!m_uninstall.contains(package));
     m_menu->actions().at(Task::Sync)->setEnabled(!m_syncRepositories);
 
+    // Enable the upgrade option only if upgrades are available or if the sync action is selected
     if ((!model()->outdatedPackages().isEmpty() || m_syncRepositories) && !m_upgradePackages)
         m_menu->actions().at(Task::UpgradeAll)->setEnabled(true);
     else
         m_menu->actions().at(Task::UpgradeAll)->setEnabled(false);
+
+    // Disable install operations for AUR for pacman
+    const AppSettings settings;
+    if (!package->isInstalled() && package->repo() == "aur" && settings.pacmanTool() == "pacman") {
+        m_menu->actions().at(Task::InstallExplicity)->setEnabled(false);
+        m_menu->actions().at(Task::InstallAsDepend)->setEnabled(false);
+    } else {
+        m_menu->actions().at(Task::InstallExplicity)->setEnabled(true);
+        m_menu->actions().at(Task::InstallAsDepend)->setEnabled(true);
+    }
 
     m_menu->exec(event->globalPos());
 }

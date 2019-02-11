@@ -106,6 +106,16 @@ void AppSettings::setAutostartEnabled(bool enabled)
     }
 }
 
+QString AppSettings::pacmanTool() const
+{
+    return value("PacmanTool", "pacman").toString();
+}
+
+void AppSettings::setPacmanTool(const QString &programName)
+{
+    setValue("PacmanTool", programName);
+}
+
 QString AppSettings::trayIconName(MainWindow::TrayStatus trayStatus) const
 {
     switch (trayStatus) {

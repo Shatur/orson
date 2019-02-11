@@ -37,6 +37,10 @@ public:
     bool isAutostartEnabled() const;
     void setAutostartEnabled(bool enabled);
 
+    // Pacman settings
+    QString pacmanTool() const;
+    void setPacmanTool(const QString &programName);
+
     // Interface settings
     QString trayIconName(MainWindow::TrayStatus trayStatus) const;
     void setTrayIconName(MainWindow::TrayStatus trayStatus, const QString &name);
