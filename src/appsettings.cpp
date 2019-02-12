@@ -108,7 +108,7 @@ void AppSettings::setAutostartEnabled(bool enabled)
 
 QString AppSettings::pacmanTool() const
 {
-    return value("PacmanTool", "pacman").toString();
+    return value("PacmanTool", "sudo pacman").toString();
 }
 
 void AppSettings::setPacmanTool(const QString &programName)

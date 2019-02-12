@@ -225,7 +225,7 @@
                </property>
                <item>
                 <property name="text">
-                 <string>pacman</string>
+                 <string>sudo pacman</string>
                 </property>
                </item>
               </widget>
