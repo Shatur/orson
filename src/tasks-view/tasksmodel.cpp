@@ -22,8 +22,12 @@ QVariant TasksModel::data(const QModelIndex &index, int role) const
     Task *item = static_cast<Task *>(index.internalPointer());
     switch (role) {
     case Qt::DisplayRole:
-        if (item->type() == Task::Item)
-            return item->package()->name();
+        if (item->type() == Task::Item) {
+            const QString update = item->package()->availableUpdate();
+            if (update.isEmpty())
+                return item->package()->name() + " " + item->package()->version();
+            return item->package()->name() + " " + item->package()->version() + " ⇒ " + item->package()->availableUpdate();
+        }
         return item->categoryName(item->type());
     case Qt::DecorationRole:
         if (item->type() == Task::Item)
