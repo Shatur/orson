@@ -47,6 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // System tray menu
     m_trayMenu = new QMenu(this);
     m_trayMenu->addAction(QIcon::fromTheme("window"), tr("Show window"), this, &MainWindow::show);
+    m_trayMenu->addAction(ui->settingsAction->icon(), ui->settingsAction->iconText(), this, &MainWindow::on_settingsAction_triggered);
     m_trayMenu->addSeparator();
     m_trayMenu->addAction(QIcon::fromTheme("system-upgrade"), tr("Sync and upgrade"), this, &MainWindow::syncAndUpgrade);
     m_trayMenu->addAction(ui->upgradeButton->icon(), ui->upgradeButton->text(), this, &MainWindow::upgrade);
