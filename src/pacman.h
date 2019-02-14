@@ -34,6 +34,9 @@ public:
     bool isNoConfirm() const;
     void setNoConfirm(bool noconfirm);
 
+    bool isForce() const;
+    void setForce(bool force);
+
     AfterCompletion afterTasksCompletion() const;
     void setAfterTasksCompletion(const AfterCompletion &afterTasksCompletion);
 
@@ -53,6 +56,7 @@ private:
     QProcess *m_terminal;
     AfterCompletion m_afterTasksCompletion = WaitForInput;
     bool m_noConfirm = true;
+    bool m_force = false;
 };
 
 #endif // PACMAN_H

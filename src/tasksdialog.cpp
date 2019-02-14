@@ -31,8 +31,13 @@ TasksDialog::TasksDialog(Pacman *terminal, PackagesView *view, QMenuBar *bar, QW
     ui->noConfirmCheckBox->setChecked(noConfirmAction->isChecked());
     ui->noConfirmCheckBox->setText(noConfirmAction->iconText());
 
+    // Force checkbox
+    const QAction *forceAction = toolsMenu->actions().at(1);
+    ui->forceCheckBox->setChecked(forceAction->isChecked());
+    ui->forceCheckBox->setText(forceAction->iconText());
+
     // After completion actions
-    const QMenu *afterCompletionMenu = toolsMenu->actions().at(1)->menu();
+    const QMenu *afterCompletionMenu = toolsMenu->actions().at(2)->menu();
     ui->afterCompletionlabel->setText(afterCompletionMenu->menuAction()->iconText());
     foreach (QAction *action, afterCompletionMenu->actions())
         ui->afterCompletionComboBox->addItem(action->iconText());

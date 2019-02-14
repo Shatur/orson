@@ -121,6 +121,11 @@ void MainWindow::on_noConfirmAction_toggled(bool checked)
     m_pacman->setNoConfirm(checked);
 }
 
+void MainWindow::on_forceAction_toggled(bool checked)
+{
+    m_pacman->setForce(checked);
+}
+
 void MainWindow::on_openHistoryFileAction_triggered()
 {
     const PacmanSettings pacmanSettings;
@@ -175,6 +180,7 @@ void MainWindow::on_applyButton_clicked()
 
     // Set pacman options back (thay may be changed in dialog)
     on_noConfirmAction_toggled(ui->noConfirmAction->isChecked());
+    on_forceAction_toggled(ui->forceAction->isChecked());
     setAfterTasksCompletionAction(m_afterCompletionGroup->checkedAction());
 }
 

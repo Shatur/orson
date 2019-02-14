@@ -37,6 +37,7 @@ private slots:
     void on_installLocalDependAction_triggered();
     void on_exitAction_triggered();
     void on_noConfirmAction_toggled(bool checked);
+    void on_forceAction_toggled(bool checked);
     void on_openHistoryFileAction_triggered();
     void on_openHistoryFolderAction_triggered();
     void on_settingsAction_triggered();

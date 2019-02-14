@@ -956,6 +956,7 @@
      <addaction name="rebootAction"/>
     </widget>
     <addaction name="noConfirmAction"/>
+    <addaction name="forceAction"/>
     <addaction name="afterCompletionMenu"/>
    </widget>
    <addaction name="fileMenu"/>
@@ -1047,10 +1048,19 @@
   </action>
   <action name="exitAction">
    <property name="icon">
-    <iconset theme="exit"/>
+    <iconset theme="exit">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Exit</string>
+   </property>
+  </action>
+  <action name="forceAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Force (--force)</string>
    </property>
   </action>
  </widget>

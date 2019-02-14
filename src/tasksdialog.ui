@@ -14,7 +14,8 @@
    <string>Confirm tasks</string>
   </property>
   <property name="windowIcon">
-   <iconset theme="utilities-terminal"/>
+   <iconset theme="utilities-terminal">
+    <normaloff>.</normaloff>.</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -42,6 +43,9 @@
    </item>
    <item>
     <widget class="QCheckBox" name="noConfirmCheckBox"/>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="forceCheckBox"/>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">

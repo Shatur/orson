@@ -145,16 +145,6 @@ QString Pacman::afterCompletionCommand(AfterCompletion afterCompletion)
     return command;
 }
 
-Pacman::AfterCompletion Pacman::afterTasksCompletion() const
-{
-    return m_afterTasksCompletion;
-}
-
-void Pacman::setAfterTasksCompletion(const AfterCompletion &afterTasksCompletion)
-{
-    m_afterTasksCompletion = afterTasksCompletion;
-}
-
 void Pacman::getExitCode()
 {
     QFile errorFile("/tmp/orson.err");
@@ -178,3 +168,24 @@ void Pacman::setNoConfirm(bool noconfirm)
 {
     m_noConfirm = noconfirm;
 }
+
+bool Pacman::isForce() const
+{
+    return m_force;
+}
+
+void Pacman::setForce(bool force)
+{
+    m_force = force;
+}
+
+Pacman::AfterCompletion Pacman::afterTasksCompletion() const
+{
+    return m_afterTasksCompletion;
+}
+
+void Pacman::setAfterTasksCompletion(const AfterCompletion &afterTasksCompletion)
+{
+    m_afterTasksCompletion = afterTasksCompletion;
+}
+
