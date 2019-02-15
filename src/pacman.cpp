@@ -27,44 +27,43 @@ void Pacman::setTasks(PackagesView *view)
 QString Pacman::tasksCommands()
 {
     const AppSettings settings;
-    const QString pacmanTool = settings.pacmanTool() + " ";
+    const QString pacmanTool = settings.pacmanTool();
     QString commands;
 
     if (m_tasksView->isSyncRepositories() && m_tasksView->isUpgradePackages()) {
         commands.append(pacmanTool);
-        commands.append("-Syu ");
+        commands.append(" -Syu");
         if (m_noConfirm)
-            commands.append("--noconfirm ");
+            commands.append(" --noconfirm");
         if (m_force)
-            commands.append("--force ");
+            commands.append(" --force");
     } else {
         if (m_tasksView->isSyncRepositories()) {
             commands.append(pacmanTool);
-            commands.append("-Sy ");
+            commands.append(" -Sy");
             if (m_noConfirm)
-                commands.append("--noconfirm ");
+                commands.append(" --noconfirm");
             if (m_force)
-                commands.append("--force ");
+                commands.append(" --force");
         }
 
         if (m_tasksView->isUpgradePackages()) {
             commands.append(pacmanTool);
-            commands.append("-Su ");
+            commands.append(" -Su");
             if (m_noConfirm)
-                commands.append("--noconfirm ");
+                commands.append(" --noconfirm");
             if (m_force)
-                commands.append("--force ");
+                commands.append(" --force");
         }
     }
 
-    appendPackagesCommand(commands, pacmanTool, m_tasksView->installExplicity(), "-S ");
-    appendPackagesCommand(commands, pacmanTool, m_tasksView->installAsDepend(), "-S ", "--asdeps ");
-    appendPackagesCommand(commands, pacmanTool, m_tasksView->reinstall(), "-S ");
-    appendPackagesCommand(commands, pacmanTool, m_tasksView->markAsExplicit(), "-D ", "--asexplicit ");
-    appendPackagesCommand(commands, pacmanTool, m_tasksView->markAsDepend(), "-D ", "--asdeps ");
-    appendPackagesCommand(commands, pacmanTool, m_tasksView->uninstall(), "-R ");
+    appendPackagesCommand(commands, pacmanTool, m_tasksView->installExplicity(), " -S");
+    appendPackagesCommand(commands, pacmanTool, m_tasksView->installAsDepend(), " -S", " --asdeps");
+    appendPackagesCommand(commands, pacmanTool, m_tasksView->reinstall(), " -S");
+    appendPackagesCommand(commands, pacmanTool, m_tasksView->markAsExplicit(), " -D", " --asexplicit");
+    appendPackagesCommand(commands, pacmanTool, m_tasksView->markAsDepend(), " -D", " --asdeps");
+    appendPackagesCommand(commands, pacmanTool, m_tasksView->uninstall(), " -R");
 
-    commands.chop(1); // Remove last space character
     return commands;
 }
 
@@ -120,18 +119,21 @@ void Pacman::appendPackagesCommand(QString &commands, const QString &pacmanTool,
         return;
 
     if (!commands.isEmpty())
-        commands.append("&& ");
+        commands.append(" && ");
 
     commands.append(pacmanTool);
     commands.append(action);
 
     foreach (Package *package, packages)
-        commands.append(package->name() + " ");
+        commands.append(" " + package->name());
 
     commands.append(parameters);
 
     if (m_noConfirm)
-        commands.append("--noconfirm ");
+        commands.append(" --noconfirm");
+
+    if (m_force)
+        commands.append(" --force");
 }
 
 QString Pacman::afterCompletionCommand(AfterCompletion afterCompletion)
