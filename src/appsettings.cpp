@@ -169,6 +169,8 @@ QStringList AppSettings::defaultArguments(const QString &terminal) const
         return {"--hide-menubar", "--hide-tabbar", "-e"};
     else if (terminal == "gnome-terminal")
         return {"--hide-menubar", "--"};
+    else if (terminal == "mate-terminal" || terminal == "xfce4-terminal")
+        return {"--hide-menubar", "-x"};
     else
         return {"-e"};
 }
