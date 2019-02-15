@@ -6,6 +6,7 @@
 #include <QFileInfo>
 #include <QDebug>
 #include <QProcess>
+#include <QMessageBox>
 
 const QString errorFile = QStringLiteral("/tmp/orson.err");
 
@@ -69,11 +70,7 @@ QString Pacman::tasksCommands()
 
 void Pacman::executeTasks()
 {
-    auto [terminal, terminalArguments] = getTerminalProgram();
-    m_terminal->setProgram(terminal);
-    m_terminal->setArguments(terminalArguments << tasksCommands() + afterCompletionCommand(m_afterTasksCompletion));
-
-    m_terminal->start();
+    exec(tasksCommands(), m_afterTasksCompletion);
 }
 
 void Pacman::installPackage(const QString &name, bool asDepend)
@@ -82,32 +79,13 @@ void Pacman::installPackage(const QString &name, bool asDepend)
     if (asDepend)
         command += " --asdepend";
 
-    auto [terminal, terminalArguments] = getTerminalProgram();
-    m_terminal->setProgram(terminal);
-    m_terminal->setArguments(terminalArguments << command + afterCompletionCommand(WaitForInput));
-    m_terminal->start();
+    exec(command, WaitForInput);
 }
 
 void Pacman::syncDatabase()
 {
     const QString command = QStringLiteral("sudo pacman -Sy");
-
-    auto [terminal, terminalArguments] = getTerminalProgram();
-    m_terminal->setProgram(terminal);
-    m_terminal->setArguments(terminalArguments << command + afterCompletionCommand(WaitForInput));
-    m_terminal->start();
-}
-
-QPair<QString, QStringList> Pacman::getTerminalProgram()
-{
-    const AppSettings settings;
-    QPair<QString, QStringList> program;
-    program.first = settings.terminal();
-    program.second = settings.terminalArguments(program.first).split(" ");
-
-    // Add shell execution
-    program.second << "$SHELL" << "-c";
-    return program;
+    exec(command, WaitForInput);
 }
 
 void Pacman::appendPackagesCommand(QString &commands, const QString &pacmanTool, const QVector<Package *> &packages, const QString &action, const QString &parameters)
@@ -154,6 +132,25 @@ QString Pacman::afterCompletionCommand(AfterCompletion afterCompletion)
     command.append(" && read -s -p '" + tr("Failed! To close this window, press <Enter>...") + "')");
 
     return command;
+}
+
+void Pacman::exec(const QString &commands, Pacman::AfterCompletion afterCompletion)
+{
+    const AppSettings settings;
+    m_terminal->setProgram(settings.terminal());
+    if (m_terminal->program().isEmpty()) {
+        QMessageBox message;
+        message.setIcon(QMessageBox::Critical);
+        message.setWindowTitle("Terminal emulator not found");
+        message.setText("Unable to find terminal emulator program. Please specify it in the settings.");
+        message.exec();
+        return;
+    }
+
+    QStringList terminalArguments = settings.terminalArguments(m_terminal->program()).split(" ");
+    terminalArguments << "$SHELL" << "-c"; // Execute shell to launch several commands
+    m_terminal->setArguments(terminalArguments << commands + afterCompletionCommand(afterCompletion));
+    m_terminal->start();
 }
 
 void Pacman::getExitCode()

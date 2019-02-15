@@ -1,4 +1,4 @@
-#ifndef PACMAN_H
+﻿#ifndef PACMAN_H
 #define PACMAN_H
 
 #include <QObject>
@@ -48,9 +48,9 @@ signals:
     void finished(int exitCode);
 
 private:
-    QPair<QString, QStringList> getTerminalProgram();
     void appendPackagesCommand(QString &tasksCommands, const QString &pacmanTool, const QVector<Package *> &packages, const QString &action, const QString &parameters = QString());
     static QString afterCompletionCommand(AfterCompletion afterCompletion);
+    void exec(const QString &commands, AfterCompletion afterCompletion);
 
     PackagesView *m_tasksView;
     QProcess *m_terminal;
