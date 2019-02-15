@@ -62,6 +62,12 @@ void TasksDialog::on_noConfirmCheckBox_toggled(bool checked)
     updateCommandsText();
 }
 
+void TasksDialog::on_forceCheckBox_toggled(bool checked)
+{
+    m_pacman->setForce(checked);
+    updateCommandsText();
+}
+
 void TasksDialog::on_afterCompletionComboBox_currentIndexChanged(int index)
 {
     const auto afterCompletion = static_cast<Pacman::AfterCompletion>(index);

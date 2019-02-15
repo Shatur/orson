@@ -23,6 +23,7 @@ public:
 
 private slots:
     void on_noConfirmCheckBox_toggled(bool checked);
+    void on_forceCheckBox_toggled(bool checked);
     void on_afterCompletionComboBox_currentIndexChanged(int index);
 
     void processTaskRemoving();

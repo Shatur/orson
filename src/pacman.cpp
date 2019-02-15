@@ -33,15 +33,27 @@ QString Pacman::tasksCommands()
     if (m_tasksView->isSyncRepositories() && m_tasksView->isUpgradePackages()) {
         commands.append(pacmanTool);
         commands.append("-Syu ");
+        if (m_noConfirm)
+            commands.append("--noconfirm ");
+        if (m_force)
+            commands.append("--force ");
     } else {
         if (m_tasksView->isSyncRepositories()) {
             commands.append(pacmanTool);
             commands.append("-Sy ");
+            if (m_noConfirm)
+                commands.append("--noconfirm ");
+            if (m_force)
+                commands.append("--force ");
         }
 
         if (m_tasksView->isUpgradePackages()) {
             commands.append(pacmanTool);
             commands.append("-Su ");
+            if (m_noConfirm)
+                commands.append("--noconfirm ");
+            if (m_force)
+                commands.append("--force ");
         }
     }
 
