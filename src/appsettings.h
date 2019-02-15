@@ -42,9 +42,9 @@ public:
     QStringList availableTerminals() const;
     void setTerminal(const QString &terminal);
 
-    QString terminalArguments(const QString &terminal) const;
-    QString defaultArguments(const QString &terminal) const;
-    void setTerminalArguments(const QString &terminal, const QString &arguments);
+    QStringList terminalArguments(const QString &terminal) const;
+    QStringList defaultArguments(const QString &terminal) const;
+    void setTerminalArguments(const QString &terminal, const QStringList &arguments);
 
     QString pacmanTool() const;
     QStringList availablePacmanTools() const;

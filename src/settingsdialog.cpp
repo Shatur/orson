@@ -70,7 +70,7 @@ void SettingsDialog::on_SettingsDialog_accepted()
 
     // Pacman settings
     settings.setTerminal(ui->terminalComboBox->currentText());
-    settings.setTerminalArguments(ui->terminalComboBox->currentText(), ui->terminalArgumentsEdit->text());
+    settings.setTerminalArguments(ui->terminalComboBox->currentText(), ui->terminalArgumentsEdit->text().split(" "));
     settings.setPacmanTool(ui->pacmanToolComboBox->currentText());
 
     // Interface settings
@@ -166,7 +166,7 @@ void SettingsDialog::on_updatesAvailableIconEdit_textChanged(const QString &file
 void SettingsDialog::on_terminalComboBox_currentTextChanged(const QString &terminalName)
 {
     const AppSettings settings;
-    ui->terminalArgumentsEdit->setText(settings.terminalArguments(terminalName));
+    ui->terminalArgumentsEdit->setText(settings.terminalArguments(terminalName).join(" "));
 
     // Set icon
     if (QIcon::hasThemeIcon(terminalName))

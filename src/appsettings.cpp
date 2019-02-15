@@ -158,22 +158,22 @@ void AppSettings::setTerminal(const QString &terminal)
     setValue("Terminal", terminal);
 }
 
-QString AppSettings::terminalArguments(const QString &terminal) const
+QStringList AppSettings::terminalArguments(const QString &terminal) const
 {
-    return value(terminal, defaultArguments(terminal)).toString();
+    return value(terminal, defaultArguments(terminal)).toStringList();
 }
 
-QString AppSettings::defaultArguments(const QString &terminal) const
+QStringList AppSettings::defaultArguments(const QString &terminal) const
 {
     if (terminal == "konsole")
-        return "--hide-menubar --hide-tabbar -e";
+        return {"--hide-menubar", "--hide-tabbar", "-e"};
     else if (terminal == "gnome-terminal")
-        return "--hide-menubar --";
+        return {"--hide-menubar", "--"};
     else
-        return "-e";
+        return {"-e"};
 }
 
-void AppSettings::setTerminalArguments(const QString &terminal, const QString &arguments)
+void AppSettings::setTerminalArguments(const QString &terminal, const QStringList &arguments)
 {
     setValue(terminal, arguments);
 }

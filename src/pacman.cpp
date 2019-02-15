@@ -147,7 +147,7 @@ void Pacman::exec(const QString &commands, Pacman::AfterCompletion afterCompleti
         return;
     }
 
-    QStringList terminalArguments = settings.terminalArguments(m_terminal->program()).split(" ");
+    QStringList terminalArguments = settings.terminalArguments(m_terminal->program());
     terminalArguments << "$SHELL" << "-c"; // Execute shell to launch several commands
     m_terminal->setArguments(terminalArguments << commands + afterCompletionCommand(afterCompletion));
     m_terminal->start();
