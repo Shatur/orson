@@ -100,9 +100,9 @@ void SettingsDialog::on_resetSettingsButton_clicked()
     ui->pacmanToolComboBox->setCurrentIndex(0);
 
     // Interface settings
-    ui->noUpdatesIconEdit->setText(settings.defaultTrayIconName(MainWindow::NoUpdates));
-    ui->updatingIconEdit->setText(settings.defaultTrayIconName(MainWindow::Updating));
-    ui->updatesAvailableIconEdit->setText(settings.defaultTrayIconName(MainWindow::UpdatesAvailable));
+    ui->noUpdatesIconEdit->setText(AppSettings::defaultTrayIconName(MainWindow::NoUpdates));
+    ui->updatingIconEdit->setText(AppSettings::defaultTrayIconName(MainWindow::Updating));
+    ui->updatesAvailableIconEdit->setText(AppSettings::defaultTrayIconName(MainWindow::UpdatesAvailable));
 
     // Connection settings
     ui->proxyTypeComboBox->setCurrentIndex(1);

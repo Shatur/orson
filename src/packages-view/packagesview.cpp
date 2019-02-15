@@ -377,7 +377,7 @@ void PackagesView::contextMenuEvent(QContextMenuEvent *event)
 
     // Disable install operations for AUR for pacman
     const AppSettings settings;
-    if (!package->isInstalled() && package->repo() == "aur" && settings.pacmanTool() == "sudo pacman") {
+    if (!package->isInstalled() && package->repo() == "aur" && settings.pacmanTool() == AppSettings::defaultPacmanTool()) {
         m_installExplicityAction->setEnabled(false);
         m_installAsDependAction->setEnabled(false);
     } else {

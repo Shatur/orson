@@ -49,11 +49,13 @@ public:
     QString pacmanTool() const;
     QStringList availablePacmanTools() const;
     void setPacmanTool(const QString &programName);
+    static constexpr const char *defaultPacmanTool()
+    { return "sudo pacman"; }
 
     // Interface settings
     QString trayIconName(MainWindow::TrayStatus trayStatus) const;
     void setTrayIconName(MainWindow::TrayStatus trayStatus, const QString &name);
-    constexpr const char *defaultTrayIconName(MainWindow::TrayStatus trayStatus) const;
+    static constexpr const char *defaultTrayIconName(MainWindow::TrayStatus trayStatus);
 
     // Connection settings
     QNetworkProxy::ProxyType proxyType() const;
@@ -82,7 +84,7 @@ private:
     static QTranslator m_appTranslator;
 };
 
-constexpr const char *AppSettings::defaultTrayIconName(MainWindow::TrayStatus trayStatus) const
+constexpr const char *AppSettings::defaultTrayIconName(MainWindow::TrayStatus trayStatus)
 {
     switch (trayStatus) {
     case MainWindow::NoUpdates:

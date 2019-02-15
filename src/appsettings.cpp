@@ -166,13 +166,13 @@ QStringList AppSettings::terminalArguments(const QString &terminal) const
 QStringList AppSettings::defaultArguments(const QString &terminal) const
 {
     if (terminal == "konsole")
-        return {"--hide-menubar", "--hide-tabbar", "-e"};
+        return { "--hide-menubar", "--hide-tabbar", "-e" };
     else if (terminal == "gnome-terminal")
-        return {"--hide-menubar", "--"};
+        return { "--hide-menubar", "--" };
     else if (terminal == "mate-terminal" || terminal == "xfce4-terminal")
-        return {"--hide-menubar", "-x"};
+        return { "--hide-menubar", "-x" };
     else
-        return {"-e"};
+        return { "-e" };
 }
 
 void AppSettings::setTerminalArguments(const QString &terminal, const QStringList &arguments)
@@ -182,12 +182,12 @@ void AppSettings::setTerminalArguments(const QString &terminal, const QStringLis
 
 QString AppSettings::pacmanTool() const
 {
-    return value("PacmanTool", "sudo pacman").toString();
+    return value("PacmanTool", defaultPacmanTool()).toString();
 }
 
 QStringList AppSettings::availablePacmanTools() const
 {
-    QStringList pacmanTools = {"sudo pacman"};
+    QStringList pacmanTools = { defaultPacmanTool() };
 
     if (QFileInfo::exists("/usr/bin/aura"))
         pacmanTools.append("aura");
