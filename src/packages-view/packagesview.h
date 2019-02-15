@@ -61,6 +61,16 @@ private:
     void addCurrentToTasks(QVector<Package *> &category);
     void removeFromTasks(Package *package);
 
+    // Context menu actions
+    QAction *m_installExplicityAction;
+    QAction *m_installAsDependAction;
+    QAction *m_reinstallAction;
+    QAction *m_markAsExplicityAction;
+    QAction *m_markAsDependAction;
+    QAction *m_uninstallAction;
+    QAction *m_syncAction;
+    QAction *m_upgradeAllAction;
+
     // Packages operations
     QVector<Package *> m_installExplicity;
     QVector<Package *> m_installAsDepend;

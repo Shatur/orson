@@ -13,14 +13,15 @@ PackagesView::PackagesView(QWidget *parent) :
 {
     // Setup menu
     m_menu = new QMenu(this);
-    m_menu->addAction(Task::categoryIcon(Task::Sync), Task::categoryName(Task::Sync));
-    m_menu->addAction(Task::categoryIcon(Task::UpgradeAll), Task::categoryName(Task::UpgradeAll));
-    m_menu->addAction(Task::categoryIcon(Task::InstallExplicity), Task::categoryName(Task::InstallExplicity));
-    m_menu->addAction(Task::categoryIcon(Task::InstallAsDepend), Task::categoryName(Task::InstallAsDepend));
-    m_menu->addAction(Task::categoryIcon(Task::Reinstall), Task::categoryName(Task::Reinstall));
-    m_menu->addAction(Task::categoryIcon(Task::MarkAsExplicity), Task::categoryName(Task::MarkAsExplicity));
-    m_menu->addAction(Task::categoryIcon(Task::MarkAsDepend), Task::categoryName(Task::MarkAsDepend));
-    m_menu->addAction(Task::categoryIcon(Task::Uninstall), Task::categoryName(Task::Uninstall));
+    m_installExplicityAction = m_menu->addAction(Task::categoryIcon(Task::InstallExplicity), Task::categoryName(Task::InstallExplicity));
+    m_installAsDependAction = m_menu->addAction(Task::categoryIcon(Task::InstallAsDepend), Task::categoryName(Task::InstallAsDepend));
+    m_reinstallAction = m_menu->addAction(Task::categoryIcon(Task::Reinstall), Task::categoryName(Task::Reinstall));
+    m_markAsExplicityAction = m_menu->addAction(Task::categoryIcon(Task::MarkAsExplicity), Task::categoryName(Task::MarkAsExplicity));
+    m_markAsDependAction = m_menu->addAction(Task::categoryIcon(Task::MarkAsDepend), Task::categoryName(Task::MarkAsDepend));
+    m_uninstallAction = m_menu->addAction(Task::categoryIcon(Task::Uninstall), Task::categoryName(Task::Uninstall));
+    m_menu->addSeparator();
+    m_syncAction = m_menu->addAction(Task::categoryIcon(Task::Sync), Task::categoryName(Task::Sync));
+    m_upgradeAllAction = m_menu->addAction(Task::categoryIcon(Task::UpgradeAll), Task::categoryName(Task::UpgradeAll));
     connect(m_menu, &QMenu::triggered, this, &PackagesView::processMenuAction);
 
     // Setup items
@@ -300,36 +301,22 @@ void PackagesView::processSelectionChanging(const QModelIndex &current)
 
 void PackagesView::processMenuAction(QAction *action)
 {
-    const auto category = static_cast<Task::Type>(m_menu->actions().indexOf(action));
-
-    switch (category) {
-    case Task::Sync:
+    if (action == m_syncAction)
         setSyncRepositories(true);
-        break;
-    case Task::UpgradeAll:
+    else if (action == m_upgradeAllAction)
         setUpgradePackages(true);
-        break;
-    case Task::InstallExplicity:
+    else if (action == m_installExplicityAction)
         addCurrentToTasks(m_installExplicity);
-        break;
-    case Task::InstallAsDepend:
+    else if (action == m_installAsDependAction)
         addCurrentToTasks(m_installAsDepend);
-        break;
-    case Task::Reinstall:
+    else if (action == m_reinstallAction)
         addCurrentToTasks(m_reinstall);
-        break;
-    case Task::MarkAsExplicity:
+    else if (action == m_markAsExplicityAction)
         addCurrentToTasks(m_markAsExplicity);
-        break;
-    case Task::MarkAsDepend:
+    else if (action == m_markAsDependAction)
         addCurrentToTasks(m_markAsDepend);
-        break;
-    case Task::Uninstall:
+    else if (action == m_uninstallAction)
         addCurrentToTasks(m_uninstall);
-        break;
-    default:
-        break;
-    }
 }
 
 void PackagesView::clearAllOperations()
@@ -355,48 +342,47 @@ void PackagesView::contextMenuEvent(QContextMenuEvent *event)
 
     // Setup menu actions
     if (package->isInstalled()) {
-        m_menu->actions().at(Task::InstallExplicity)->setVisible(false);
-        m_menu->actions().at(Task::InstallAsDepend)->setVisible(false);
+        m_reinstallAction->setVisible(true);
+        m_uninstallAction->setVisible(true);
 
-        m_menu->actions().at(Task::Reinstall)->setVisible(true);
-        m_menu->actions().at(Task::Uninstall)->setVisible(true);
-        if (package->isInstalledExplicitly())
-            m_menu->actions().at(Task::MarkAsDepend)->setVisible(true);
-        else
-            m_menu->actions().at(Task::MarkAsExplicity)->setVisible(true);
+        m_markAsDependAction->setVisible(package->isInstalledExplicitly());
+        m_markAsExplicityAction->setVisible(!m_markAsDependAction->isVisible());
+
+        m_installExplicityAction->setVisible(false);
+        m_installAsDependAction->setVisible(false);
     } else {
-        m_menu->actions().at(Task::Reinstall)->setVisible(false);
-        m_menu->actions().at(Task::MarkAsDepend)->setVisible(false);
-        m_menu->actions().at(Task::MarkAsExplicity)->setVisible(false);
-        m_menu->actions().at(Task::Uninstall)->setVisible(false);
+        m_installExplicityAction->setVisible(true);
+        m_installAsDependAction->setVisible(true);
 
-        m_menu->actions().at(Task::InstallExplicity)->setVisible(true);
-        m_menu->actions().at(Task::InstallAsDepend)->setVisible(true);
+        m_reinstallAction->setVisible(false);
+        m_markAsDependAction->setVisible(false);
+        m_markAsExplicityAction->setVisible(false);
+        m_uninstallAction->setVisible(false);
     }
 
     // Check if opeartions are already selected
-    m_menu->actions().at(Task::InstallExplicity)->setEnabled(!m_installExplicity.contains(package));
-    m_menu->actions().at(Task::InstallAsDepend)->setEnabled(!m_installAsDepend.contains(package));
-    m_menu->actions().at(Task::Reinstall)->setEnabled(!m_reinstall.contains(package));
-    m_menu->actions().at(Task::MarkAsExplicity)->setEnabled(!m_markAsExplicity.contains(package));
-    m_menu->actions().at(Task::MarkAsDepend)->setEnabled(!m_markAsDepend.contains(package));
-    m_menu->actions().at(Task::Uninstall)->setEnabled(!m_uninstall.contains(package));
-    m_menu->actions().at(Task::Sync)->setEnabled(!m_syncRepositories);
+    m_installExplicityAction->setEnabled(!m_installExplicity.contains(package));
+    m_installAsDependAction->setEnabled(!m_installAsDepend.contains(package));
+    m_reinstallAction->setEnabled(!m_reinstall.contains(package));
+    m_markAsExplicityAction->setEnabled(!m_markAsExplicity.contains(package));
+    m_markAsDependAction->setEnabled(!m_markAsDepend.contains(package));
+    m_uninstallAction->setEnabled(!m_uninstall.contains(package));
+    m_syncAction->setEnabled(!m_syncRepositories);
 
     // Enable the upgrade option only if upgrades are available or if the sync action is selected
     if ((!model()->outdatedPackages().isEmpty() || m_syncRepositories) && !m_upgradePackages)
-        m_menu->actions().at(Task::UpgradeAll)->setEnabled(true);
+        m_upgradeAllAction->setEnabled(true);
     else
-        m_menu->actions().at(Task::UpgradeAll)->setEnabled(false);
+        m_upgradeAllAction->setEnabled(false);
 
     // Disable install operations for AUR for pacman
     const AppSettings settings;
-    if (!package->isInstalled() && package->repo() == "aur" && settings.pacmanTool() == "pacman") {
-        m_menu->actions().at(Task::InstallExplicity)->setEnabled(false);
-        m_menu->actions().at(Task::InstallAsDepend)->setEnabled(false);
+    if (!package->isInstalled() && package->repo() == "aur" && settings.pacmanTool() == "sudo pacman") {
+        m_installExplicityAction->setEnabled(false);
+        m_installAsDependAction->setEnabled(false);
     } else {
-        m_menu->actions().at(Task::InstallExplicity)->setEnabled(true);
-        m_menu->actions().at(Task::InstallAsDepend)->setEnabled(true);
+        m_installExplicityAction->setEnabled(true);
+        m_installAsDependAction->setEnabled(true);
     }
 
     m_menu->exec(event->globalPos());
