@@ -4,7 +4,7 @@
 
 #include <QStandardPaths>
 #include <QFileInfo>
-#include <QDebug>
+#include <QMimeDatabase>
 
 QTranslator AppSettings::m_appTranslator;
 
@@ -106,9 +106,103 @@ void AppSettings::setAutostartEnabled(bool enabled)
     }
 }
 
+QString AppSettings::terminal() const
+{
+    return value("Terminal", availableTerminals().at(0)).toString();
+}
+
+QStringList AppSettings::availableTerminals() const
+{
+    QStringList terminals;
+    if (QFileInfo::exists("/usr/bin/xterm"))
+        terminals.append("xterm");
+    if (QFileInfo::exists("/usr/bin/konsole"))
+        terminals.append("konsole");
+    if (QFileInfo::exists("/usr/bin/gnome-terminal"))
+        terminals.append("gnome-terminal");
+    if (QFileInfo::exists("/usr/bin/mate-terminal"))
+        terminals.append("mate-terminal");
+    if (QFileInfo::exists("/usr/bin/xfce4-terminal"))
+        terminals.append("xfce4-terminal");
+    if (QFileInfo::exists("/usr/bin/lxterminal"))
+        terminals.append("lxterminal");
+    if (QFileInfo::exists("/usr/bin/deepin-terminal"))
+        terminals.append("deepin-terminal");
+    if (QFileInfo::exists("/usr/bin/pantheon-terminal"))
+        terminals.append("pantheon-terminal");
+    if (QFileInfo::exists("/usr/bin/alacritty"))
+        terminals.append("alacritty");
+    if (QFileInfo::exists("/usr/bin/cool-retro-term"))
+        terminals.append("cool-retro-term");
+    if (QFileInfo::exists("/usr/bin/kitty"))
+        terminals.append("kitty");
+    if (QFileInfo::exists("/usr/bin/qterminal"))
+        terminals.append("qterminal");
+    if (QFileInfo::exists("/usr/bin/sakura"))
+        terminals.append("sakura");
+    if (QFileInfo::exists("/usr/bin/terminator"))
+        terminals.append("terminator");
+    if (QFileInfo::exists("/usr/bin/termite"))
+        terminals.append("termite");
+    if (QFileInfo::exists("/usr/bin/tilix"))
+        terminals.append("tilix");
+
+    if (terminals.isEmpty())
+        terminals.append("");
+
+    return terminals;
+}
+
+void AppSettings::setTerminal(const QString &terminal)
+{
+    setValue("Terminal", terminal);
+}
+
+QString AppSettings::terminalArguments(const QString &terminal) const
+{
+    return value(terminal, defaultArguments(terminal)).toString();
+}
+
+QString AppSettings::defaultArguments(const QString &terminal) const
+{
+    if (terminal == "konsole")
+        return "--hide-menubar --hide-tabbar -e";
+    else if (terminal == "gnome-terminal")
+        return "--hide-menubar --";
+    else
+        return "-e";
+}
+
+void AppSettings::setTerminalArguments(const QString &terminal, const QString &arguments)
+{
+    setValue(terminal, arguments);
+}
+
 QString AppSettings::pacmanTool() const
 {
     return value("PacmanTool", "sudo pacman").toString();
+}
+
+QStringList AppSettings::availablePacmanTools() const
+{
+    QStringList pacmanTools = {"sudo pacman"};
+
+    if (QFileInfo::exists("/usr/bin/aura"))
+        pacmanTools.append("aura");
+    if (QFileInfo::exists("/usr/bin/packer"))
+       pacmanTools.append("packer");
+    if (QFileInfo::exists("/usr/bin/pakku"))
+        pacmanTools.append("pakku");
+    if (QFileInfo::exists("/usr/bin/pikaur"))
+        pacmanTools.append("pikaur");
+    if (QFileInfo::exists("/usr/bin/trizen"))
+        pacmanTools.append("trizen");
+    if (QFileInfo::exists("/usr/bin/wrapaur"))
+        pacmanTools.append("wrapaur");
+    if (QFileInfo::exists("/usr/bin/yay"))
+        pacmanTools.append("yay");
+
+    return pacmanTools;
 }
 
 void AppSettings::setPacmanTool(const QString &programName)

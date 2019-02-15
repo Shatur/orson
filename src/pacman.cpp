@@ -100,13 +100,10 @@ void Pacman::syncDatabase()
 
 QPair<QString, QStringList> Pacman::getTerminalProgram()
 {
+    const AppSettings settings;
     QPair<QString, QStringList> program;
-    if (QFileInfo::exists("/usr/bin/konsole"))
-        program = {"konsole", {"--hide-menubar", "--hide-tabbar", "-e"}};
-    else if (QFileInfo::exists("/usr/bin/gnome-terminal"))
-        program = {"gnome-terminal", {"--hide-menubar", "--"}};
-    else
-        qFatal("Unable to found terminal program");
+    program.first = settings.terminal();
+    program.second = settings.terminalArguments(program.first).split(" ");
 
     // Add shell execution
     program.second << "$SHELL" << "-c";

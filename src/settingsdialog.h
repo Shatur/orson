@@ -1,4 +1,4 @@
-#ifndef SETTINGSDIALOG_H
+﻿#ifndef SETTINGSDIALOG_H
 #define SETTINGSDIALOG_H
 
 #include <QDialog>
@@ -30,6 +30,8 @@ private slots:
     void on_noUpdatesIconEdit_textChanged(const QString &fileName);
     void on_updatingIconEdit_textChanged(const QString &fileName);
     void on_updatesAvailableIconEdit_textChanged(const QString &fileName);
+
+    void on_terminalComboBox_currentTextChanged(const QString &terminalName);
 
     void on_shortcutsTreeWidget_itemSelectionChanged();
     void on_shortcutSequenceEdit_editingFinished();

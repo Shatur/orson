@@ -204,6 +204,43 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_9">
            <item>
+            <layout class="QHBoxLayout" name="terminalLayout">
+             <item>
+              <widget class="QLabel" name="terminalLabel">
+               <property name="text">
+                <string>Terminal:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="terminalComboBox">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="editable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="terminalIconLabel"/>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="terminalArgumentsEdit">
+               <property name="toolTip">
+                <string>Terminal arguments</string>
+               </property>
+               <property name="placeholderText">
+                <string>Arguments</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
             <layout class="QHBoxLayout" name="pacmanToolLayout">
              <item>
               <widget class="QLabel" name="pacmanToolLabel">
@@ -223,11 +260,6 @@
                <property name="editable">
                 <bool>true</bool>
                </property>
-               <item>
-                <property name="text">
-                 <string>sudo pacman</string>
-                </property>
-               </item>
               </widget>
              </item>
              <item>
@@ -335,25 +367,13 @@
             </widget>
            </item>
            <item row="0" column="2">
-            <widget class="QLabel" name="noUpdatesIconPreviewLabel">
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
+            <widget class="QLabel" name="noUpdatesIconPreviewLabel"/>
            </item>
            <item row="4" column="2">
-            <widget class="QLabel" name="updatesAvailableIconPreviewLabel">
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
+            <widget class="QLabel" name="updatesAvailableIconPreviewLabel"/>
            </item>
            <item row="3" column="2">
-            <widget class="QLabel" name="updatingIconPreviewLabel">
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
+            <widget class="QLabel" name="updatingIconPreviewLabel"/>
            </item>
           </layout>
          </widget>

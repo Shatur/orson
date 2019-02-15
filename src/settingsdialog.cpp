@@ -23,23 +23,17 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     ui->autostartCheckBox->setChecked(settings.isAutostartEnabled());
 
     // Pacman settings
-    // Detect available AUR-helpers
-    if (QFileInfo::exists("/usr/bin/aura"))
-        ui->pacmanToolComboBox->addItem("aura");
-    if (QFileInfo::exists("/usr/bin/packer"))
-        ui->pacmanToolComboBox->addItem("packer");
-    if (QFileInfo::exists("/usr/bin/pakku"))
-        ui->pacmanToolComboBox->addItem("pakku");
-    if (QFileInfo::exists("/usr/bin/pikaur"))
-        ui->pacmanToolComboBox->addItem("pikaur");
-    if (QFileInfo::exists("/usr/bin/trizen"))
-        ui->pacmanToolComboBox->addItem("trizen");
-    if (QFileInfo::exists("/usr/bin/wrapaur"))
-        ui->pacmanToolComboBox->addItem("wrapaur");
-    if (QFileInfo::exists("/usr/bin/yay"))
-        ui->pacmanToolComboBox->addItem("yay");
+    // Terminals
+    ui->terminalComboBox->addItems(settings.availableTerminals());
+    const QString terminal = settings.terminal();
+    const int terminalIndex = ui->terminalComboBox->findText(terminal);
+    if (terminalIndex == -1)
+        ui->terminalComboBox->setCurrentText(terminal);
+    else
+        ui->terminalComboBox->setCurrentIndex(terminalIndex);
 
-    // Load current pacman tool
+    // Pacman tools
+    ui->pacmanToolComboBox->addItems(settings.availablePacmanTools());
     const QString pacmanTool = settings.pacmanTool();
     const int pacmanToolIndex = ui->pacmanToolComboBox->findText(pacmanTool);
     if (pacmanToolIndex == -1)
@@ -75,6 +69,8 @@ void SettingsDialog::on_SettingsDialog_accepted()
     settings.setAutostartEnabled(ui->autostartCheckBox->isChecked());
 
     // Pacman settings
+    settings.setTerminal(ui->terminalComboBox->currentText());
+    settings.setTerminalArguments(ui->terminalComboBox->currentText(), ui->terminalArgumentsEdit->text());
     settings.setPacmanTool(ui->pacmanToolComboBox->currentText());
 
     // Interface settings
@@ -100,6 +96,7 @@ void SettingsDialog::on_resetSettingsButton_clicked()
     ui->autostartCheckBox->setChecked(false);
 
     // Pacman settings
+    ui->terminalComboBox->setCurrentIndex(0);
     ui->pacmanToolComboBox->setCurrentIndex(0);
 
     // Interface settings
@@ -164,6 +161,18 @@ void SettingsDialog::on_updatingIconEdit_textChanged(const QString &fileName)
 void SettingsDialog::on_updatesAvailableIconEdit_textChanged(const QString &fileName)
 {
     showIconPreview(ui->updatesAvailableIconPreviewLabel, fileName);
+}
+
+void SettingsDialog::on_terminalComboBox_currentTextChanged(const QString &terminalName)
+{
+    const AppSettings settings;
+    ui->terminalArgumentsEdit->setText(settings.terminalArguments(terminalName));
+
+    // Set icon
+    if (QIcon::hasThemeIcon(terminalName))
+        ui->terminalIconLabel->setPixmap(QIcon::fromTheme(terminalName).pixmap(24, 24));
+    else
+        ui->terminalIconLabel->setPixmap(QIcon::fromTheme("terminal").pixmap(24, 24));
 }
 
 void SettingsDialog::on_shortcutsTreeWidget_itemSelectionChanged()

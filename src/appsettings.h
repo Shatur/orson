@@ -38,7 +38,16 @@ public:
     void setAutostartEnabled(bool enabled);
 
     // Pacman settings
+    QString terminal() const;
+    QStringList availableTerminals() const;
+    void setTerminal(const QString &terminal);
+
+    QString terminalArguments(const QString &terminal) const;
+    QString defaultArguments(const QString &terminal) const;
+    void setTerminalArguments(const QString &terminal, const QString &arguments);
+
     QString pacmanTool() const;
+    QStringList availablePacmanTools() const;
     void setPacmanTool(const QString &programName);
 
     // Interface settings
