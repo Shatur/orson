@@ -19,6 +19,7 @@ PackagesView::PackagesView(QWidget *parent) :
     m_markAsExplicityAction = m_menu->addAction(Task::categoryIcon(Task::MarkAsExplicity), Task::categoryName(Task::MarkAsExplicity));
     m_markAsDependAction = m_menu->addAction(Task::categoryIcon(Task::MarkAsDepend), Task::categoryName(Task::MarkAsDepend));
     m_uninstallAction = m_menu->addAction(Task::categoryIcon(Task::Uninstall), Task::categoryName(Task::Uninstall));
+    m_uninstallWithUnusedAction = m_menu->addAction(Task::categoryIcon(Task::UninstallWithUnused), Task::categoryName(Task::UninstallWithUnused));
     m_menu->addSeparator();
     m_syncAction = m_menu->addAction(Task::categoryIcon(Task::Sync), Task::categoryName(Task::Sync));
     m_upgradeAllAction = m_menu->addAction(Task::categoryIcon(Task::UpgradeAll), Task::categoryName(Task::UpgradeAll));
@@ -158,24 +159,9 @@ PackagesModel *PackagesView::model() const
     return qobject_cast<PackagesModel *>(QTreeView::model());
 }
 
-QVector<Package *> PackagesView::uninstall() const
+QVector<Package *> PackagesView::installExplicity() const
 {
-    return m_uninstall;
-}
-
-QVector<Package *> PackagesView::markAsDepend() const
-{
-    return m_markAsDepend;
-}
-
-QVector<Package *> PackagesView::markAsExplicit() const
-{
-    return m_markAsExplicity;
-}
-
-QVector<Package *> PackagesView::reinstall() const
-{
-    return m_reinstall;
+    return m_installExplicity;
 }
 
 QVector<Package *> PackagesView::installAsDepend() const
@@ -183,9 +169,29 @@ QVector<Package *> PackagesView::installAsDepend() const
     return m_installAsDepend;
 }
 
-QVector<Package *> PackagesView::installExplicity() const
+QVector<Package *> PackagesView::reinstall() const
 {
-    return m_installExplicity;
+    return m_reinstall;
+}
+
+QVector<Package *> PackagesView::markAsExplicit() const
+{
+    return m_markAsExplicity;
+}
+
+QVector<Package *> PackagesView::markAsDepend() const
+{
+    return m_markAsDepend;
+}
+
+QVector<Package *> PackagesView::uninstall() const
+{
+    return m_uninstall;
+}
+
+QVector<Package *> PackagesView::uninstallWithUnused() const
+{
+    return m_uninstallWithUnused;
 }
 
 bool PackagesView::isUpgradePackages() const
@@ -228,6 +234,7 @@ int PackagesView::operationsCount()
     count += m_markAsExplicity.size();
     count += m_markAsDepend.size();
     count += m_uninstall.size();
+    count += m_uninstallWithUnused.size();
 
     return count;
 }
@@ -261,6 +268,9 @@ void PackagesView::removeOperation(Task *task)
         case Task::Uninstall:
             m_uninstall.removeOne(task->package());
             break;
+        case Task::UninstallWithUnused:
+            m_uninstallWithUnused.removeOne(task->package());
+            break;
         default:
             break;
         }
@@ -282,6 +292,9 @@ void PackagesView::removeOperation(Task *task)
         break;
     case Task::Uninstall:
         m_uninstall.clear();
+        break;
+    case Task::UninstallWithUnused:
+        m_uninstallWithUnused.clear();
         break;
     }
 
@@ -317,6 +330,8 @@ void PackagesView::processMenuAction(QAction *action)
         addCurrentToTasks(m_markAsDepend);
     else if (action == m_uninstallAction)
         addCurrentToTasks(m_uninstall);
+    else if (action == m_uninstallWithUnusedAction)
+        addCurrentToTasks(m_uninstallWithUnused);
 }
 
 void PackagesView::clearAllOperations()
@@ -330,6 +345,7 @@ void PackagesView::clearAllOperations()
     m_markAsExplicity.clear();
     m_markAsDepend.clear();
     m_uninstall.clear();
+    m_uninstallWithUnused.clear();
 
     emit operationsCountChanged(0);
 }
@@ -344,6 +360,7 @@ void PackagesView::contextMenuEvent(QContextMenuEvent *event)
     if (package->isInstalled()) {
         m_reinstallAction->setVisible(true);
         m_uninstallAction->setVisible(true);
+        m_uninstallWithUnusedAction->setVisible(true);
 
         m_markAsDependAction->setVisible(package->isInstalledExplicitly());
         m_markAsExplicityAction->setVisible(!m_markAsDependAction->isVisible());
@@ -358,6 +375,7 @@ void PackagesView::contextMenuEvent(QContextMenuEvent *event)
         m_markAsDependAction->setVisible(false);
         m_markAsExplicityAction->setVisible(false);
         m_uninstallAction->setVisible(false);
+        m_uninstallWithUnusedAction->setVisible(false);
     }
 
     // Check if opeartions are already selected
@@ -367,6 +385,7 @@ void PackagesView::contextMenuEvent(QContextMenuEvent *event)
     m_markAsExplicityAction->setEnabled(!m_markAsExplicity.contains(package));
     m_markAsDependAction->setEnabled(!m_markAsDepend.contains(package));
     m_uninstallAction->setEnabled(!m_uninstall.contains(package));
+    m_uninstallWithUnusedAction->setEnabled(!m_uninstallWithUnused.contains(package));
     m_syncAction->setEnabled(!m_syncRepositories);
 
     // Enable the upgrade option only if upgrades are available or if the sync action is selected

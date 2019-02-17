@@ -120,6 +120,9 @@ void TasksModel::setTasks(PackagesView *packagesView)
     if (!packagesView->uninstall().isEmpty())
         addCategory(Task::Uninstall, packagesView->uninstall());
 
+    if (!packagesView->uninstallWithUnused().isEmpty())
+        addCategory(Task::UninstallWithUnused, packagesView->uninstallWithUnused());
+
     endResetModel();
 
     connect(this, &TasksModel::taskRemoved, packagesView, &PackagesView::removeOperation);

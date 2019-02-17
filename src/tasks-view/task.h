@@ -17,7 +17,8 @@ public:
         Reinstall,
         MarkAsExplicity,
         MarkAsDepend,
-        Uninstall
+        Uninstall,
+        UninstallWithUnused
     };
 
     explicit Task(Package *m_package);

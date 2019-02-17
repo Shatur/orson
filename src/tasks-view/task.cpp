@@ -50,6 +50,8 @@ QString Task::categoryName(Task::Type category)
         return "Mark installed as depend";
     case Uninstall:
         return "Uninstall";
+    case UninstallWithUnused:
+        return "Uninstall with unused dependencies";
     default:
         return QString();
     }
@@ -74,6 +76,8 @@ QIcon Task::categoryIcon(Task::Type category)
         return QIcon::fromTheme("exchange-positions-clockwise");
     case Uninstall:
         return QIcon::fromTheme("edit-delete");
+    case UninstallWithUnused:
+        return QIcon::fromTheme("edit-paste-style");
     default:
         return QIcon();
     }

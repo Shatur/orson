@@ -33,6 +33,7 @@ public:
     QVector<Package *> markAsExplicit() const;
     QVector<Package *> markAsDepend() const;
     QVector<Package *> uninstall() const;
+    QVector<Package *> uninstallWithUnused() const;
 
     bool isUpgradePackages() const;
     void setUpgradePackages(bool isUpgradePackages);
@@ -70,6 +71,7 @@ private:
     QAction *m_uninstallAction;
     QAction *m_syncAction;
     QAction *m_upgradeAllAction;
+    QAction *m_uninstallWithUnusedAction;
 
     // Packages operations
     QVector<Package *> m_installExplicity;
@@ -78,6 +80,7 @@ private:
     QVector<Package *> m_markAsExplicity;
     QVector<Package *> m_markAsDepend;
     QVector<Package *> m_uninstall;
+    QVector<Package *> m_uninstallWithUnused;
     bool m_upgradePackages = false;
     bool m_syncRepositories = false;
 

@@ -60,6 +60,7 @@ QString Pacman::tasksCommands()
     appendPackagesCommand(commands, pacmanTool, m_tasksView->markAsExplicit(), " -D", " --asexplicit");
     appendPackagesCommand(commands, pacmanTool, m_tasksView->markAsDepend(), " -D", " --asdeps");
     appendPackagesCommand(commands, pacmanTool, m_tasksView->uninstall(), " -R");
+    appendPackagesCommand(commands, pacmanTool, m_tasksView->uninstallWithUnused(), " -Rs");
 
     return commands;
 }
