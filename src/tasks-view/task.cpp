@@ -1,5 +1,7 @@
 #include "task.h"
 
+#include "singleapplication.h"
+
 Task::Task(Package *package) :
     m_package(package)
 {
@@ -35,23 +37,23 @@ QString Task::categoryName(Task::Type category)
 {
     switch (category) {
     case Sync:
-        return "Sync repositories";
+        return SingleApplication::translate("TasksView", "Sync repositories") + " (-Sy)";
     case UpgradeAll:
-        return "Upgrade all";
+        return SingleApplication::translate("TasksView", "Upgrade all") + " (-Su)";
     case InstallExplicity:
-        return "Install explicity";
+        return SingleApplication::translate("TasksView", "Install explicity") + " (-S)";
     case InstallAsDepend:
-        return "Install as depend";
+        return SingleApplication::translate("TasksView", "Install as depend") + " (-S --asdepend)";
     case Reinstall:
-        return "Reinstall";
+        return SingleApplication::translate("TasksView", "Reinstall") + " (-S)";
     case MarkAsExplicity:
-        return "Mark installed as explicity";
+        return SingleApplication::translate("TasksView", "Mark installed as explicity") + " (-D --asexplicit)";
     case MarkAsDepend:
-        return "Mark installed as depend";
+        return SingleApplication::translate("TasksView", "Mark installed as depend") + " (-D --asdepend)";
     case Uninstall:
-        return "Uninstall";
+        return SingleApplication::translate("TasksView", "Uninstall") + " (-R)";
     case UninstallWithUnused:
-        return "Uninstall with unused dependencies";
+        return SingleApplication::translate("TasksView", "Uninstall with unused dependencies") + " (-Rs)";
     default:
         return QString();
     }
