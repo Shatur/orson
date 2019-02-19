@@ -20,18 +20,18 @@ QVariant FilesModel::data(const QModelIndex &index, int role) const
     auto *item = static_cast<File *>(index.internalPointer());
 
     switch (role) {
-    case Qt::BackgroundRole:
-        return item->backgroundColor();
     case Qt::DisplayRole:
         return item->text(index.column());
+    case Qt::BackgroundRole:
+        if (!item->isMissing())
+            return QColor(255, 0, 0, 127); // Semi-transpared red
+        break;
     case Qt::DecorationRole:
         if (index.column() == 0)
             return item->icon();
-
-        [[fallthrough]];
-    default:
-        return QVariant();
     }
+
+    return QVariant();
 }
 
 QVariant FilesModel::headerData(int section, Qt::Orientation orientation, int role) const

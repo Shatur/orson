@@ -17,7 +17,7 @@ File::File(const QString &path, File *parent) :
     if (!m_info.exists() && parent->isReadable()) {
         m_icon = QIcon::fromTheme("dialog-error");
         m_typeColumn = QStringLiteral("Missing");
-        m_backgroundColor = {255, 0, 0, 127};
+        m_missing = true;
     } else if (m_info.isFile()) {
         const QMimeDatabase mimeDatabase;
         const QMimeType type = mimeDatabase.mimeTypeForFile(m_info);
@@ -99,11 +99,6 @@ QIcon File::icon() const
     return m_icon;
 }
 
-QColor File::backgroundColor() const
-{
-    return m_backgroundColor;
-}
-
 QString File::path() const
 {
     return m_info.filePath();
@@ -117,6 +112,11 @@ bool File::isFile() const
 bool File::isReadable() const
 {
     return m_info.isReadable();
+}
+
+bool File::isMissing() const
+{
+    return m_missing;
 }
 
 QVector<File *> File::children() const

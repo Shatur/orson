@@ -23,10 +23,10 @@ public:
     // Item properties
     QString name() const;
     QIcon icon() const;
-    QColor backgroundColor() const;
     QString path() const;
     bool isFile() const;
     bool isReadable() const;
+    bool isMissing() const;
 
 private:
     File *m_parent = nullptr;
@@ -37,7 +37,7 @@ private:
     QString m_typeColumn;
     QFileInfo m_info;
     QIcon m_icon;
-    QColor m_backgroundColor = {0, 0, 0, 0};
+    bool m_missing = false;
 };
 
 #endif // FILE_H
