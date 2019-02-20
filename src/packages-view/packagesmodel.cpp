@@ -63,7 +63,8 @@ QVariant PackagesModel::data(const QModelIndex &index, int role) const
             case 3:
                 return package->votes();
             case 4:
-                return package->popularity();
+                QLocale locale;
+                return locale.toString(package->popularity(), 'f', 2);
             }
             break;
         }
