@@ -369,7 +369,7 @@ void PackagesModel::loadRepoPackages()
         loadSyncDatabase(repo);
 
     // Load additional information for packages installed from AUR
-//    loadAurDatabase();
+    loadAurDatabase();
 
     // Check for updates
     emit databaseStatusChanged("Checking for updates");
