@@ -191,6 +191,8 @@ QStringList AppSettings::availablePacmanTools() const
 
     if (QFileInfo::exists("/usr/bin/aura"))
         pacmanTools.append("aura");
+    if (QFileInfo::exists("/usr/bin/pacaur"))
+        pacmanTools.append("pacaur");
     if (QFileInfo::exists("/usr/bin/packer"))
        pacmanTools.append("packer");
     if (QFileInfo::exists("/usr/bin/pakku"))
@@ -203,6 +205,7 @@ QStringList AppSettings::availablePacmanTools() const
         pacmanTools.append("wrapaur");
     if (QFileInfo::exists("/usr/bin/yay"))
         pacmanTools.append("yay");
+
 
     return pacmanTools;
 }
