@@ -313,7 +313,15 @@
               </widget>
              </item>
              <item>
-              <widget class="QTimeEdit" name="autosyncTimeEdit"/>
+              <widget class="QTimeEdit" name="autosyncTimeEdit">
+               <property name="minimumTime">
+                <time>
+                 <hour>0</hour>
+                 <minute>1</minute>
+                 <second>0</second>
+                </time>
+               </property>
+              </widget>
              </item>
              <item>
               <spacer name="autosyncSpacer">
