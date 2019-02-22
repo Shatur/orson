@@ -16,6 +16,9 @@
 #include <QFileDialog>
 #include <QDBusInterface>
 #include <QButtonGroup>
+#include <QTimer>
+
+#include <cmath>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -32,6 +35,10 @@ MainWindow::MainWindow(QWidget *parent) :
     m_pacman->setTasks(ui->packagesView);
     connect(m_pacman, &Pacman::finished, this, &MainWindow::processTerminalFinish);
     connect(m_pacman, &Pacman::started, this, &MainWindow::processTerminalStart);
+
+    // Setup autosync
+    m_autosyncTimer = new QTimer(this);
+    connect(m_autosyncTimer, &QTimer::timeout, this, &MainWindow::processAutosyncTimerExpires); // Automatically sync databases in background
 
     // Make after completion actions exclusive
     m_afterCompletionGroup = new QActionGroup(this);
@@ -95,7 +102,7 @@ void MainWindow::on_installLocalAction_triggered()
     if (!dialog.exec())
         return;
 
-    m_pacman->installPackage(dialog.selectedFiles().at(0));
+    m_pacman->installLocalPackage(dialog.selectedFiles().at(0));
 }
 
 void MainWindow::on_installLocalDependAction_triggered()
@@ -108,7 +115,7 @@ void MainWindow::on_installLocalDependAction_triggered()
     if (!dialog.exec())
         return;
 
-    m_pacman->installPackage(dialog.selectedFiles().at(0), true);
+    m_pacman->installLocalPackage(dialog.selectedFiles().at(0), true);
 }
 
 void MainWindow::on_exitAction_triggered()
@@ -443,6 +450,16 @@ void MainWindow::processTerminalFinish(int exitCode)
     }
 }
 
+void MainWindow::processAutosyncTimerExpires()
+{
+    m_pacman->syncDatabase();
+
+    // Reload time to autosync
+    const AppSettings settings;
+    if (settings.autosyncType() == SpecifiedTime)
+        m_autosyncTimer->setInterval(msecsToAutosync(SpecifiedTime));
+}
+
 void MainWindow::loadPackageInfo(const Package *package)
 {
     // Licenses
@@ -599,11 +616,20 @@ void MainWindow::loadAppSettings()
 {
     const AppSettings settings;
 
+    // Tray icon
     const bool trayIconVisible = settings.isTrayIconVisible();
     if (trayIconVisible)
         setTrayStatus(m_trayStatus);
     m_trayIcon->setVisible(trayIconVisible);
     SingleApplication::setQuitOnLastWindowClosed(!trayIconVisible);
+
+    // Autosync
+    if (settings.isAutosyncEnabled()) {
+        m_autosyncTimer->setInterval(msecsToAutosync(settings.autosyncType()));
+        m_autosyncTimer->start();
+    } else {
+        m_autosyncTimer->stop();
+    }
 
     // Connection
     QNetworkProxy proxy;
@@ -625,4 +651,18 @@ void MainWindow::loadMainWindowSettings()
     restoreGeometry(settings.mainWindowGeometry());
     ui->noConfirmAction->setChecked(settings.isNoConfirm());
     m_afterCompletionGroup->actions().at(settings.afterCompletion())->setChecked(true);
+}
+
+int MainWindow::msecsToAutosync(AutosyncType type)
+{
+    const AppSettings settings;
+
+    switch (type) {
+    case Interval:
+        return abs(settings.autosyncTime().msecsTo(QTime(0, 0, 0)));
+    case SpecifiedTime:
+        return abs(settings.autosyncTime().msecsTo(QTime::currentTime()));
+    }
+
+    qFatal("Unable to get autosync time");
 }

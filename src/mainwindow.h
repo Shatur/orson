@@ -22,6 +22,11 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+    enum AutosyncType {
+        Interval,
+        SpecifiedTime
+    };
+    Q_ENUM(AutosyncType)
     enum TrayStatus {
         NoUpdates,
         Updating,
@@ -72,6 +77,7 @@ private slots:
     void processOperationsCountChanged(int tasksCount);
     void processTerminalStart();
     void processTerminalFinish(int exitCode);
+    void processAutosyncTimerExpires();
 
 private:
     // Package info tabs
@@ -86,6 +92,8 @@ private:
     void loadAppSettings();
     void loadMainWindowSettings();
 
+    int msecsToAutosync(AutosyncType type);
+
     Ui::MainWindow *ui;
     QButtonGroup *m_depsButtonGroup;
     QSystemTrayIcon *m_trayIcon;
@@ -93,6 +101,7 @@ private:
     QActionGroup *m_afterCompletionGroup;
     Pacman *m_pacman;
     TrayStatus m_trayStatus = Updating;
+    QTimer *m_autosyncTimer;
 };
 
 #endif // MAINWINDOW_H

@@ -52,6 +52,16 @@ public:
     static constexpr const char *defaultPacmanTool()
     { return "sudo pacman"; }
 
+    bool isAutosyncEnabled() const;
+    void setAutosyncEnabled(bool enabled);
+
+    MainWindow::AutosyncType autosyncType() const;
+    void setAutosyncType(MainWindow::AutosyncType type);
+
+    QTime autosyncTime() const;
+    void setAutosyncTime(const QTime &time);
+    QTime defaultAutosyncTime() const;
+
     // Interface settings
     QString trayIconName(MainWindow::TrayStatus trayStatus) const;
     void setTrayIconName(MainWindow::TrayStatus trayStatus, const QString &name);

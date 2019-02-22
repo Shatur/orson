@@ -275,7 +275,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>684</width>
+             <width>692</width>
              <height>450</height>
             </rect>
            </property>
@@ -766,8 +766,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>704</width>
-             <height>333</height>
+             <width>692</width>
+             <height>318</height>
             </rect>
            </property>
            <layout class="QFormLayout" name="depsContentLayout">

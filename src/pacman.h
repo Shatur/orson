@@ -27,7 +27,7 @@ public:
     QString tasksCommands();
     void executeTasks();
 
-    void installPackage(const QString &name, bool asDepend = false);
+    void installLocalPackage(const QString &fileName, bool asDepend = false);
     void syncDatabase();
 
     // Parameters

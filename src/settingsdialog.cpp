@@ -41,6 +41,10 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     else
         ui->pacmanToolComboBox->setCurrentIndex(pacmanToolIndex);
 
+    ui->autosyncGroupBox->setChecked(settings.isAutosyncEnabled());
+    ui->autosyncTypeComboBox->setCurrentIndex(settings.autosyncType());
+    ui->autosyncTimeEdit->setTime(settings.autosyncTime());
+
     // Interface settings
     ui->noUpdatesIconEdit->setText(settings.trayIconName(MainWindow::NoUpdates));
     ui->updatingIconEdit->setText(settings.trayIconName(MainWindow::Updating));
@@ -72,6 +76,9 @@ void SettingsDialog::on_SettingsDialog_accepted()
     settings.setTerminal(ui->terminalComboBox->currentText());
     settings.setTerminalArguments(ui->terminalComboBox->currentText(), ui->terminalArgumentsEdit->text().split(" "));
     settings.setPacmanTool(ui->pacmanToolComboBox->currentText());
+    settings.setAutosyncEnabled(ui->autosyncGroupBox->isChecked());
+    settings.setAutosyncType(static_cast<MainWindow::AutosyncType>(ui->autosyncTypeComboBox->currentIndex()));
+    settings.setAutosyncTime(ui->autosyncTimeEdit->time());
 
     // Interface settings
     settings.setTrayIconName(MainWindow::NoUpdates, ui->noUpdatesIconEdit->text());
@@ -98,6 +105,9 @@ void SettingsDialog::on_resetSettingsButton_clicked()
     // Pacman settings
     ui->terminalComboBox->setCurrentIndex(0);
     ui->pacmanToolComboBox->setCurrentIndex(0);
+    ui->autosyncGroupBox->setChecked(true);
+    ui->autosyncTypeComboBox->setCurrentIndex(0);
+    ui->autosyncTimeEdit->setTime(settings.defaultAutosyncTime());
 
     // Interface settings
     ui->noUpdatesIconEdit->setText(AppSettings::defaultTrayIconName(MainWindow::NoUpdates));

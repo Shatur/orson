@@ -70,9 +70,9 @@ void Pacman::executeTasks()
     exec(tasksCommands(), m_afterTasksCompletion);
 }
 
-void Pacman::installPackage(const QString &name, bool asDepend)
+void Pacman::installLocalPackage(const QString &fileName, bool asDepend)
 {
-    QString command = "sudo pacman -U " + name;
+    QString command = "sudo pacman -U " + fileName;
     if (asDepend)
         command += " --asdepend";
 
@@ -81,8 +81,9 @@ void Pacman::installPackage(const QString &name, bool asDepend)
 
 void Pacman::syncDatabase()
 {
-    const QString command = QStringLiteral("sudo pacman -Sy");
-    exec(command, WaitForInput);
+    m_terminal->setProgram("systemctl");
+    m_terminal->setArguments({ "start", "orson-sync"});
+    m_terminal->start();
 }
 
 void Pacman::appendPackagesCommand(QString &commands, const QString &pacmanTool, const QVector<Package *> &packages, const QString &action, const QString &parameters)

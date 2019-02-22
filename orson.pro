@@ -66,7 +66,17 @@ bin.files = $${TARGET}
 desktop.path = /usr/share/applications
 desktop.files = dist/orson.desktop
 
-INSTALLS += bin desktop
+sync-service.path = /usr/lib/systemd/system/
+sync-service.files = dist/
+
+sync-rule.path = /etc/polkit-1/rules.d/
+sync-rule.files = dist/10-orson-sync.rules
+
+INSTALLS += \
+    bin \
+    desktop \
+    sync-service \
+    sync-rule
 
 # Check with PVS Studio
 #CONFIG += pvs

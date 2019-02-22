@@ -281,6 +281,59 @@
          </widget>
         </item>
         <item>
+         <widget class="QGroupBox" name="autosyncGroupBox">
+          <property name="title">
+           <string>Autosync database</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_10">
+           <item>
+            <layout class="QHBoxLayout" name="autosyncLayout">
+             <item>
+              <widget class="QLabel" name="autosyncTypelabel">
+               <property name="text">
+                <string>Autosync type</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="autosyncTypeComboBox">
+               <item>
+                <property name="text">
+                 <string>Interval</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Specified time</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item>
+              <widget class="QTimeEdit" name="autosyncTimeEdit"/>
+             </item>
+             <item>
+              <spacer name="autosyncSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
          <spacer name="pacmanSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>

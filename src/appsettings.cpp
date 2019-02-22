@@ -5,6 +5,7 @@
 #include <QStandardPaths>
 #include <QFileInfo>
 #include <QMimeDatabase>
+#include <QTime>
 
 QTranslator AppSettings::m_appTranslator;
 
@@ -213,6 +214,41 @@ QStringList AppSettings::availablePacmanTools() const
 void AppSettings::setPacmanTool(const QString &programName)
 {
     setValue("PacmanTool", programName);
+}
+
+bool AppSettings::isAutosyncEnabled() const
+{
+    return value("Autosync", true).toBool();
+}
+
+void AppSettings::setAutosyncEnabled(bool enabled)
+{
+    setValue("Autosync", enabled);
+}
+
+MainWindow::AutosyncType AppSettings::autosyncType() const
+{
+    return value("AutosyncType", MainWindow::Interval).value<MainWindow::AutosyncType>();
+}
+
+void AppSettings::setAutosyncType(MainWindow::AutosyncType type)
+{
+    setValue("AutosyncType", type);
+}
+
+QTime AppSettings::autosyncTime() const
+{
+    return value("AutosyncTime", defaultAutosyncTime()).toTime();
+}
+
+void AppSettings::setAutosyncTime(const QTime &time)
+{
+    setValue("AutosyncTime", time);
+}
+
+QTime AppSettings::defaultAutosyncTime() const
+{
+    return QTime(12, 0);
 }
 
 QString AppSettings::trayIconName(MainWindow::TrayStatus trayStatus) const
