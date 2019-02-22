@@ -59,6 +59,11 @@ FORMS += \
 
 LIBS += -lalpm
 
+DEFINES += KDE
+contains(DEFINES, KDE){
+  QT += KNotifications
+}
+
 # Rules for deployment
 bin.path = /usr/bin
 bin.files = $${TARGET}

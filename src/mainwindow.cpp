@@ -64,10 +64,19 @@ MainWindow::MainWindow(QWidget *parent) :
     m_trayMenu->addAction(QIcon::fromTheme("application-exit"), tr("Exit"), SingleApplication::instance(), &SingleApplication::quit);
 
     // System tray icon
-    m_trayIcon = new QSystemTrayIcon(QIcon::fromTheme("state-sync"), this);
-    m_trayIcon->setContextMenu(m_trayMenu);
-    m_trayIcon->show();
+#ifdef KDE
+    m_trayIcon = new KStatusNotifierItem(this);
+    m_trayIcon->setStandardActionsEnabled(false);
+    m_trayIcon->setToolTipTitle(SingleApplication::applicationName());
+    m_trayIcon->setToolTipIconByName("system-software-install");
+    connect(m_trayIcon, &KStatusNotifierItem::secondaryActivateRequested, &KStatusNotifierItem::activate);
+#else
+    m_trayIcon = new QSystemTrayIcon(this);
     connect(m_trayIcon, &QSystemTrayIcon::activated, this, &MainWindow::activateTray);
+    m_trayIcon->show();
+#endif
+    m_trayIcon->setContextMenu(m_trayMenu);
+    setTrayStatus(Updating);
 
     // Select the first package if it is not already selected (when first package loaded faster than window)
     if (ui->packagesView->model()->index(0, 0).isValid() && ui->packagesView->selectionModel()->selectedRows().isEmpty())
@@ -217,6 +226,8 @@ void MainWindow::on_reloadButton_clicked()
     ui->syncButton->setChecked(false);
     ui->upgradeButton->setChecked(false);
 
+    setTrayStatus(Updating);
+
     ui->packagesView->model()->reloadRepoPackages();
 }
 
@@ -327,6 +338,7 @@ void MainWindow::on_packageTabsWidget_currentChanged(int index)
     }
 }
 
+#ifndef KDE
 void MainWindow::activateTray(QSystemTrayIcon::ActivationReason reason)
 {
     if (reason == QSystemTrayIcon::Trigger) {
@@ -339,18 +351,43 @@ void MainWindow::activateTray(QSystemTrayIcon::ActivationReason reason)
         }
     }
 }
+#endif
 
 void MainWindow::setTrayStatus(MainWindow::TrayStatus trayStatus)
 {
     const AppSettings settings;
     const QString iconName = settings.trayIconName(trayStatus);
 
+#ifdef KDE
+    if (QIcon::hasThemeIcon(iconName))
+        m_trayIcon->setIconByName(iconName);
+    else if (QFile::exists(iconName))
+        m_trayIcon->setIconByPixmap(QIcon(iconName));
+    else
+        m_trayIcon->setIconByName("dialog-error");
+
+    switch (trayStatus) {
+    case NoUpdates:
+        m_trayIcon->setToolTipSubTitle("No updates available");
+        m_trayIcon->setStatus(KStatusNotifierItem::Passive);
+        break;
+    case Updating:
+        m_trayIcon->setToolTipSubTitle("Synchronizing databases");
+        m_trayIcon->setStatus(KStatusNotifierItem::Active);
+        break;
+    case UpdatesAvailable:
+        m_trayIcon->setToolTipSubTitle("Updates available!");
+        m_trayIcon->setStatus(KStatusNotifierItem::NeedsAttention);
+        break;
+    }
+#else
     if (QIcon::hasThemeIcon(iconName))
         m_trayIcon->setIcon(QIcon::fromTheme(iconName));
     else if (QFile::exists(iconName))
         m_trayIcon->setIcon(QIcon(iconName));
     else
         m_trayIcon->setIcon(QIcon::fromTheme("dialog-error"));
+#endif
 
     m_trayStatus = trayStatus;
 }
@@ -620,7 +657,9 @@ void MainWindow::loadAppSettings()
     const bool trayIconVisible = settings.isTrayIconVisible();
     if (trayIconVisible)
         setTrayStatus(m_trayStatus);
+#ifndef KDE
     m_trayIcon->setVisible(trayIconVisible);
+#endif
     SingleApplication::setQuitOnLastWindowClosed(!trayIconVisible);
 
     // Autosync
