@@ -59,7 +59,7 @@ FORMS += \
 
 LIBS += -lalpm
 
-DEFINES += KDE
+#DEFINES += KDE
 contains(DEFINES, KDE){
   QT += KNotifications
 }

@@ -154,16 +154,16 @@
             </layout>
            </item>
            <item>
-            <widget class="QCheckBox" name="trayCheckBox">
+            <widget class="QCheckBox" name="minimizeToTrayCheckBox">
              <property name="text">
-              <string>Show tray icon</string>
+              <string>Minimize to tray</string>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QCheckBox" name="startMinimizedCheckBox">
              <property name="enabled">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="text">
               <string>Start minimized</string>
@@ -1065,7 +1065,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>trayCheckBox</sender>
+   <sender>minimizeToTrayCheckBox</sender>
    <signal>toggled(bool)</signal>
    <receiver>startMinimizedCheckBox</receiver>
    <slot>setEnabled(bool)</slot>
@@ -1081,7 +1081,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>trayCheckBox</sender>
+   <sender>minimizeToTrayCheckBox</sender>
    <signal>toggled(bool)</signal>
    <receiver>startMinimizedCheckBox</receiver>
    <slot>setChecked(bool)</slot>

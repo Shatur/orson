@@ -18,7 +18,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 
     // General settings
     const AppSettings settings;
-    ui->trayCheckBox->setChecked(settings.isTrayIconVisible());
+    ui->minimizeToTrayCheckBox->setChecked(settings.isMinimizeToTray());
     ui->startMinimizedCheckBox->setChecked(settings.isStartMinimized());
     ui->autostartCheckBox->setChecked(settings.isAutostartEnabled());
 
@@ -68,7 +68,7 @@ void SettingsDialog::on_SettingsDialog_accepted()
 {
     // General settings
     AppSettings settings;
-    settings.setTrayIconVisible(ui->trayCheckBox->isChecked());
+    settings.setMinimizeToTray(ui->minimizeToTrayCheckBox->isChecked());
     settings.setStartMinimized(ui->startMinimizedCheckBox->isChecked());
     settings.setAutostartEnabled(ui->autostartCheckBox->isChecked());
 
@@ -98,7 +98,7 @@ void SettingsDialog::on_resetSettingsButton_clicked()
 {
     // General settings
     const AppSettings settings;
-    ui->trayCheckBox->setChecked(true);
+    ui->minimizeToTrayCheckBox->setChecked(true);
     ui->startMinimizedCheckBox->setChecked(false);
     ui->autostartCheckBox->setChecked(false);
 

@@ -63,14 +63,14 @@ void AppSettings::loadLocale(QLocale::Language lang)
     m_appTranslator.load(QLocale(), "orson", "_", ":/translations");
 }
 
-bool AppSettings::isTrayIconVisible() const
+bool AppSettings::isMinimizeToTray() const
 {
-    return value("TrayIconVisible", true).toBool();
+    return value("MinimizeToTray", true).toBool();
 }
 
-void AppSettings::setTrayIconVisible(bool visible)
+void AppSettings::setMinimizeToTray(bool visible)
 {
-    setValue("TrayIconVisible", visible);
+    setValue("MinimizeToTray", visible);
 }
 
 bool AppSettings::isStartMinimized() const

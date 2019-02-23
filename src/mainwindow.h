@@ -38,7 +38,7 @@ public:
     };
 
     explicit MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    ~MainWindow() override;
 
 private slots:
     // Menu bar
@@ -74,6 +74,7 @@ private slots:
 #ifndef KDE
     void activateTray(QSystemTrayIcon::ActivationReason reason);
 #endif
+    void showNotification(const QString &message, int interval);
     void setTrayStatus(TrayStatus trayStatus);
     void setStatusBarMessage(const QString &text);
     void findDepend(QAbstractButton* button);
@@ -86,6 +87,8 @@ private slots:
     void processAutosyncTimerExpires();
 
 private:
+    virtual void closeEvent(QCloseEvent *event) override;
+
     // Package info tabs
     void loadPackageInfo(const Package *package);
     void loadPackageDeps(const Package *package);

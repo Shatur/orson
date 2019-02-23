@@ -28,8 +28,8 @@ public:
     void setLocale(QLocale::Language lang);
     void loadLocale(QLocale::Language lang);
 
-    bool isTrayIconVisible() const;
-    void setTrayIconVisible(bool visible);
+    bool isMinimizeToTray() const;
+    void setMinimizeToTray(bool visible);
 
     bool isStartMinimized() const;
     void setStartMinimized(bool minimized);

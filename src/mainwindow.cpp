@@ -68,15 +68,14 @@ MainWindow::MainWindow(QWidget *parent) :
     m_trayIcon = new KStatusNotifierItem(this);
     m_trayIcon->setStandardActionsEnabled(false);
     m_trayIcon->setToolTipTitle(SingleApplication::applicationName());
-    m_trayIcon->setToolTipIconByName("system-software-install");
+    m_trayIcon->setToolTipIconByName(windowIcon().name());
+    m_trayIcon->setCategory(KStatusNotifierItem::SystemServices);
     connect(m_trayIcon, &KStatusNotifierItem::secondaryActivateRequested, &KStatusNotifierItem::activate);
 #else
     m_trayIcon = new QSystemTrayIcon(this);
     connect(m_trayIcon, &QSystemTrayIcon::activated, this, &MainWindow::activateTray);
-    m_trayIcon->show();
 #endif
     m_trayIcon->setContextMenu(m_trayMenu);
-    setTrayStatus(Updating);
 
     // Select the first package if it is not already selected (when first package loaded faster than window)
     if (ui->packagesView->model()->index(0, 0).isValid() && ui->packagesView->selectionModel()->selectedRows().isEmpty())
@@ -353,11 +352,44 @@ void MainWindow::activateTray(QSystemTrayIcon::ActivationReason reason)
 }
 #endif
 
+void MainWindow::showNotification(const QString &message, int interval)
+{
+#ifdef KDE
+    m_trayIcon->showMessage(SingleApplication::applicationName(), message, windowIcon().name(), interval);
+#else
+    QDBusInterface notify("org.freedesktop.Notifications", "/org/freedesktop/Notifications", "org.freedesktop.Notifications");
+    QVariantList notifyArguments;
+    notifyArguments << SingleApplication::applicationName(); // Set program name
+    notifyArguments << QVariant(QVariant::UInt);
+    notifyArguments << windowIcon().name(); // Icon
+    notifyArguments << SingleApplication::applicationName(); // Title
+    notifyArguments << message; // Body
+    notifyArguments << QStringList();
+    notifyArguments << QVariantMap();
+    notifyArguments << interval; // Show interval
+    notify.callWithArgumentList(QDBus::AutoDetect, "Notify", notifyArguments);
+#endif
+}
+
 void MainWindow::setTrayStatus(MainWindow::TrayStatus trayStatus)
 {
+    m_trayStatus = trayStatus;
+
+    // Show notification
+    switch (trayStatus) {
+    case NoUpdates:
+        showNotification("No updates available", 10000);
+        break;
+    case UpdatesAvailable:
+        showNotification(QString::number(ui->packagesView->model()->outdatedPackages().size()) + " updates available", 10000);
+        break;
+    default:
+        break;
+    }
+
+    // Set icon
     const AppSettings settings;
     const QString iconName = settings.trayIconName(trayStatus);
-
 #ifdef KDE
     if (QIcon::hasThemeIcon(iconName))
         m_trayIcon->setIconByName(iconName);
@@ -388,8 +420,6 @@ void MainWindow::setTrayStatus(MainWindow::TrayStatus trayStatus)
     else
         m_trayIcon->setIcon(QIcon::fromTheme("dialog-error"));
 #endif
-
-    m_trayStatus = trayStatus;
 }
 
 void MainWindow::setStatusBarMessage(const QString &text)
@@ -417,26 +447,11 @@ void MainWindow::findDepend(QAbstractButton *button)
 
 void MainWindow::processLoadedDatabase()
 {
-    QDBusInterface notify("org.freedesktop.Notifications", "/org/freedesktop/Notifications", "org.freedesktop.Notifications");
-    QVariantList notifyArguments;
-    notifyArguments << "Orson"; // Program name
-    notifyArguments << QVariant(QVariant::UInt);
-    notifyArguments << windowIcon().name(); // Icon
-    notifyArguments << "Updates"; // Title
-
-    // Body
-    if (ui->packagesView->model()->outdatedPackages().isEmpty()) {
-        notifyArguments << "No updates available";
+    // Set tray status
+    if (ui->packagesView->model()->outdatedPackages().isEmpty())
         setTrayStatus(NoUpdates);
-    } else {
-        notifyArguments << QString::number(ui->packagesView->model()->outdatedPackages().size()) + " updates available";
+    else
         setTrayStatus(UpdatesAvailable);
-    }
-
-    notifyArguments << QStringList();
-    notifyArguments << QVariantMap();
-    notifyArguments << 3000; // Show interval
-    notify.callWithArgumentList(QDBus::AutoDetect, "Notify", notifyArguments);
 
     // Enable buttons
     ui->reloadButton->setEnabled(true);
@@ -495,6 +510,16 @@ void MainWindow::processAutosyncTimerExpires()
     const AppSettings settings;
     if (settings.autosyncType() == SpecifiedTime)
         m_autosyncTimer->setInterval(msecsToAutosync(SpecifiedTime));
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    // Check if user disabled minimizing to tray
+    AppSettings settings;
+    if (!settings.isMinimizeToTray())
+        SingleApplication::quit();
+
+    QMainWindow::closeEvent(event);
 }
 
 void MainWindow::loadPackageInfo(const Package *package)
@@ -654,13 +679,10 @@ void MainWindow::loadAppSettings()
     const AppSettings settings;
 
     // Tray icon
-    const bool trayIconVisible = settings.isTrayIconVisible();
-    if (trayIconVisible)
-        setTrayStatus(m_trayStatus);
+    setTrayStatus(m_trayStatus);
 #ifndef KDE
-    m_trayIcon->setVisible(trayIconVisible);
+    m_trayIcon->show();
 #endif
-    SingleApplication::setQuitOnLastWindowClosed(!trayIconVisible);
 
     // Autosync
     if (settings.isAutosyncEnabled()) {
