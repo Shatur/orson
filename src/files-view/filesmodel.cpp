@@ -23,7 +23,7 @@ QVariant FilesModel::data(const QModelIndex &index, int role) const
     case Qt::DisplayRole:
         return item->text(index.column());
     case Qt::BackgroundRole:
-        if (!item->isMissing())
+        if (item->isMissing())
             return QColor(255, 0, 0, 127); // Semi-transpared red
         break;
     case Qt::DecorationRole:
