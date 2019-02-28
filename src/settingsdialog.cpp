@@ -11,6 +11,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     ui(new Ui::SettingsDialog)
 {
     ui->setupUi(this);
+    connect(ui->dialogButtonBox->button(QDialogButtonBox::RestoreDefaults), &QPushButton::clicked, this, &SettingsDialog::restoreDefaults);
     ui->shortcutsTreeWidget->expandAll();
     ui->shortcutsTreeWidget->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
     ui->logoLabel->setPixmap(QIcon::fromTheme("system-software-installer").pixmap(512, 512));
@@ -92,38 +93,6 @@ void SettingsDialog::on_SettingsDialog_accepted()
     settings.setProxyAuthEnabled(ui->proxyAuthCheckBox->isChecked());
     settings.setProxyUsername(ui->proxyUsernameEdit->text());
     settings.setProxyPassword(ui->proxyPasswordEdit->text());
-}
-
-void SettingsDialog::on_resetSettingsButton_clicked()
-{
-    // General settings
-    const AppSettings settings;
-    ui->minimizeToTrayCheckBox->setChecked(true);
-    ui->startMinimizedCheckBox->setChecked(false);
-    ui->autostartCheckBox->setChecked(false);
-
-    // Pacman settings
-    ui->terminalComboBox->setCurrentIndex(0);
-    ui->pacmanToolComboBox->setCurrentIndex(0);
-    ui->autosyncGroupBox->setChecked(true);
-    ui->autosyncTypeComboBox->setCurrentIndex(0);
-    ui->autosyncTimeEdit->setTime(settings.defaultAutosyncTime());
-
-    // Interface settings
-    ui->noUpdatesIconEdit->setText(AppSettings::defaultTrayIconName(MainWindow::NoUpdates));
-    ui->updatingIconEdit->setText(AppSettings::defaultTrayIconName(MainWindow::Updating));
-    ui->updatesAvailableIconEdit->setText(AppSettings::defaultTrayIconName(MainWindow::UpdatesAvailable));
-
-    // Connection settings
-    ui->proxyTypeComboBox->setCurrentIndex(1);
-    ui->proxyHostEdit->setText("");
-    ui->proxyPortSpinbox->setValue(8080);
-    ui->proxyAuthCheckBox->setChecked(false);
-    ui->proxyUsernameEdit->setText("");
-    ui->proxyPasswordEdit->setText("");
-
-    // Shortcuts
-    on_resetAllShortcutsButton_clicked();
 }
 
 void SettingsDialog::on_proxyTypeComboBox_currentIndexChanged(int index)
@@ -233,6 +202,38 @@ void SettingsDialog::on_resetAllShortcutsButton_clicked()
         item->setText(1, item->data(1, Qt::UserRole).toString());
         ++it;
     }
+}
+
+void SettingsDialog::restoreDefaults()
+{
+    // General settings
+    const AppSettings settings;
+    ui->minimizeToTrayCheckBox->setChecked(true);
+    ui->startMinimizedCheckBox->setChecked(false);
+    ui->autostartCheckBox->setChecked(false);
+
+    // Pacman settings
+    ui->terminalComboBox->setCurrentIndex(0);
+    ui->pacmanToolComboBox->setCurrentIndex(0);
+    ui->autosyncGroupBox->setChecked(true);
+    ui->autosyncTypeComboBox->setCurrentIndex(0);
+    ui->autosyncTimeEdit->setTime(settings.defaultAutosyncTime());
+
+    // Interface settings
+    ui->noUpdatesIconEdit->setText(AppSettings::defaultTrayIconName(MainWindow::NoUpdates));
+    ui->updatingIconEdit->setText(AppSettings::defaultTrayIconName(MainWindow::Updating));
+    ui->updatesAvailableIconEdit->setText(AppSettings::defaultTrayIconName(MainWindow::UpdatesAvailable));
+
+    // Connection settings
+    ui->proxyTypeComboBox->setCurrentIndex(1);
+    ui->proxyHostEdit->setText("");
+    ui->proxyPortSpinbox->setValue(8080);
+    ui->proxyAuthCheckBox->setChecked(false);
+    ui->proxyUsernameEdit->setText("");
+    ui->proxyPasswordEdit->setText("");
+
+    // Shortcuts
+    on_resetAllShortcutsButton_clicked();
 }
 
 void SettingsDialog::chooseIcon(QLineEdit *iconPathEdit)

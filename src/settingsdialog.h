@@ -21,7 +21,6 @@ public:
 private slots:
     // UI
     void on_SettingsDialog_accepted();
-    void on_resetSettingsButton_clicked();
     void on_proxyTypeComboBox_currentIndexChanged(int index);
 
     void on_noUpdatesIconButton_clicked();
@@ -39,6 +38,8 @@ private slots:
     void on_clearShortcutButton_clicked();
     void on_resetShortcutButton_clicked();
     void on_resetAllShortcutsButton_clicked();
+
+    void restoreDefaults();
 
 private:
     void chooseIcon(QLineEdit *iconPathEdit);
