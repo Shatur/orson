@@ -16,6 +16,7 @@ class QAbstractButton;
 class QActionGroup;
 class Pacman;
 class Package;
+class AutosyncTimer;
 
 namespace Ui {
 class MainWindow;
@@ -26,11 +27,6 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    enum AutosyncType {
-        Interval,
-        SpecifiedTime
-    };
-    Q_ENUM(AutosyncType)
     enum TrayStatus {
         NoUpdates,
         Updating,
@@ -84,7 +80,6 @@ private slots:
     void processOperationsCountChanged(int tasksCount);
     void processTerminalStart();
     void processTerminalFinish(int exitCode);
-    void processAutosyncTimerExpires();
 
 private:
     virtual void closeEvent(QCloseEvent *event) override;
@@ -101,15 +96,13 @@ private:
     void loadAppSettings();
     void loadMainWindowSettings();
 
-    int msecsToAutosync(AutosyncType type);
-
     Ui::MainWindow *ui;
     QButtonGroup *m_depsButtonGroup;
     QMenu *m_trayMenu;
     QActionGroup *m_afterCompletionGroup;
     Pacman *m_pacman;
     TrayStatus m_trayStatus = Updating;
-    QTimer *m_autosyncTimer;
+    AutosyncTimer *m_autosyncTimer;
 
 #ifdef KDE
     KStatusNotifierItem *m_trayIcon;

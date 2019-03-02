@@ -1,5 +1,4 @@
 #include "appsettings.h"
-
 #include "singleapplication.h"
 
 #include <QStandardPaths>
@@ -216,24 +215,24 @@ void AppSettings::setPacmanTool(const QString &programName)
     setValue("PacmanTool", programName);
 }
 
-bool AppSettings::isAutosyncEnabled() const
+AutosyncTimer::AutosyncType AppSettings::autosyncType() const
 {
-    return value("Autosync", true).toBool();
+    return value("AutosyncType", defaultAutosyncType()).value<AutosyncTimer::AutosyncType>();
 }
 
-void AppSettings::setAutosyncEnabled(bool enabled)
-{
-    setValue("Autosync", enabled);
-}
-
-MainWindow::AutosyncType AppSettings::autosyncType() const
-{
-    return value("AutosyncType", MainWindow::Interval).value<MainWindow::AutosyncType>();
-}
-
-void AppSettings::setAutosyncType(MainWindow::AutosyncType type)
+void AppSettings::setAutosyncType(AutosyncTimer::AutosyncType type)
 {
     setValue("AutosyncType", type);
+}
+
+int AppSettings::autosyncInterval() const
+{
+    return value("AutosyncInterval", defaultAutosyncInterval()).toInt();
+}
+
+void AppSettings::setAutosyncInterval(int hours)
+{
+    setValue("AutosyncInterval", hours);
 }
 
 QTime AppSettings::autosyncTime() const
@@ -246,7 +245,7 @@ void AppSettings::setAutosyncTime(const QTime &time)
     setValue("AutosyncTime", time);
 }
 
-QTime AppSettings::defaultAutosyncTime() const
+QTime AppSettings::defaultAutosyncTime()
 {
     return QTime(12, 0);
 }

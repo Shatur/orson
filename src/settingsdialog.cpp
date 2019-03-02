@@ -12,87 +12,26 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     connect(ui->dialogButtonBox->button(QDialogButtonBox::RestoreDefaults), &QPushButton::clicked, this, &SettingsDialog::restoreDefaults);
+
+    // Shortcuts
     ui->shortcutsTreeWidget->expandAll();
     ui->shortcutsTreeWidget->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+
+    // About info version
     ui->logoLabel->setPixmap(QIcon::fromTheme("system-software-installer").pixmap(512, 512));
     ui->versionLabel->setText(SingleApplication::applicationVersion());
 
-    // General settings
-    const AppSettings settings;
-    ui->minimizeToTrayCheckBox->setChecked(settings.isMinimizeToTray());
-    ui->startMinimizedCheckBox->setChecked(settings.isStartMinimized());
-    ui->autostartCheckBox->setChecked(settings.isAutostartEnabled());
+    // Set autosync radio buttons IDs
+    ui->autosyncButtonGroup->setId(ui->noAutosyncRadioButton, AutosyncTimer::NoAutosync);
+    ui->autosyncButtonGroup->setId(ui->autosyncIntervalRadioButton, AutosyncTimer::Interval);
+    ui->autosyncButtonGroup->setId(ui->autosyncTimeRadioButton, AutosyncTimer::SpecifiedTime);
 
-    // Pacman settings
-    // Terminals
-    ui->terminalComboBox->addItems(settings.availableTerminals());
-    const QString terminal = settings.terminal();
-    const int terminalIndex = ui->terminalComboBox->findText(terminal);
-    if (terminalIndex == -1)
-        ui->terminalComboBox->setCurrentText(terminal);
-    else
-        ui->terminalComboBox->setCurrentIndex(terminalIndex);
-
-    // Pacman tools
-    ui->pacmanToolComboBox->addItems(settings.availablePacmanTools());
-    const QString pacmanTool = settings.pacmanTool();
-    const int pacmanToolIndex = ui->pacmanToolComboBox->findText(pacmanTool);
-    if (pacmanToolIndex == -1)
-        ui->pacmanToolComboBox->setCurrentText(pacmanTool);
-    else
-        ui->pacmanToolComboBox->setCurrentIndex(pacmanToolIndex);
-
-    ui->autosyncGroupBox->setChecked(settings.isAutosyncEnabled());
-    ui->autosyncTypeComboBox->setCurrentIndex(settings.autosyncType());
-    ui->autosyncTimeEdit->setTime(settings.autosyncTime());
-
-    // Interface settings
-    ui->noUpdatesIconEdit->setText(settings.trayIconName(MainWindow::NoUpdates));
-    ui->updatingIconEdit->setText(settings.trayIconName(MainWindow::Updating));
-    ui->updatesAvailableIconEdit->setText(settings.trayIconName(MainWindow::UpdatesAvailable));
-
-    // Connection settings
-    ui->proxyTypeComboBox->setCurrentIndex(settings.proxyType());
-    ui->proxyHostEdit->setText(settings.proxyHost());
-    ui->proxyPortSpinbox->setValue(settings.proxyPort());
-    ui->proxyAuthCheckBox->setChecked(settings.isProxyAuthEnabled());
-    ui->proxyUsernameEdit->setText(settings.proxyUsername());
-    ui->proxyPasswordEdit->setText(settings.proxyPassword());
+    loadSettings();
 }
 
 SettingsDialog::~SettingsDialog()
 {
     delete ui;
-}
-
-void SettingsDialog::on_SettingsDialog_accepted()
-{
-    // General settings
-    AppSettings settings;
-    settings.setMinimizeToTray(ui->minimizeToTrayCheckBox->isChecked());
-    settings.setStartMinimized(ui->startMinimizedCheckBox->isChecked());
-    settings.setAutostartEnabled(ui->autostartCheckBox->isChecked());
-
-    // Pacman settings
-    settings.setTerminal(ui->terminalComboBox->currentText());
-    settings.setTerminalArguments(ui->terminalComboBox->currentText(), ui->terminalArgumentsEdit->text().split(" "));
-    settings.setPacmanTool(ui->pacmanToolComboBox->currentText());
-    settings.setAutosyncEnabled(ui->autosyncGroupBox->isChecked());
-    settings.setAutosyncType(static_cast<MainWindow::AutosyncType>(ui->autosyncTypeComboBox->currentIndex()));
-    settings.setAutosyncTime(ui->autosyncTimeEdit->time());
-
-    // Interface settings
-    settings.setTrayIconName(MainWindow::NoUpdates, ui->noUpdatesIconEdit->text());
-    settings.setTrayIconName(MainWindow::Updating, ui->updatingIconEdit->text());
-    settings.setTrayIconName(MainWindow::UpdatesAvailable, ui->updatesAvailableIconEdit->text());
-
-    // Connection settings
-    settings.setProxyType(static_cast<QNetworkProxy::ProxyType>(ui->proxyTypeComboBox->currentIndex()));
-    settings.setProxyHost(ui->proxyHostEdit->text());
-    settings.setProxyPort(static_cast<quint16>(ui->proxyPortSpinbox->value()));
-    settings.setProxyAuthEnabled(ui->proxyAuthCheckBox->isChecked());
-    settings.setProxyUsername(ui->proxyUsernameEdit->text());
-    settings.setProxyPassword(ui->proxyPasswordEdit->text());
 }
 
 void SettingsDialog::on_proxyTypeComboBox_currentIndexChanged(int index)
@@ -154,6 +93,23 @@ void SettingsDialog::on_terminalComboBox_currentTextChanged(const QString &termi
         ui->terminalIconLabel->setPixmap(QIcon::fromTheme("terminal").pixmap(24, 24));
 }
 
+void SettingsDialog::on_autosyncButtonGroup_buttonToggled(QAbstractButton *button, bool checked)
+{
+    if (!checked)
+        return;
+
+    if (button == ui->noAutosyncRadioButton) {
+        ui->autosyncTimeEdit->setEnabled(false);
+        ui->autosyncIntervalSpinBox->setEnabled(false);
+    } else if (button == ui->autosyncTimeRadioButton) {
+        ui->autosyncTimeEdit->setEnabled(true);
+        ui->autosyncIntervalSpinBox->setEnabled(false);
+    } else if (button == ui->autosyncIntervalRadioButton) {
+        ui->autosyncTimeEdit->setEnabled(false);
+        ui->autosyncIntervalSpinBox->setEnabled(true);
+    }
+}
+
 void SettingsDialog::on_shortcutsTreeWidget_itemSelectionChanged()
 {
     if (ui->shortcutsTreeWidget->currentItem()->childCount() == 0) {
@@ -204,6 +160,37 @@ void SettingsDialog::on_resetAllShortcutsButton_clicked()
     }
 }
 
+void SettingsDialog::on_SettingsDialog_accepted()
+{
+    // General settings
+    AppSettings settings;
+    settings.setMinimizeToTray(ui->minimizeToTrayCheckBox->isChecked());
+    settings.setStartMinimized(ui->startMinimizedCheckBox->isChecked());
+    settings.setAutostartEnabled(ui->autostartCheckBox->isChecked());
+
+    // Pacman settings
+    settings.setTerminal(ui->terminalComboBox->currentText());
+    settings.setTerminalArguments(ui->terminalComboBox->currentText(), ui->terminalArgumentsEdit->text().split(" "));
+    settings.setPacmanTool(ui->pacmanToolComboBox->currentText());
+    settings.setAutosyncType(static_cast<AutosyncTimer::AutosyncType>(ui->autosyncButtonGroup->checkedId()));
+    settings.setAutosyncTime(ui->autosyncTimeEdit->time());
+    settings.setAutosyncInterval(ui->autosyncIntervalSpinBox->value());
+
+    // Interface settings
+    settings.setTrayIconName(MainWindow::NoUpdates, ui->noUpdatesIconEdit->text());
+    settings.setTrayIconName(MainWindow::Updating, ui->updatingIconEdit->text());
+    settings.setTrayIconName(MainWindow::UpdatesAvailable, ui->updatesAvailableIconEdit->text());
+
+    // Connection settings
+    settings.setProxyType(static_cast<QNetworkProxy::ProxyType>(ui->proxyTypeComboBox->currentIndex()));
+    settings.setProxyHost(ui->proxyHostEdit->text());
+    settings.setProxyPort(static_cast<quint16>(ui->proxyPortSpinbox->value()));
+    settings.setProxyAuthEnabled(ui->proxyAuthCheckBox->isChecked());
+    settings.setProxyUsername(ui->proxyUsernameEdit->text());
+    settings.setProxyPassword(ui->proxyPasswordEdit->text());
+}
+
+
 void SettingsDialog::restoreDefaults()
 {
     // General settings
@@ -216,8 +203,9 @@ void SettingsDialog::restoreDefaults()
     ui->terminalComboBox->setCurrentIndex(0);
     ui->pacmanToolComboBox->setCurrentIndex(0);
     ui->autosyncGroupBox->setChecked(true);
-    ui->autosyncTypeComboBox->setCurrentIndex(0);
-    ui->autosyncTimeEdit->setTime(settings.defaultAutosyncTime());
+    ui->autosyncButtonGroup->buttons().at(AppSettings::defaultAutosyncType())->setChecked(true);
+    ui->autosyncTimeEdit->setTime(AppSettings::defaultAutosyncTime());
+    ui->autosyncIntervalSpinBox->setValue(AppSettings::defaultAutosyncInterval());
 
     // Interface settings
     ui->noUpdatesIconEdit->setText(AppSettings::defaultTrayIconName(MainWindow::NoUpdates));
@@ -234,6 +222,53 @@ void SettingsDialog::restoreDefaults()
 
     // Shortcuts
     on_resetAllShortcutsButton_clicked();
+}
+
+void SettingsDialog::loadSettings()
+{
+    const AppSettings settings;
+
+    // General settings
+    ui->minimizeToTrayCheckBox->setChecked(settings.isMinimizeToTray());
+    ui->startMinimizedCheckBox->setChecked(settings.isStartMinimized());
+    ui->autostartCheckBox->setChecked(settings.isAutostartEnabled());
+
+    // Pacman settings
+    // Terminals
+    ui->terminalComboBox->addItems(settings.availableTerminals());
+    const QString terminal = settings.terminal();
+    const int terminalIndex = ui->terminalComboBox->findText(terminal);
+    if (terminalIndex == -1)
+        ui->terminalComboBox->setCurrentText(terminal);
+    else
+        ui->terminalComboBox->setCurrentIndex(terminalIndex);
+
+    // Pacman tools
+    ui->pacmanToolComboBox->addItems(settings.availablePacmanTools());
+    const QString pacmanTool = settings.pacmanTool();
+    const int pacmanToolIndex = ui->pacmanToolComboBox->findText(pacmanTool);
+    if (pacmanToolIndex == -1)
+        ui->pacmanToolComboBox->setCurrentText(pacmanTool);
+    else
+        ui->pacmanToolComboBox->setCurrentIndex(pacmanToolIndex);
+
+    // Autosync
+    ui->autosyncButtonGroup->button(settings.autosyncType())->setChecked(true);
+    ui->autosyncTimeEdit->setTime(settings.autosyncTime());
+    ui->autosyncIntervalSpinBox->setValue(settings.autosyncInterval());
+
+    // Interface settings
+    ui->noUpdatesIconEdit->setText(settings.trayIconName(MainWindow::NoUpdates));
+    ui->updatingIconEdit->setText(settings.trayIconName(MainWindow::Updating));
+    ui->updatesAvailableIconEdit->setText(settings.trayIconName(MainWindow::UpdatesAvailable));
+
+    // Connection settings
+    ui->proxyTypeComboBox->setCurrentIndex(settings.proxyType());
+    ui->proxyHostEdit->setText(settings.proxyHost());
+    ui->proxyPortSpinbox->setValue(settings.proxyPort());
+    ui->proxyAuthCheckBox->setChecked(settings.isProxyAuthEnabled());
+    ui->proxyUsernameEdit->setText(settings.proxyUsername());
+    ui->proxyPasswordEdit->setText(settings.proxyPassword());
 }
 
 void SettingsDialog::chooseIcon(QLineEdit *iconPathEdit)

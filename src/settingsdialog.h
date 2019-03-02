@@ -5,6 +5,7 @@
 
 class QLineEdit;
 class QLabel;
+class QAbstractButton;
 
 namespace Ui {
 class SettingsDialog;
@@ -20,9 +21,6 @@ public:
 
 private slots:
     // UI
-    void on_SettingsDialog_accepted();
-    void on_proxyTypeComboBox_currentIndexChanged(int index);
-
     void on_noUpdatesIconButton_clicked();
     void on_updatingIconEditButton_clicked();
     void on_updatesAvailableIconButton_clicked();
@@ -31,6 +29,9 @@ private slots:
     void on_updatesAvailableIconEdit_textChanged(const QString &fileName);
 
     void on_terminalComboBox_currentTextChanged(const QString &terminalName);
+    void on_autosyncButtonGroup_buttonToggled(QAbstractButton *button, bool checked);
+
+    void on_proxyTypeComboBox_currentIndexChanged(int index);
 
     void on_shortcutsTreeWidget_itemSelectionChanged();
     void on_shortcutSequenceEdit_editingFinished();
@@ -39,9 +40,11 @@ private slots:
     void on_resetShortcutButton_clicked();
     void on_resetAllShortcutsButton_clicked();
 
+    void on_SettingsDialog_accepted();
     void restoreDefaults();
 
 private:
+    void loadSettings();
     void chooseIcon(QLineEdit *iconPathEdit);
     void showIconPreview(QLabel *previewLabel, const QString &fileName);
 

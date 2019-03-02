@@ -3,6 +3,7 @@
 
 #include "mainwindow.h"
 #include "pacman.h"
+#include "autosynctimer.h"
 
 #include <QSettings>
 #include <QLocale>
@@ -52,15 +53,19 @@ public:
     static constexpr const char *defaultPacmanTool()
     { return "sudo pacman"; }
 
-    bool isAutosyncEnabled() const;
-    void setAutosyncEnabled(bool enabled);
+    AutosyncTimer::AutosyncType autosyncType() const;
+    void setAutosyncType(AutosyncTimer::AutosyncType type);
+    static constexpr AutosyncTimer::AutosyncType defaultAutosyncType()
+    { return AutosyncTimer::Interval; }
 
-    MainWindow::AutosyncType autosyncType() const;
-    void setAutosyncType(MainWindow::AutosyncType type);
+    int autosyncInterval() const;
+    void setAutosyncInterval(int hours);
+    static constexpr int defaultAutosyncInterval()
+    { return 3; }
 
     QTime autosyncTime() const;
     void setAutosyncTime(const QTime &time);
-    QTime defaultAutosyncTime() const;
+    static QTime defaultAutosyncTime();
 
     // Interface settings
     QString trayIconName(MainWindow::TrayStatus trayStatus) const;

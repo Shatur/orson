@@ -1,13 +1,14 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "tasksdialog.h"
+#include "autosynctimer.h"
 #include "appsettings.h"
 #include "pacmansettings.h"
-#include "singleapplication.h"
 #include "settingsdialog.h"
 #include "packages-view/package.h"
 #include "packages-view/packagesmodel.h"
 #include "files-view/filesmodel.h"
+#include "singleapplication.h"
 
 #include <QPushButton>
 #include <QStandardItemModel>
@@ -17,8 +18,6 @@
 #include <QDBusInterface>
 #include <QButtonGroup>
 #include <QTimer>
-
-#include <cmath>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -37,8 +36,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_pacman, &Pacman::started, this, &MainWindow::processTerminalStart);
 
     // Setup autosync
-    m_autosyncTimer = new QTimer(this);
-    connect(m_autosyncTimer, &QTimer::timeout, this, &MainWindow::processAutosyncTimerExpires); // Automatically sync databases in background
+    m_autosyncTimer = new AutosyncTimer(this);
+    connect(m_autosyncTimer, &AutosyncTimer::timeout, m_pacman, &Pacman::syncDatabase); // Automatically sync databases in background
 
     // Make after completion actions exclusive
     m_afterCompletionGroup = new QActionGroup(this);
@@ -502,16 +501,6 @@ void MainWindow::processTerminalFinish(int exitCode)
     }
 }
 
-void MainWindow::processAutosyncTimerExpires()
-{
-    m_pacman->syncDatabase();
-
-    // Reload time to autosync
-    const AppSettings settings;
-    if (settings.autosyncType() == SpecifiedTime)
-        m_autosyncTimer->setInterval(msecsToAutosync(SpecifiedTime));
-}
-
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     // Check if user disabled minimizing to tray
@@ -684,13 +673,8 @@ void MainWindow::loadAppSettings()
     m_trayIcon->show();
 #endif
 
-    // Autosync
-    if (settings.isAutosyncEnabled()) {
-        m_autosyncTimer->setInterval(msecsToAutosync(settings.autosyncType()));
-        m_autosyncTimer->start();
-    } else {
-        m_autosyncTimer->stop();
-    }
+    // Set autosync databases timer
+    m_autosyncTimer->loadSettings();
 
     // Connection
     QNetworkProxy proxy;
@@ -712,18 +696,4 @@ void MainWindow::loadMainWindowSettings()
     restoreGeometry(settings.mainWindowGeometry());
     ui->noConfirmAction->setChecked(settings.isNoConfirm());
     m_afterCompletionGroup->actions().at(settings.afterCompletion())->setChecked(true);
-}
-
-int MainWindow::msecsToAutosync(AutosyncType type)
-{
-    const AppSettings settings;
-
-    switch (type) {
-    case Interval:
-        return abs(settings.autosyncTime().msecsTo(QTime(0, 0, 0)));
-    case SpecifiedTime:
-        return abs(settings.autosyncTime().msecsTo(QTime::currentTime()));
-    }
-
-    qFatal("Unable to get autosync time");
 }

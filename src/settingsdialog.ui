@@ -14,7 +14,8 @@
    <string>Settings</string>
   </property>
   <property name="windowIcon">
-   <iconset theme="preferences-system"/>
+   <iconset theme="preferences-system">
+    <normaloff>.</normaloff>.</iconset>
   </property>
   <layout class="QVBoxLayout" name="settingsLayout">
    <item>
@@ -288,58 +289,59 @@
           <property name="title">
            <string>Autosync database</string>
           </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_10">
-           <item>
-            <layout class="QHBoxLayout" name="autosyncLayout">
-             <item>
-              <widget class="QLabel" name="autosyncTypelabel">
-               <property name="text">
-                <string>Autosync type</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QComboBox" name="autosyncTypeComboBox">
-               <item>
-                <property name="text">
-                 <string>Interval</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Specified time</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item>
-              <widget class="QTimeEdit" name="autosyncTimeEdit">
-               <property name="minimumTime">
-                <time>
-                 <hour>0</hour>
-                 <minute>1</minute>
-                 <second>0</second>
-                </time>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="autosyncSpacer">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="1" column="0">
+            <widget class="QRadioButton" name="autosyncIntervalRadioButton">
+             <property name="text">
+              <string>Every</string>
+             </property>
+             <attribute name="buttonGroup">
+              <string notr="true">autosyncButtonGroup</string>
+             </attribute>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QRadioButton" name="autosyncTimeRadioButton">
+             <property name="text">
+              <string>In specified time</string>
+             </property>
+             <attribute name="buttonGroup">
+              <string notr="true">autosyncButtonGroup</string>
+             </attribute>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QTimeEdit" name="autosyncTimeEdit"/>
+           </item>
+           <item row="1" column="1">
+            <widget class="QSpinBox" name="autosyncIntervalSpinBox">
+             <property name="suffix">
+              <string>h</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="0" column="0">
+            <widget class="QRadioButton" name="noAutosyncRadioButton">
+             <property name="text">
+              <string>No autosync</string>
+             </property>
+             <attribute name="buttonGroup">
+              <string notr="true">autosyncButtonGroup</string>
+             </attribute>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -1089,4 +1091,7 @@
    </hints>
   </connection>
  </connections>
+ <buttongroups>
+  <buttongroup name="autosyncButtonGroup"/>
+ </buttongroups>
 </ui>
