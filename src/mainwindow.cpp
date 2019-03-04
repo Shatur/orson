@@ -374,21 +374,9 @@ void MainWindow::setTrayStatus(MainWindow::TrayStatus trayStatus)
 {
     m_trayStatus = trayStatus;
 
-    // Show notification
-    switch (trayStatus) {
-    case NoUpdates:
-        showNotification("No updates available", 10000);
-        break;
-    case UpdatesAvailable:
-        showNotification(QString::number(ui->packagesView->model()->outdatedPackages().size()) + " updates available", 10000);
-        break;
-    default:
-        break;
-    }
-
     // Set icon
     const AppSettings settings;
-    const QString iconName = settings.trayIconName(trayStatus);
+    const QString iconName = settings.trayIconName(m_trayStatus);
 #ifdef KDE
     if (QIcon::hasThemeIcon(iconName))
         m_trayIcon->setIconByName(iconName);
@@ -396,21 +384,6 @@ void MainWindow::setTrayStatus(MainWindow::TrayStatus trayStatus)
         m_trayIcon->setIconByPixmap(QIcon(iconName));
     else
         m_trayIcon->setIconByName("dialog-error");
-
-    switch (trayStatus) {
-    case NoUpdates:
-        m_trayIcon->setToolTipSubTitle("No updates available");
-        m_trayIcon->setStatus(KStatusNotifierItem::Passive);
-        break;
-    case Updating:
-        m_trayIcon->setToolTipSubTitle("Synchronizing databases");
-        m_trayIcon->setStatus(KStatusNotifierItem::Active);
-        break;
-    case UpdatesAvailable:
-        m_trayIcon->setToolTipSubTitle("Updates available!");
-        m_trayIcon->setStatus(KStatusNotifierItem::NeedsAttention);
-        break;
-    }
 #else
     if (QIcon::hasThemeIcon(iconName))
         m_trayIcon->setIcon(QIcon::fromTheme(iconName));
@@ -419,6 +392,45 @@ void MainWindow::setTrayStatus(MainWindow::TrayStatus trayStatus)
     else
         m_trayIcon->setIcon(QIcon::fromTheme("dialog-error"));
 #endif
+
+#ifdef KDE
+    const QDateTime datetime = settings.lastSync();
+    QString syncString = tr("Last sync: ");
+    if (datetime.isNull())
+        syncString += tr("never");
+    else
+        syncString += datetime.toString();
+#endif
+
+    // Show notification and KDE tooltip
+    switch (m_trayStatus) {
+    case NoUpdates:
+    {
+        const QString message = tr("No updates available");
+        showNotification(message + '\n' + syncString, 10000);
+#ifdef KDE
+        m_trayIcon->setToolTipSubTitle(message);
+        m_trayIcon->setStatus(KStatusNotifierItem::Passive);
+#endif
+        break;
+    }
+    case Updating:
+#ifdef KDE
+        m_trayIcon->setToolTipSubTitle("Synchronizing databases");
+        m_trayIcon->setStatus(KStatusNotifierItem::Active);
+#endif
+        break;
+    case UpdatesAvailable:
+    {
+        const QString message = QString::number(ui->packagesView->model()->outdatedPackages().size()) + tr(" updates available");
+        showNotification(message, 10000);
+#ifdef KDE
+        m_trayIcon->setToolTipSubTitle(message + '\n' + syncString);
+        m_trayIcon->setStatus(KStatusNotifierItem::NeedsAttention);
+#endif
+    }
+        break;
+    }
 }
 
 void MainWindow::setStatusBarMessage(const QString &text)

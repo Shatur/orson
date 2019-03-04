@@ -67,6 +67,8 @@ QString Pacman::tasksCommands()
 
 void Pacman::executeTasks()
 {
+    if (m_tasksView->isSyncRepositories())
+        m_updateTimeOnSuccess = true;
     exec(tasksCommands(), m_afterTasksCompletion);
 }
 
@@ -84,6 +86,59 @@ void Pacman::syncDatabase()
     m_terminal->setProgram("systemctl");
     m_terminal->setArguments({ "start", "orson-sync"});
     m_terminal->start();
+}
+
+bool Pacman::isNoConfirm() const
+{
+    return m_noConfirm;
+}
+
+void Pacman::setNoConfirm(bool noconfirm)
+{
+    m_noConfirm = noconfirm;
+}
+
+bool Pacman::isForce() const
+{
+    return m_force;
+}
+
+void Pacman::setForce(bool force)
+{
+    m_force = force;
+}
+
+Pacman::AfterCompletion Pacman::afterTasksCompletion() const
+{
+    return m_afterTasksCompletion;
+}
+
+void Pacman::setAfterTasksCompletion(const AfterCompletion &afterTasksCompletion)
+{
+    m_afterTasksCompletion = afterTasksCompletion;
+}
+
+void Pacman::getExitCode()
+{
+    QFile errorFile("/tmp/orson.err");
+
+    // No error
+    if (!errorFile.exists()) {
+        if (m_updateTimeOnSuccess) {
+            AppSettings settings;
+            settings.setLastSync(QDateTime::currentDateTime());
+            m_updateTimeOnSuccess = false;
+        }
+        
+        emit finished(0);
+        return;
+    }
+
+    // Read error
+    m_updateTimeOnSuccess = false;
+    errorFile.open(QIODevice::ReadWrite);
+    emit finished(errorFile.readAll().toInt());
+    errorFile.remove();
 }
 
 void Pacman::appendPackagesCommand(QString &commands, const QString &pacmanTool, const QVector<Package *> &packages, const QString &action, const QString &parameters)
@@ -150,48 +205,3 @@ void Pacman::exec(const QString &commands, Pacman::AfterCompletion afterCompleti
     m_terminal->setArguments(terminalArguments << commands + afterCompletionCommand(afterCompletion));
     m_terminal->start();
 }
-
-void Pacman::getExitCode()
-{
-    QFile errorFile("/tmp/orson.err");
-
-    if (!errorFile.exists()) {
-        emit finished(0);
-        return;
-    }
-
-    errorFile.open(QIODevice::ReadWrite);
-    emit finished(errorFile.readAll().toInt());
-    errorFile.remove();
-}
-
-bool Pacman::isNoConfirm() const
-{
-    return m_noConfirm;
-}
-
-void Pacman::setNoConfirm(bool noconfirm)
-{
-    m_noConfirm = noconfirm;
-}
-
-bool Pacman::isForce() const
-{
-    return m_force;
-}
-
-void Pacman::setForce(bool force)
-{
-    m_force = force;
-}
-
-Pacman::AfterCompletion Pacman::afterTasksCompletion() const
-{
-    return m_afterTasksCompletion;
-}
-
-void Pacman::setAfterTasksCompletion(const AfterCompletion &afterTasksCompletion)
-{
-    m_afterTasksCompletion = afterTasksCompletion;
-}
-

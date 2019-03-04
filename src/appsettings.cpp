@@ -250,6 +250,16 @@ QTime AppSettings::defaultAutosyncTime()
     return QTime(12, 0);
 }
 
+QDateTime AppSettings::lastSync() const
+{
+    return value("LastSync", QDateTime()).toDateTime();
+}
+
+void AppSettings::setLastSync(QDateTime dateTime)
+{
+    setValue("LastSync", dateTime);
+}
+
 QString AppSettings::trayIconName(MainWindow::TrayStatus trayStatus) const
 {
     switch (trayStatus) {

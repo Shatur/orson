@@ -40,12 +40,12 @@ public:
     AfterCompletion afterTasksCompletion() const;
     void setAfterTasksCompletion(const AfterCompletion &afterTasksCompletion);
 
-private slots:
-    void getExitCode();
-
 signals:
     void started();
     void finished(int exitCode);
+
+private slots:
+    void getExitCode();
 
 private:
     void appendPackagesCommand(QString &tasksCommands, const QString &pacmanTool, const QVector<Package *> &packages, const QString &action, const QString &parameters = QString());
@@ -57,6 +57,7 @@ private:
     AfterCompletion m_afterTasksCompletion = WaitForInput;
     bool m_noConfirm = true;
     bool m_force = false;
+    bool m_updateTimeOnSuccess = false;
 };
 
 #endif // PACMAN_H

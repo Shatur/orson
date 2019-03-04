@@ -67,6 +67,9 @@ public:
     void setAutosyncTime(const QTime &time);
     static QTime defaultAutosyncTime();
 
+    QDateTime lastSync() const;
+    void setLastSync(QDateTime dateTime);
+
     // Interface settings
     QString trayIconName(MainWindow::TrayStatus trayStatus) const;
     void setTrayIconName(MainWindow::TrayStatus trayStatus, const QString &name);
