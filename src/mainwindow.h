@@ -4,11 +4,6 @@
 #include "packages-view/depend.h"
 
 #include <QMainWindow>
-#ifdef KDE
-#include <KF5/KNotifications/KStatusNotifierItem>
-#else
-#include <QSystemTrayIcon>
-#endif
 
 class QLabel;
 class QButtonGroup;
@@ -17,6 +12,7 @@ class QActionGroup;
 class Pacman;
 class Package;
 class AutosyncTimer;
+class SystemTray;
 
 namespace Ui {
 class MainWindow;
@@ -27,12 +23,6 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    enum TrayStatus {
-        NoUpdates,
-        Updating,
-        UpdatesAvailable
-    };
-
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow() override;
 
@@ -67,11 +57,6 @@ private slots:
     void on_packagesView_currentPackageChanged(Package *package);
     void on_packageTabsWidget_currentChanged(int index);
 
-#ifndef KDE
-    void activateTray(QSystemTrayIcon::ActivationReason reason);
-#endif
-    void showNotification(const QString &message, int interval);
-    void setTrayStatus(TrayStatus trayStatus);
     void setStatusBarMessage(const QString &text);
     void findDepend(QAbstractButton* button);
 
@@ -101,14 +86,8 @@ private:
     QMenu *m_trayMenu;
     QActionGroup *m_afterCompletionGroup;
     Pacman *m_pacman;
-    TrayStatus m_trayStatus = Updating;
     AutosyncTimer *m_autosyncTimer;
-
-#ifdef KDE
-    KStatusNotifierItem *m_trayIcon;
-#else
-    QSystemTrayIcon *m_trayIcon;
-#endif
+    SystemTray *m_trayIcon;
 };
 
 #endif // MAINWINDOW_H

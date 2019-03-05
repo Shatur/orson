@@ -1,8 +1,8 @@
 ﻿#ifndef APPSETTINGS_H
 #define APPSETTINGS_H
 
-#include "mainwindow.h"
 #include "pacman.h"
+#include "systemtray.h"
 #include "autosynctimer.h"
 
 #include <QSettings>
@@ -68,12 +68,13 @@ public:
     static QTime defaultAutosyncTime();
 
     QDateTime lastSync() const;
+    QString lastSyncString() const;
     void setLastSync(QDateTime dateTime);
 
     // Interface settings
-    QString trayIconName(MainWindow::TrayStatus trayStatus) const;
-    void setTrayIconName(MainWindow::TrayStatus trayStatus, const QString &name);
-    static constexpr const char *defaultTrayIconName(MainWindow::TrayStatus trayStatus);
+    QString trayIconName(SystemTray::TrayStatus trayStatus) const;
+    void setTrayIconName(SystemTray::TrayStatus trayStatus, const QString &name);
+    static constexpr const char *defaultTrayIconName(SystemTray::TrayStatus trayStatus);
 
     // Connection settings
     QNetworkProxy::ProxyType proxyType() const;
@@ -102,14 +103,14 @@ private:
     static QTranslator m_appTranslator;
 };
 
-constexpr const char *AppSettings::defaultTrayIconName(MainWindow::TrayStatus trayStatus)
+constexpr const char *AppSettings::defaultTrayIconName(SystemTray::TrayStatus trayStatus)
 {
     switch (trayStatus) {
-    case MainWindow::NoUpdates:
+    case SystemTray::NoUpdates:
         return "update-none";
-    case MainWindow::Updating:
+    case SystemTray::Updating:
         return "state-sync";
-    case MainWindow::UpdatesAvailable:
+    case SystemTray::UpdatesAvailable:
         return "update-high";
     }
 

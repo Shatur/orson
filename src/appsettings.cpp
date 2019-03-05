@@ -255,35 +255,47 @@ QDateTime AppSettings::lastSync() const
     return value("LastSync", QDateTime()).toDateTime();
 }
 
+QString AppSettings::lastSyncString() const
+{
+    const QDateTime datetime = lastSync();
+    QString syncString = SystemTray::tr("Last sync: ");
+    if (datetime.isNull())
+        syncString += SystemTray::tr("never");
+    else
+        syncString += datetime.toString();
+
+    return syncString;
+}
+
 void AppSettings::setLastSync(QDateTime dateTime)
 {
     setValue("LastSync", dateTime);
 }
 
-QString AppSettings::trayIconName(MainWindow::TrayStatus trayStatus) const
+QString AppSettings::trayIconName(SystemTray::TrayStatus trayStatus) const
 {
     switch (trayStatus) {
-    case MainWindow::NoUpdates:
+    case SystemTray::NoUpdates:
         return value("NoUpdatesIcon", defaultTrayIconName(trayStatus)).toString();
-    case MainWindow::Updating:
+    case SystemTray::Updating:
         return value("UpdatingIcon", defaultTrayIconName(trayStatus)).toString();
-    case MainWindow::UpdatesAvailable:
+    case SystemTray::UpdatesAvailable:
         return value("UpdatesAvailableIcon", defaultTrayIconName(trayStatus)).toString();
     }
 
     return QString();
 }
 
-void AppSettings::setTrayIconName(MainWindow::TrayStatus trayStatus, const QString &name)
+void AppSettings::setTrayIconName(SystemTray::TrayStatus trayStatus, const QString &name)
 {
     switch (trayStatus) {
-    case MainWindow::NoUpdates:
+    case SystemTray::NoUpdates:
         setValue("NoUpdatesIcon", name);
         break;
-    case MainWindow::Updating:
+    case SystemTray::Updating:
         setValue("UpdatingIcon", name);
         break;
-    case MainWindow::UpdatesAvailable:
+    case SystemTray::UpdatesAvailable:
         setValue("UpdatesAvailableIcon", name);
         break;
     }

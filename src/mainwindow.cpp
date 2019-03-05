@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "tasksdialog.h"
 #include "autosynctimer.h"
+#include "systemtray.h"
 #include "appsettings.h"
 #include "pacmansettings.h"
 #include "settingsdialog.h"
@@ -62,18 +63,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_trayMenu->addSeparator();
     m_trayMenu->addAction(QIcon::fromTheme("application-exit"), tr("Exit"), SingleApplication::instance(), &SingleApplication::quit);
 
-    // System tray icon
-#ifdef KDE
-    m_trayIcon = new KStatusNotifierItem(this);
-    m_trayIcon->setStandardActionsEnabled(false);
-    m_trayIcon->setToolTipTitle(SingleApplication::applicationName());
-    m_trayIcon->setToolTipIconByName(windowIcon().name());
-    m_trayIcon->setCategory(KStatusNotifierItem::SystemServices);
-    connect(m_trayIcon, &KStatusNotifierItem::secondaryActivateRequested, &KStatusNotifierItem::activate);
-#else
-    m_trayIcon = new QSystemTrayIcon(this);
-    connect(m_trayIcon, &QSystemTrayIcon::activated, this, &MainWindow::activateTray);
-#endif
+    // System tray
+    m_trayIcon = new SystemTray(this);
     m_trayIcon->setContextMenu(m_trayMenu);
 
     // Select the first package if it is not already selected (when first package loaded faster than window)
@@ -224,7 +215,7 @@ void MainWindow::on_reloadButton_clicked()
     ui->syncButton->setChecked(false);
     ui->upgradeButton->setChecked(false);
 
-    setTrayStatus(Updating);
+    m_trayIcon->setTrayStatus(SystemTray::Updating);
 
     ui->packagesView->model()->reloadRepoPackages();
 }
@@ -336,103 +327,6 @@ void MainWindow::on_packageTabsWidget_currentChanged(int index)
     }
 }
 
-#ifndef KDE
-void MainWindow::activateTray(QSystemTrayIcon::ActivationReason reason)
-{
-    if (reason == QSystemTrayIcon::Trigger) {
-        if (!this->isVisible()) {
-            show();
-            activateWindow();
-            raise();
-        } else {
-            hide();
-        }
-    }
-}
-#endif
-
-void MainWindow::showNotification(const QString &message, int interval)
-{
-#ifdef KDE
-    m_trayIcon->showMessage(SingleApplication::applicationName(), message, windowIcon().name(), interval);
-#else
-    QDBusInterface notify("org.freedesktop.Notifications", "/org/freedesktop/Notifications", "org.freedesktop.Notifications");
-    QVariantList notifyArguments;
-    notifyArguments << SingleApplication::applicationName(); // Set program name
-    notifyArguments << QVariant(QVariant::UInt);
-    notifyArguments << windowIcon().name(); // Icon
-    notifyArguments << SingleApplication::applicationName(); // Title
-    notifyArguments << message; // Body
-    notifyArguments << QStringList();
-    notifyArguments << QVariantMap();
-    notifyArguments << interval; // Show interval
-    notify.callWithArgumentList(QDBus::AutoDetect, "Notify", notifyArguments);
-#endif
-}
-
-void MainWindow::setTrayStatus(MainWindow::TrayStatus trayStatus)
-{
-    m_trayStatus = trayStatus;
-
-    // Set icon
-    const AppSettings settings;
-    const QString iconName = settings.trayIconName(m_trayStatus);
-#ifdef KDE
-    if (QIcon::hasThemeIcon(iconName))
-        m_trayIcon->setIconByName(iconName);
-    else if (QFile::exists(iconName))
-        m_trayIcon->setIconByPixmap(QIcon(iconName));
-    else
-        m_trayIcon->setIconByName("dialog-error");
-#else
-    if (QIcon::hasThemeIcon(iconName))
-        m_trayIcon->setIcon(QIcon::fromTheme(iconName));
-    else if (QFile::exists(iconName))
-        m_trayIcon->setIcon(QIcon(iconName));
-    else
-        m_trayIcon->setIcon(QIcon::fromTheme("dialog-error"));
-#endif
-
-#ifdef KDE
-    const QDateTime datetime = settings.lastSync();
-    QString syncString = tr("Last sync: ");
-    if (datetime.isNull())
-        syncString += tr("never");
-    else
-        syncString += datetime.toString();
-#endif
-
-    // Show notification and KDE tooltip
-    switch (m_trayStatus) {
-    case NoUpdates:
-    {
-        const QString message = tr("No updates available");
-        showNotification(message + '\n' + syncString, 10000);
-#ifdef KDE
-        m_trayIcon->setToolTipSubTitle(message);
-        m_trayIcon->setStatus(KStatusNotifierItem::Passive);
-#endif
-        break;
-    }
-    case Updating:
-#ifdef KDE
-        m_trayIcon->setToolTipSubTitle("Synchronizing databases");
-        m_trayIcon->setStatus(KStatusNotifierItem::Active);
-#endif
-        break;
-    case UpdatesAvailable:
-    {
-        const QString message = QString::number(ui->packagesView->model()->outdatedPackages().size()) + tr(" updates available");
-        showNotification(message, 10000);
-#ifdef KDE
-        m_trayIcon->setToolTipSubTitle(message + '\n' + syncString);
-        m_trayIcon->setStatus(KStatusNotifierItem::NeedsAttention);
-#endif
-    }
-        break;
-    }
-}
-
 void MainWindow::setStatusBarMessage(const QString &text)
 {
     statusBar()->showMessage(text);
@@ -460,9 +354,9 @@ void MainWindow::processLoadedDatabase()
 {
     // Set tray status
     if (ui->packagesView->model()->outdatedPackages().isEmpty())
-        setTrayStatus(NoUpdates);
+        m_trayIcon->setTrayStatus(SystemTray::NoUpdates);
     else
-        setTrayStatus(UpdatesAvailable);
+        m_trayIcon->setTrayStatus(SystemTray::UpdatesAvailable, ui->packagesView->model()->outdatedPackages().size());
 
     // Enable buttons
     ui->reloadButton->setEnabled(true);
@@ -497,7 +391,7 @@ void MainWindow::processOperationsCountChanged(int tasksCount)
 
 void MainWindow::processTerminalStart()
 {
-    setTrayStatus(Updating);
+    m_trayIcon->setTrayStatus(SystemTray::Updating);
     ui->reloadButton->setEnabled(false);
 }
 
@@ -505,9 +399,9 @@ void MainWindow::processTerminalFinish(int exitCode)
 {
     if (exitCode != 0) {
         if (ui->packagesView->model()->outdatedPackages().isEmpty())
-            setTrayStatus(MainWindow::NoUpdates);
+            m_trayIcon->setTrayStatus(SystemTray::NoUpdates);
         else
-            setTrayStatus(MainWindow::UpdatesAvailable);
+            m_trayIcon->setTrayStatus(SystemTray::UpdatesAvailable, ui->packagesView->model()->outdatedPackages().size());
     } else {
         on_reloadButton_clicked();
     }
@@ -680,10 +574,7 @@ void MainWindow::loadAppSettings()
     const AppSettings settings;
 
     // Tray icon
-    setTrayStatus(m_trayStatus);
-#ifndef KDE
-    m_trayIcon->show();
-#endif
+    m_trayIcon->setTrayStatus(m_trayIcon->trayStatus());
 
     // Set autosync databases timer
     m_autosyncTimer->loadSettings();

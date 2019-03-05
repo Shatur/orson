@@ -177,9 +177,9 @@ void SettingsDialog::on_SettingsDialog_accepted()
     settings.setAutosyncInterval(ui->autosyncIntervalSpinBox->value());
 
     // Interface settings
-    settings.setTrayIconName(MainWindow::NoUpdates, ui->noUpdatesIconEdit->text());
-    settings.setTrayIconName(MainWindow::Updating, ui->updatingIconEdit->text());
-    settings.setTrayIconName(MainWindow::UpdatesAvailable, ui->updatesAvailableIconEdit->text());
+    settings.setTrayIconName(SystemTray::NoUpdates, ui->noUpdatesIconEdit->text());
+    settings.setTrayIconName(SystemTray::Updating, ui->updatingIconEdit->text());
+    settings.setTrayIconName(SystemTray::UpdatesAvailable, ui->updatesAvailableIconEdit->text());
 
     // Connection settings
     settings.setProxyType(static_cast<QNetworkProxy::ProxyType>(ui->proxyTypeComboBox->currentIndex()));
@@ -208,9 +208,9 @@ void SettingsDialog::restoreDefaults()
     ui->autosyncIntervalSpinBox->setValue(AppSettings::defaultAutosyncInterval());
 
     // Interface settings
-    ui->noUpdatesIconEdit->setText(AppSettings::defaultTrayIconName(MainWindow::NoUpdates));
-    ui->updatingIconEdit->setText(AppSettings::defaultTrayIconName(MainWindow::Updating));
-    ui->updatesAvailableIconEdit->setText(AppSettings::defaultTrayIconName(MainWindow::UpdatesAvailable));
+    ui->noUpdatesIconEdit->setText(AppSettings::defaultTrayIconName(SystemTray::NoUpdates));
+    ui->updatingIconEdit->setText(AppSettings::defaultTrayIconName(SystemTray::Updating));
+    ui->updatesAvailableIconEdit->setText(AppSettings::defaultTrayIconName(SystemTray::UpdatesAvailable));
 
     // Connection settings
     ui->proxyTypeComboBox->setCurrentIndex(1);
@@ -258,9 +258,9 @@ void SettingsDialog::loadSettings()
     ui->autosyncIntervalSpinBox->setValue(settings.autosyncInterval());
 
     // Interface settings
-    ui->noUpdatesIconEdit->setText(settings.trayIconName(MainWindow::NoUpdates));
-    ui->updatingIconEdit->setText(settings.trayIconName(MainWindow::Updating));
-    ui->updatesAvailableIconEdit->setText(settings.trayIconName(MainWindow::UpdatesAvailable));
+    ui->noUpdatesIconEdit->setText(settings.trayIconName(SystemTray::NoUpdates));
+    ui->updatingIconEdit->setText(settings.trayIconName(SystemTray::Updating));
+    ui->updatesAvailableIconEdit->setText(settings.trayIconName(SystemTray::UpdatesAvailable));
 
     // Connection settings
     ui->proxyTypeComboBox->setCurrentIndex(settings.proxyType());

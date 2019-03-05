@@ -21,6 +21,7 @@ SOURCES += \
     src/tasksdialog.cpp \
     src/settingsdialog.cpp \
     src/autosynctimer.cpp \
+    src/systemtray.cpp \
     src/pacman.cpp \
     src/pacmansettings.cpp \
     src/appsettings.cpp \
@@ -40,6 +41,7 @@ HEADERS += \
     src/tasksdialog.h \
     src/settingsdialog.h \
     src/autosynctimer.h \
+    src/systemtray.h \
     src/pacman.h \
     src/pacmansettings.h \
     src/appsettings.h \
