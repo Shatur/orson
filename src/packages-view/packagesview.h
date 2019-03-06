@@ -62,6 +62,9 @@ private:
     void addCurrentToTasks(QVector<Package *> &category);
     void removeFromTasks(Package *package);
 
+    template<class... T>
+    void filterPackages(const QString &text, T... packagesMembers);
+
     // Context menu actions
     QAction *m_installExplicityAction;
     QAction *m_installAsDependAction;

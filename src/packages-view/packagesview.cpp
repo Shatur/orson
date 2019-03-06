@@ -63,6 +63,7 @@ void PackagesView::filter(const QString &text, PackagesView::FilterType type)
         return;
     }
 
+    // Filter packages
     if (text.isEmpty()) {
         if (!m_filtered)
             return;
@@ -74,47 +75,19 @@ void PackagesView::filter(const QString &text, PackagesView::FilterType type)
         return;
     }
 
-    // Filter packages
     switch (type) {
     case Name:
-        // Search by name and description
-        for (int i = 0; i < model()->packages().size(); ++i) {
-            const Package *package = model()->packages().at(i);
-            if (package->name().contains(text))
-                setRowHidden(i, QModelIndex(), false);
-            else
-                setRowHidden(i, QModelIndex(), true);
-        }
+        filterPackages(text, &Package::name);
         break;
     case NameDescription:
-        // Search only by name
-        for (int i = 0; i < model()->packages().size(); ++i) {
-            const Package *package = model()->packages().at(i);
-            if (package->name().contains(text) || package->description().contains(text))
-                setRowHidden(i, QModelIndex(), false);
-            else
-                setRowHidden(i, QModelIndex(), true);
-        }
+        filterPackages(text, &Package::name, &Package::description);
         break;
     case Maintainer:
-        // Search only by name
-        for (int i = 0; i < model()->packages().size(); ++i) {
-            const Package *package = model()->packages().at(i);
-            if (package->maintainer().contains(text))
-                setRowHidden(i, QModelIndex(), false);
-            else
-                setRowHidden(i, QModelIndex(), true);
-        }
+        filterPackages(text, &Package::maintainer);
         break;
     case Description:
-        // Search only by description
-        for (int i = 0; i < model()->packages().size(); ++i) {
-            const Package *package = model()->packages().at(i);
-            if (package->description().contains(text))
-                setRowHidden(i, QModelIndex(), false);
-            else
-                setRowHidden(i, QModelIndex(), true);
-        }
+        filterPackages(text, &Package::description);
+        break;
     }
 
     m_filtered = true;
@@ -439,4 +412,16 @@ void PackagesView::removeFromTasks(Package *package)
         return;
 
     m_uninstall.removeOne(package);
+}
+
+template<class... T>
+void PackagesView::filterPackages(const QString &text, T... packagesMembers)
+{
+    for (int i = 0; i < model()->packages().size(); ++i) {
+        const Package *package = model()->packages().at(i);
+        if (((package->*packagesMembers)().contains(text) || ...))
+            setRowHidden(i, QModelIndex(), false);
+        else
+            setRowHidden(i, QModelIndex(), true);
+    }
 }
