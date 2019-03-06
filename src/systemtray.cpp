@@ -114,12 +114,12 @@ void SystemTray::processTrayActivation(QSystemTrayIcon::ActivationReason reason)
         return;
 
     auto window = qobject_cast<MainWindow *>(parent());
-    if (!this->isVisible()) {
+    if (!window->isVisible()) {
         window->show();
         window->activateWindow();
         window->raise();
     } else {
-        hide();
+        window->hide();
     }
 }
 #endif
