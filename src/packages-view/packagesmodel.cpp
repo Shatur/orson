@@ -491,8 +491,7 @@ void PackagesModel::loadAurDatabase()
 }
 
 template<typename T1, typename T2>
-void PackagesModel::sortPackages(QVector<Package *> &container, Qt::SortOrder order,
-                                 Comparator<T1> firstMember, Comparator<T2> secondMember)
+void PackagesModel::sortPackages(QVector<Package *> &container, Qt::SortOrder order, T1 firstMember, T2 secondMember)
 {
     switch (order) {
     case Qt::AscendingOrder:
@@ -513,7 +512,7 @@ void PackagesModel::sortPackages(QVector<Package *> &container, Qt::SortOrder or
 }
 
 template<typename T>
-void PackagesModel::sortPackages(QVector<Package *> &container, Qt::SortOrder order, Comparator<T> member)
+void PackagesModel::sortPackages(QVector<Package *> &container, Qt::SortOrder order, T member)
 {
     switch (order) {
     case Qt::AscendingOrder:

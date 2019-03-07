@@ -54,14 +54,11 @@ private:
     void loadSyncDatabase(const QString &databaseName);
     void loadAurDatabase();
 
-    template<typename T>
-    using Comparator = T (Package::*)() const;
-
     template<typename T1, typename T2>
-    void sortPackages(QVector<Package *> &container, Qt::SortOrder order, Comparator<T1> firstMember, Comparator<T2> secondMember);
+    void sortPackages(QVector<Package *> &container, Qt::SortOrder order, T1 firstMember, T2 secondMember);
 
     template<typename T>
-    void sortPackages(QVector<Package *> &container, Qt::SortOrder order, Comparator<T> member);
+    void sortPackages(QVector<Package *> &container, Qt::SortOrder order, T member);
 
     // ALPM stuff
     alpm_handle_t *m_handle = nullptr;
