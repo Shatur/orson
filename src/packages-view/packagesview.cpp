@@ -39,31 +39,25 @@ PackagesView::PackagesView(QWidget *parent) :
     });
 }
 
-void PackagesView::filter(const QString &text, PackagesView::FilterType type)
+void PackagesView::search(const QString &text, PackagesView::SearchType type)
 {
     // Search packages in AUR
     if (model()->mode() == PackagesModel::AUR) {
-        // Detect type
-        QString queryType;
         switch (type) {
         case NameDescription:
-            queryType = QStringLiteral("name-desc");
-            break;
+            model()->aurQuery(text, "name-desc");
+            return;
         case Name:
-            queryType = QStringLiteral("name");
-            break;
+            model()->aurQuery(text, "name");
+            return;
         case Maintainer:
-            queryType = QStringLiteral("maintainer");
-            break;
+            model()->aurQuery(text, "maintainer");
+            return;
         default:
             qFatal("Unsupported search type for AUR");
         }
-
-        model()->aurSearch(text, queryType);
-        return;
     }
 
-    // Filter packages
     if (text.isEmpty()) {
         if (!m_filtered)
             return;
@@ -75,6 +69,7 @@ void PackagesView::filter(const QString &text, PackagesView::FilterType type)
         return;
     }
 
+    // Filter local packages
     switch (type) {
     case Name:
         filterPackages(text, &Package::name);

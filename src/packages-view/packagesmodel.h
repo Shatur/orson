@@ -39,7 +39,7 @@ public:
     QVector<Package *> packages() const;
     QVector<Package *> outdatedPackages() const;
     void reloadRepoPackages();
-    void aurSearch(const QString &text, const QString &queryType);
+    void aurQuery(const QString &text, const QString &searchType);
     void loadMoreAurInfo(Package *package);
 
 signals:

@@ -262,11 +262,11 @@ void PackagesModel::reloadRepoPackages()
     m_loadingDatabases = QtConcurrent::run(this, &PackagesModel::loadRepoPackages);
 }
 
-void PackagesModel::aurSearch(const QString &text, const QString &queryType)
+void PackagesModel::aurQuery(const QString &text, const QString &searchType)
 {
     // Generate API URL
     QUrl url(AUR_API_URL);
-    url.setQuery("v=5&type=search&by=" + queryType + "&arg=" + text);
+    url.setQuery("v=5&type=search&by=" + searchType + "&arg=" + text);
 
     // Get request
     QScopedPointer reply(m_manager.get(QNetworkRequest(url)));

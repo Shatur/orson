@@ -251,8 +251,8 @@ void MainWindow::on_searchModeComboBox_currentIndexChanged(int index)
 
 void MainWindow::on_searchPackagesEdit_returnPressed()
 {
-    const auto filterType = static_cast<PackagesView::FilterType>(ui->searchByComboBox->currentIndex());
-    ui->packagesView->filter(ui->searchPackagesEdit->text(), filterType);
+    const auto filterType = static_cast<PackagesView::SearchType>(ui->searchByComboBox->currentIndex());
+    ui->packagesView->search(ui->searchPackagesEdit->text(), filterType);
 }
 
 void MainWindow::on_packagesView_currentPackageChanged(Package *package)
