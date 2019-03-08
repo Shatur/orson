@@ -262,7 +262,7 @@ QString AppSettings::lastSyncString() const
     if (datetime.isNull())
         syncString += SystemTray::tr("never");
     else
-        syncString += datetime.toString();
+        syncString += datetime.toString("dd.mm.yy hh:mm");
 
     return syncString;
 }
