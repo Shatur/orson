@@ -168,12 +168,14 @@ void MainWindow::syncAndUpgrade()
 void MainWindow::syncRepositories()
 {
     ui->packagesView->setSyncRepositories(true);
+    ui->packagesView->setUpgradePackages(false);
     on_applyButton_clicked();
 }
 
 void MainWindow::upgrade()
 {
     ui->packagesView->setUpgradePackages(true);
+    ui->packagesView->setSyncRepositories(false);
     on_applyButton_clicked();
 }
 
