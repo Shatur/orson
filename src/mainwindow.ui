@@ -47,7 +47,7 @@
          <string>Check for updates</string>
         </property>
         <property name="text">
-         <string>Sync repositories</string>
+         <string>Sync repositories (-Sy)</string>
         </property>
         <property name="icon">
          <iconset theme="mail-send-receive">
@@ -64,7 +64,7 @@
          <bool>false</bool>
         </property>
         <property name="text">
-         <string>Upgrade all</string>
+         <string>Upgrade all (-Su)</string>
         </property>
         <property name="icon">
          <iconset theme="go-up">

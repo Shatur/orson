@@ -56,7 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_trayMenu->addAction(QIcon::fromTheme("window"), tr("Show window"), this, &MainWindow::show);
     m_trayMenu->addAction(ui->settingsAction->icon(), ui->settingsAction->iconText(), this, &MainWindow::on_settingsAction_triggered);
     m_trayMenu->addSeparator();
-    m_trayMenu->addAction(QIcon::fromTheme("system-upgrade"), tr("Sync and upgrade"), this, &MainWindow::syncAndUpgrade);
+    m_trayMenu->addAction(QIcon::fromTheme("system-upgrade"), tr("Sync and upgrade (-Syu)"), this, &MainWindow::syncAndUpgrade);
     m_trayMenu->addAction(ui->upgradeButton->icon(), ui->upgradeButton->text(), this, &MainWindow::upgrade);
     m_trayMenu->addAction(ui->syncButton->icon(), ui->syncButton->text(), this, &MainWindow::syncRepositories);
     m_trayMenu->addAction(ui->reloadButton->icon(), ui->reloadButton->text(), this, &MainWindow::on_reloadButton_clicked);
