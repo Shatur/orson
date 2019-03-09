@@ -34,6 +34,8 @@ private slots:
 #endif
 
 private:
+    static QString lastSyncString(QDateTime dateTime);
+
     TrayStatus m_trayStatus = Updating;
 };
 

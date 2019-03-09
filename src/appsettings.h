@@ -68,7 +68,6 @@ public:
     static QTime defaultAutosyncTime();
 
     QDateTime lastSync() const;
-    QString lastSyncString() const;
     void setLastSync(QDateTime dateTime);
 
     // Interface settings

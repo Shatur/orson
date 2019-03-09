@@ -255,18 +255,6 @@ QDateTime AppSettings::lastSync() const
     return value("LastSync", QDateTime()).toDateTime();
 }
 
-QString AppSettings::lastSyncString() const
-{
-    const QDateTime datetime = lastSync();
-    QString syncString = SystemTray::tr("Last sync: ");
-    if (datetime.isNull())
-        syncString += SystemTray::tr("never");
-    else
-        syncString += datetime.toString("dd.mm.yy hh:mm");
-
-    return syncString;
-}
-
 void AppSettings::setLastSync(QDateTime dateTime)
 {
     setValue("LastSync", dateTime);

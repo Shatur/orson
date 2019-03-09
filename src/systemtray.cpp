@@ -79,7 +79,7 @@ void SystemTray::setTrayStatus(TrayStatus trayStatus, int updatesCount)
         const QString message = tr("No updates available");
         showNotification(message);
 #ifdef KDE
-        setToolTipSubTitle(message + '\n' + settings.lastSyncString());
+        setToolTipSubTitle(message + '\n' + lastSyncString(settings.lastSync()));
         setStatus(KStatusNotifierItem::Passive);
 #endif
         break;
@@ -95,7 +95,7 @@ void SystemTray::setTrayStatus(TrayStatus trayStatus, int updatesCount)
         const QString message = QString::number(updatesCount) + tr(" updates available");
         showNotification(message);
 #ifdef KDE
-        setToolTipSubTitle(message + '\n' + settings.lastSyncString());
+        setToolTipSubTitle(message + '\n' + lastSyncString(settings.lastSync()));
         setStatus(KStatusNotifierItem::NeedsAttention);
 #endif
     }
@@ -123,3 +123,14 @@ void SystemTray::processTrayActivation(QSystemTrayIcon::ActivationReason reason)
     }
 }
 #endif
+
+QString SystemTray::lastSyncString(QDateTime dateTime)
+{
+    QString syncString = tr("Last sync: ");
+    if (dateTime.isNull())
+        syncString += tr("never");
+    else
+        syncString += dateTime.toString("dd.mm.yy hh:mm");
+
+    return syncString;
+}
