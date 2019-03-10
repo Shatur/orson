@@ -2,8 +2,8 @@
 #define APPSETTINGS_H
 
 #include "pacman.h"
-#include "systemtray.h"
 #include "autosynctimer.h"
+#include "packages-view/packagesmodel.h"
 
 #include <QSettings>
 #include <QLocale>
@@ -71,9 +71,9 @@ public:
     void setLastSync(QDateTime dateTime);
 
     // Interface settings
-    QString trayIconName(SystemTray::TrayStatus trayStatus) const;
-    void setTrayIconName(SystemTray::TrayStatus trayStatus, const QString &name);
-    static constexpr const char *defaultTrayIconName(SystemTray::TrayStatus trayStatus);
+    QString trayIconName(PackagesModel::DatabaseStatus status) const;
+    void setTrayIconName(PackagesModel::DatabaseStatus status, const QString &name);
+    static constexpr const char *defaultTrayIconName(PackagesModel::DatabaseStatus status);
 
     // Connection settings
     QNetworkProxy::ProxyType proxyType() const;
@@ -102,14 +102,14 @@ private:
     static QTranslator m_appTranslator;
 };
 
-constexpr const char *AppSettings::defaultTrayIconName(SystemTray::TrayStatus trayStatus)
+constexpr const char *AppSettings::defaultTrayIconName(PackagesModel::DatabaseStatus status)
 {
-    switch (trayStatus) {
-    case SystemTray::NoUpdates:
+    switch (status) {
+    case PackagesModel::NoUpdates:
         return "update-none";
-    case SystemTray::Updating:
+    case PackagesModel::Loading:
         return "state-sync";
-    case SystemTray::UpdatesAvailable:
+    case PackagesModel::UpdatesAvailable:
         return "update-high";
     }
 

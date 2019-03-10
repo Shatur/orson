@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "packages-view/depend.h"
+#include "packages-view/packagesmodel.h"
 
 #include <QMainWindow>
 
@@ -60,7 +61,7 @@ private slots:
     void setStatusBarMessage(const QString &text);
     void findDepend(QAbstractButton* button);
 
-    void processLoadedDatabase();
+    void processDatabaseStatusChanged(PackagesModel::DatabaseStatus status);
     void processFirstPackageAvailable();
     void processOperationsCountChanged(int tasksCount);
     void processTerminalStart();

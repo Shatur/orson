@@ -26,22 +26,24 @@ void AutosyncTimer::loadSettings()
         constexpr int secsInHour = 3600;
         const int intervalInHours = settings.autosyncInterval();
         const QDateTime nextSync = settings.lastSync().addSecs(intervalInHours * secsInHour);
-        if (nextSync < QDateTime::currentDateTime())
-            emit timeout();
+//        if (nextSync < QDateTime::currentDateTime())
+//            emit timeout();
 
         m_timer->setInterval(intervalToMsec(intervalInHours));
         m_timer->start();
         break;
     }
     case SpecifiedTime:
+    {
         const QTime autosyncTime = settings.autosyncTime();
         const QDateTime nextSync = settings.lastSync().addMSecs(QTime(0, 0).msecsTo(autosyncTime));
-        if (nextSync < QDateTime::currentDateTime())
-            emit timeout();
+//        if (nextSync < QDateTime::currentDateTime())
+//            emit timeout();
 
         m_timer->setInterval(timeToMsec(autosyncTime));
         m_timer->start();
         break;
+    }
     }
 }
 

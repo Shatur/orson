@@ -16,17 +16,11 @@ class SystemTray : public QSystemTrayIcon
 #endif
 {
 public:
-    enum TrayStatus {
-        NoUpdates,
-        Updating,
-        UpdatesAvailable
-    };
 
     SystemTray(MainWindow *parent);
 
     void showNotification(const QString &message, int interval = 10000);
-    void setTrayStatus(TrayStatus trayStatus, int updatesCount = 0);
-    TrayStatus trayStatus() const;
+    void loadTrayStatus(const PackagesModel *model);
 
 #ifndef KDE
 private slots:
@@ -35,8 +29,6 @@ private slots:
 
 private:
     static QString lastSyncString(QDateTime dateTime);
-
-    TrayStatus m_trayStatus = Updating;
 };
 
 #endif // SYSTEMTRAY_H

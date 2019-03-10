@@ -51,14 +51,9 @@ void SettingsDialog::on_proxyTypeComboBox_currentIndexChanged(int index)
     }
 }
 
-void SettingsDialog::on_noUpdatesIconButton_clicked()
+void SettingsDialog::on_loadingIconEditButton_clicked()
 {
-    chooseIcon(ui->noUpdatesIconEdit);
-}
-
-void SettingsDialog::on_updatingIconEditButton_clicked()
-{
-    chooseIcon(ui->updatingIconEdit);
+    chooseIcon(ui->loadingIconEdit);
 }
 
 void SettingsDialog::on_updatesAvailableIconButton_clicked()
@@ -66,19 +61,24 @@ void SettingsDialog::on_updatesAvailableIconButton_clicked()
     chooseIcon(ui->updatesAvailableIconEdit);
 }
 
-void SettingsDialog::on_noUpdatesIconEdit_textChanged(const QString &fileName)
+void SettingsDialog::on_noUpdatesIconButton_clicked()
 {
-    showIconPreview(ui->noUpdatesIconPreviewLabel, fileName);
+    chooseIcon(ui->noUpdatesIconEdit);
 }
 
-void SettingsDialog::on_updatingIconEdit_textChanged(const QString &fileName)
+void SettingsDialog::on_loadingIconEdit_textChanged(const QString &fileName)
 {
-    showIconPreview(ui->updatingIconPreviewLabel, fileName);
+    showIconPreview(ui->loadingIconPreviewLabel, fileName);
 }
 
 void SettingsDialog::on_updatesAvailableIconEdit_textChanged(const QString &fileName)
 {
     showIconPreview(ui->updatesAvailableIconPreviewLabel, fileName);
+}
+
+void SettingsDialog::on_noUpdatesIconEdit_textChanged(const QString &fileName)
+{
+    showIconPreview(ui->noUpdatesIconPreviewLabel, fileName);
 }
 
 void SettingsDialog::on_terminalComboBox_currentTextChanged(const QString &terminalName)
@@ -177,9 +177,9 @@ void SettingsDialog::on_SettingsDialog_accepted()
     settings.setAutosyncInterval(ui->autosyncIntervalSpinBox->value());
 
     // Interface settings
-    settings.setTrayIconName(SystemTray::NoUpdates, ui->noUpdatesIconEdit->text());
-    settings.setTrayIconName(SystemTray::Updating, ui->updatingIconEdit->text());
-    settings.setTrayIconName(SystemTray::UpdatesAvailable, ui->updatesAvailableIconEdit->text());
+    settings.setTrayIconName(PackagesModel::Loading, ui->loadingIconEdit->text());
+    settings.setTrayIconName(PackagesModel::NoUpdates, ui->noUpdatesIconEdit->text());
+    settings.setTrayIconName(PackagesModel::UpdatesAvailable, ui->updatesAvailableIconEdit->text());
 
     // Connection settings
     settings.setProxyType(static_cast<QNetworkProxy::ProxyType>(ui->proxyTypeComboBox->currentIndex()));
@@ -208,9 +208,9 @@ void SettingsDialog::restoreDefaults()
     ui->autosyncIntervalSpinBox->setValue(AppSettings::defaultAutosyncInterval());
 
     // Interface settings
-    ui->noUpdatesIconEdit->setText(AppSettings::defaultTrayIconName(SystemTray::NoUpdates));
-    ui->updatingIconEdit->setText(AppSettings::defaultTrayIconName(SystemTray::Updating));
-    ui->updatesAvailableIconEdit->setText(AppSettings::defaultTrayIconName(SystemTray::UpdatesAvailable));
+    ui->loadingIconEdit->setText(AppSettings::defaultTrayIconName(PackagesModel::Loading));
+    ui->updatesAvailableIconEdit->setText(AppSettings::defaultTrayIconName(PackagesModel::UpdatesAvailable));
+    ui->noUpdatesIconEdit->setText(AppSettings::defaultTrayIconName(PackagesModel::NoUpdates));
 
     // Connection settings
     ui->proxyTypeComboBox->setCurrentIndex(1);
@@ -258,9 +258,9 @@ void SettingsDialog::loadSettings()
     ui->autosyncIntervalSpinBox->setValue(settings.autosyncInterval());
 
     // Interface settings
-    ui->noUpdatesIconEdit->setText(settings.trayIconName(SystemTray::NoUpdates));
-    ui->updatingIconEdit->setText(settings.trayIconName(SystemTray::Updating));
-    ui->updatesAvailableIconEdit->setText(settings.trayIconName(SystemTray::UpdatesAvailable));
+    ui->loadingIconEdit->setText(settings.trayIconName(PackagesModel::Loading));
+    ui->updatesAvailableIconEdit->setText(settings.trayIconName(PackagesModel::UpdatesAvailable));
+    ui->noUpdatesIconEdit->setText(settings.trayIconName(PackagesModel::NoUpdates));
 
     // Connection settings
     ui->proxyTypeComboBox->setCurrentIndex(settings.proxyType());

@@ -9,11 +9,11 @@
 #endif
 
 SystemTray::SystemTray(MainWindow *parent) :
-    #ifdef KDE
+#ifdef KDE
     KStatusNotifierItem(parent)
-    #else
+#else
     QSystemTrayIcon(parent)
-    #endif
+#endif
 {
 #ifdef KDE
     setStandardActionsEnabled(false);
@@ -46,13 +46,11 @@ void SystemTray::showNotification(const QString &message, int interval)
 }
 
 
-void SystemTray::setTrayStatus(TrayStatus trayStatus, int updatesCount)
+void SystemTray::loadTrayStatus(const PackagesModel *model)
 {
-    m_trayStatus = trayStatus;
-
     // Set icon
     const AppSettings settings;
-    const QString iconName = settings.trayIconName(m_trayStatus);
+    const QString iconName = settings.trayIconName(model->databaseStatus());
 #ifdef KDE
     if (QIcon::hasThemeIcon(iconName))
         setIconByName(iconName);
@@ -73,8 +71,8 @@ void SystemTray::setTrayStatus(TrayStatus trayStatus, int updatesCount)
 #endif
 
     // Show notification and set KDE tooltip
-    switch (m_trayStatus) {
-    case NoUpdates:
+    switch (model->databaseStatus()) {
+    case PackagesModel::NoUpdates:
     {
         const QString message = tr("No updates available");
         showNotification(message);
@@ -84,15 +82,15 @@ void SystemTray::setTrayStatus(TrayStatus trayStatus, int updatesCount)
 #endif
         break;
     }
-    case Updating:
+    case PackagesModel::Loading:
 #ifdef KDE
         setToolTipSubTitle("Synchronizing databases");
         setStatus(KStatusNotifierItem::Active);
 #endif
         break;
-    case UpdatesAvailable:
+    case PackagesModel::UpdatesAvailable:
     {
-        const QString message = QString::number(updatesCount) + tr(" updates available");
+        const QString message = QString::number(model->outdatedPackages().size()) + tr(" updates available");
         showNotification(message);
 #ifdef KDE
         setToolTipSubTitle(message + '\n' + lastSyncString(settings.lastSync()));
@@ -100,11 +98,6 @@ void SystemTray::setTrayStatus(TrayStatus trayStatus, int updatesCount)
 #endif
     }
     }
-}
-
-SystemTray::TrayStatus SystemTray::trayStatus() const
-{
-    return m_trayStatus;
 }
 
 #ifndef KDE

@@ -260,30 +260,30 @@ void AppSettings::setLastSync(QDateTime dateTime)
     setValue("LastSync", dateTime);
 }
 
-QString AppSettings::trayIconName(SystemTray::TrayStatus trayStatus) const
+QString AppSettings::trayIconName(PackagesModel::DatabaseStatus status) const
 {
-    switch (trayStatus) {
-    case SystemTray::NoUpdates:
-        return value("NoUpdatesIcon", defaultTrayIconName(trayStatus)).toString();
-    case SystemTray::Updating:
-        return value("UpdatingIcon", defaultTrayIconName(trayStatus)).toString();
-    case SystemTray::UpdatesAvailable:
-        return value("UpdatesAvailableIcon", defaultTrayIconName(trayStatus)).toString();
+    switch (status) {
+    case PackagesModel::NoUpdates:
+        return value("NoUpdatesIcon", defaultTrayIconName(status)).toString();
+    case PackagesModel::Loading:
+        return value("LoadingIcon", defaultTrayIconName(status)).toString();
+    case PackagesModel::UpdatesAvailable:
+        return value("UpdatesAvailableIcon", defaultTrayIconName(status)).toString();
     }
 
     return QString();
 }
 
-void AppSettings::setTrayIconName(SystemTray::TrayStatus trayStatus, const QString &name)
+void AppSettings::setTrayIconName(PackagesModel::DatabaseStatus status, const QString &name)
 {
-    switch (trayStatus) {
-    case SystemTray::NoUpdates:
+    switch (status) {
+    case PackagesModel::NoUpdates:
         setValue("NoUpdatesIcon", name);
         break;
-    case SystemTray::Updating:
-        setValue("UpdatingIcon", name);
+    case PackagesModel::Loading:
+        setValue("LoadingIcon", name);
         break;
-    case SystemTray::UpdatesAvailable:
+    case PackagesModel::UpdatesAvailable:
         setValue("UpdatesAvailableIcon", name);
         break;
     }

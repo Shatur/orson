@@ -369,30 +369,14 @@
            <string>Tray icon</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
-           <item row="0" column="3">
-            <widget class="QLineEdit" name="noUpdatesIconEdit"/>
-           </item>
-           <item row="4" column="3">
-            <widget class="QLineEdit" name="updatesAvailableIconEdit"/>
-           </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="updatesAvailableIconLabel">
-             <property name="text">
-              <string>Updates available:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
+           <item row="1" column="0">
             <widget class="QLabel" name="noUpdatesIconLabel">
              <property name="text">
               <string>No updates icon:</string>
              </property>
             </widget>
            </item>
-           <item row="3" column="3">
-            <widget class="QLineEdit" name="updatingIconEdit"/>
-           </item>
-           <item row="4" column="5">
+           <item row="5" column="5">
             <widget class="QToolButton" name="updatesAvailableIconButton">
              <property name="text">
               <string>Choose</string>
@@ -403,7 +387,26 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="5">
+           <item row="1" column="3">
+            <widget class="QLineEdit" name="noUpdatesIconEdit"/>
+           </item>
+           <item row="1" column="2">
+            <widget class="QLabel" name="noUpdatesIconPreviewLabel"/>
+           </item>
+           <item row="5" column="3">
+            <widget class="QLineEdit" name="updatesAvailableIconEdit"/>
+           </item>
+           <item row="5" column="2">
+            <widget class="QLabel" name="updatesAvailableIconPreviewLabel"/>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="updatesAvailableIconLabel">
+             <property name="text">
+              <string>Updates available:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="5">
             <widget class="QToolButton" name="noUpdatesIconButton">
              <property name="text">
               <string>Choose</string>
@@ -414,15 +417,21 @@
              </property>
             </widget>
            </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="updatingIconLabel">
+           <item row="0" column="0">
+            <widget class="QLabel" name="loadingIconLabel">
              <property name="text">
-              <string>Updating icon:</string>
+              <string>Loading icon:</string>
              </property>
             </widget>
            </item>
-           <item row="3" column="5">
-            <widget class="QToolButton" name="updatingIconEditButton">
+           <item row="0" column="3">
+            <widget class="QLineEdit" name="loadingIconEdit"/>
+           </item>
+           <item row="0" column="2">
+            <widget class="QLabel" name="loadingIconPreviewLabel"/>
+           </item>
+           <item row="0" column="5">
+            <widget class="QToolButton" name="loadingIconEditButton">
              <property name="text">
               <string>Choose</string>
              </property>
@@ -431,15 +440,6 @@
                <normaloff>.</normaloff>.</iconset>
              </property>
             </widget>
-           </item>
-           <item row="0" column="2">
-            <widget class="QLabel" name="noUpdatesIconPreviewLabel"/>
-           </item>
-           <item row="4" column="2">
-            <widget class="QLabel" name="updatesAvailableIconPreviewLabel"/>
-           </item>
-           <item row="3" column="2">
-            <widget class="QLabel" name="updatingIconPreviewLabel"/>
            </item>
           </layout>
          </widget>

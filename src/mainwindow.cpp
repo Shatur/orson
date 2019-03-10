@@ -25,9 +25,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    connect(ui->packagesView->model(), &PackagesModel::databaseStatusChanged, this, &MainWindow::setStatusBarMessage);
+    connect(ui->packagesView->model(), &PackagesModel::databaseLoadingMessageChanged, this, &MainWindow::setStatusBarMessage);
     connect(ui->packagesView->model(), &PackagesModel::firstPackageAvailable, this, &MainWindow::processFirstPackageAvailable);
-    connect(ui->packagesView->model(), &PackagesModel::databaseLoaded, this, &MainWindow::processLoadedDatabase);
+    connect(ui->packagesView->model(), &PackagesModel::databaseStatusChanged, this, &MainWindow::processDatabaseStatusChanged);
     connect(ui->packagesView, &PackagesView::operationsCountChanged, this, &MainWindow::processOperationsCountChanged);
 
     // Setup terminal
@@ -210,15 +210,6 @@ void MainWindow::on_upgradeButton_toggled(bool checked)
 
 void MainWindow::on_reloadButton_clicked()
 {
-    ui->reloadButton->setEnabled(false);
-    ui->syncButton->setEnabled(false);
-    ui->upgradeButton->setEnabled(false);
-
-    ui->syncButton->setChecked(false);
-    ui->upgradeButton->setChecked(false);
-
-    m_trayIcon->setTrayStatus(SystemTray::Updating);
-
     ui->packagesView->model()->reloadRepoPackages();
 }
 
@@ -352,23 +343,31 @@ void MainWindow::findDepend(QAbstractButton *button)
     }
 }
 
-void MainWindow::processLoadedDatabase()
+void MainWindow::processDatabaseStatusChanged(PackagesModel::DatabaseStatus status)
 {
-    // Set tray status
-    if (ui->packagesView->model()->outdatedPackages().isEmpty())
-        m_trayIcon->setTrayStatus(SystemTray::NoUpdates);
-    else
-        m_trayIcon->setTrayStatus(SystemTray::UpdatesAvailable, ui->packagesView->model()->outdatedPackages().size());
+    m_trayIcon->loadTrayStatus(ui->packagesView->model());
 
-    // Enable buttons
-    ui->reloadButton->setEnabled(true);
-    ui->syncButton->setEnabled(true);
+    switch (status) {
+    case PackagesModel::Loading:
+        ui->reloadButton->setEnabled(false);
+        ui->syncButton->setEnabled(false);
 
-    // Enable upgrade button only if updates available
-    if (ui->packagesView->model()->outdatedPackages().isEmpty())
+        // Also uncheck buttons
+        ui->syncButton->setChecked(false);
+        ui->upgradeButton->setChecked(false);
+        break;
+    case PackagesModel::NoUpdates:
+        ui->reloadButton->setEnabled(true);
+        ui->syncButton->setEnabled(true);
         ui->upgradeButton->setEnabled(false);
-    else
+
+        break;
+    case PackagesModel::UpdatesAvailable:
+        ui->reloadButton->setEnabled(true);
+        ui->syncButton->setEnabled(true);
         ui->upgradeButton->setEnabled(true);
+        break;
+    }
 }
 
 void MainWindow::processFirstPackageAvailable()
@@ -393,17 +392,16 @@ void MainWindow::processOperationsCountChanged(int tasksCount)
 
 void MainWindow::processTerminalStart()
 {
-    m_trayIcon->setTrayStatus(SystemTray::Updating);
-    ui->reloadButton->setEnabled(false);
+    processDatabaseStatusChanged(PackagesModel::Loading);
 }
 
 void MainWindow::processTerminalFinish(int exitCode)
 {
     if (exitCode != 0) {
         if (ui->packagesView->model()->outdatedPackages().isEmpty())
-            m_trayIcon->setTrayStatus(SystemTray::NoUpdates);
+            processDatabaseStatusChanged(PackagesModel::NoUpdates);
         else
-            m_trayIcon->setTrayStatus(SystemTray::UpdatesAvailable, ui->packagesView->model()->outdatedPackages().size());
+            processDatabaseStatusChanged(PackagesModel::UpdatesAvailable);
     } else {
         on_reloadButton_clicked();
     }
@@ -576,7 +574,7 @@ void MainWindow::loadAppSettings()
     const AppSettings settings;
 
     // Tray icon
-    m_trayIcon->setTrayStatus(m_trayIcon->trayStatus());
+    m_trayIcon->loadTrayStatus(ui->packagesView->model());
 
     // Set autosync databases timer
     m_autosyncTimer->loadSettings();

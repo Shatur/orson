@@ -21,12 +21,12 @@ public:
 
 private slots:
     // UI
-    void on_noUpdatesIconButton_clicked();
-    void on_updatingIconEditButton_clicked();
+    void on_loadingIconEditButton_clicked();
     void on_updatesAvailableIconButton_clicked();
-    void on_noUpdatesIconEdit_textChanged(const QString &fileName);
-    void on_updatingIconEdit_textChanged(const QString &fileName);
+    void on_noUpdatesIconButton_clicked();
+    void on_loadingIconEdit_textChanged(const QString &fileName);
     void on_updatesAvailableIconEdit_textChanged(const QString &fileName);
+    void on_noUpdatesIconEdit_textChanged(const QString &fileName);
 
     void on_terminalComboBox_currentTextChanged(const QString &terminalName);
     void on_autosyncButtonGroup_buttonToggled(QAbstractButton *button, bool checked);

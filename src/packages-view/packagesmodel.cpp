@@ -12,6 +12,7 @@ constexpr char AUR_API_URL[] = "https://aur.archlinux.org/rpc/";
 PackagesModel::PackagesModel(QObject *parent) :
     QAbstractItemModel(parent)
 {
+    qRegisterMetaType<DatabaseStatus>("DatabaseStatus"); // To allow use databaseStatusChanged signal
     reloadRepoPackages();
 }
 
@@ -240,6 +241,11 @@ void PackagesModel::setMode(Mode mode)
     endResetModel();
 }
 
+PackagesModel::DatabaseStatus PackagesModel::databaseStatus() const
+{
+    return m_databaseStatus;
+}
+
 QVector<Package *> PackagesModel::packages() const
 {
     switch (m_mode) {
@@ -259,7 +265,7 @@ QVector<Package *> PackagesModel::outdatedPackages() const
 
 void PackagesModel::reloadRepoPackages()
 {
-    m_loadingDatabases = QtConcurrent::run(this, &PackagesModel::loadRepoPackages);
+    m_loadingDatabases = QtConcurrent::run(this, &PackagesModel::loadDatabases);
 }
 
 void PackagesModel::aurQuery(const QString &text, const QString &searchType)
@@ -339,8 +345,10 @@ void PackagesModel::loadMoreAurInfo(Package *package)
     package->setAurData(packageData, true);
 }
 
-void PackagesModel::loadRepoPackages()
+void PackagesModel::loadDatabases()
 {
+    setDatabaseStatus(Loading);
+
     // Reset old data
     if (!m_repoPackages.isEmpty()) {
         beginResetModel();
@@ -372,19 +380,24 @@ void PackagesModel::loadRepoPackages()
     loadAurDatabase();
 
     // Check for updates
-    emit databaseStatusChanged("Checking for updates");
+    emit databaseLoadingMessageChanged("Checking for updates");
     foreach (Package *package, m_repoPackages) {
         if (!package->availableUpdate().isEmpty())
             m_outdatedPackages.append(package);
     }
 
-    emit databaseStatusChanged(QString::number(m_repoPackages.size())
+    // Set status
+    if (m_outdatedPackages.empty())
+        setDatabaseStatus(NoUpdates);
+    else
+        setDatabaseStatus(UpdatesAvailable);
+
+    emit databaseLoadingMessageChanged(QString::number(m_repoPackages.size())
                                + " packages avaible in official repositories, "
                                + QString::number(installedPackages)
                                + " packages installed, "
-                               + (m_outdatedPackages.size() != 0 ? QString::number(m_outdatedPackages.size()) : "no")
+                               + (m_outdatedPackages.empty() ? "no" : QString::number(m_outdatedPackages.size()))
                                + " updates available");
-    emit databaseLoaded();
 }
 
 // Load installed (local) packages
@@ -416,7 +429,7 @@ int PackagesModel::loadLocalDatabase()
 
 void PackagesModel::loadSyncDatabase(const QString &databaseName)
 {
-    emit databaseStatusChanged("Loading " + databaseName + " database");
+    emit databaseLoadingMessageChanged("Loading " + databaseName + " database");
 
     alpm_db_t *database = alpm_register_syncdb(m_handle, qPrintable(databaseName), 0);
     if (database == nullptr)
@@ -457,7 +470,7 @@ void PackagesModel::loadSyncDatabase(const QString &databaseName)
 
 void PackagesModel::loadAurDatabase()
 {
-    emit databaseStatusChanged("Loading information from AUR for");
+    emit databaseLoadingMessageChanged("Loading information from AUR");
     QNetworkAccessManager manager;
     QUrl url(AUR_API_URL);
 
@@ -488,6 +501,15 @@ void PackagesModel::loadAurDatabase()
                 package->setAurData(packageData.toObject(), true);
         }
     }
+}
+
+void PackagesModel::setDatabaseStatus(DatabaseStatus databaseStatus)
+{
+    if (m_databaseStatus == databaseStatus)
+        return;
+
+    m_databaseStatus = databaseStatus;
+    emit databaseStatusChanged(m_databaseStatus);
 }
 
 template<typename T1, typename T2>

@@ -18,6 +18,11 @@ public:
         Repo,
         AUR
     };
+    enum DatabaseStatus {
+        Loading,
+        UpdatesAvailable,
+        NoUpdates
+    };
 
     explicit PackagesModel(QObject *parent = nullptr);
     ~PackagesModel() override;
@@ -36,6 +41,7 @@ public:
     void setMode(Mode mode);
 
     // Other
+    DatabaseStatus databaseStatus() const;
     QVector<Package *> packages() const;
     QVector<Package *> outdatedPackages() const;
     void reloadRepoPackages();
@@ -43,17 +49,21 @@ public:
     void loadMoreAurInfo(Package *package);
 
 signals:
-    void databaseStatusChanged(const QString &text);
-    void databaseLoaded();
+    void databaseStatusChanged(DatabaseStatus status);
+    void databaseLoadingMessageChanged(const QString &text);
     void firstPackageAvailable();
     void packageChanged(Package *package);
 
 private:
-    void loadRepoPackages();
+    void setDatabaseStatus(DatabaseStatus databaseStatus);
+    void loadDatabases();
+
+    // Helper functions for loading all databases
     int loadLocalDatabase();
     void loadSyncDatabase(const QString &databaseName);
     void loadAurDatabase();
 
+    // Sorting
     template<typename T1, typename T2>
     void sortPackages(QVector<Package *> &container, Qt::SortOrder order, T1 firstMember, T2 secondMember);
 
@@ -65,12 +75,16 @@ private:
     alpm_errno_t m_error = ALPM_ERR_OK;
 
     Mode m_mode = Repo;
-    int m_updates = 0;
+    DatabaseStatus m_databaseStatus = Loading;
+    QFuture<void> m_loadingDatabases;
+
     QVector<Package *> m_repoPackages;
     QVector<Package *> m_aurPackages;
     QVector<Package *> m_outdatedPackages;
-    QFuture<void> m_loadingDatabases;
+
     QNetworkAccessManager m_manager;
 };
+
+Q_DECLARE_METATYPE(PackagesModel::DatabaseStatus)
 
 #endif // PACKAGESMODEL_H
