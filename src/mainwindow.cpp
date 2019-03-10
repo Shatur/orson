@@ -373,7 +373,6 @@ void MainWindow::processDatabaseStatusChanged(PackagesModel::DatabaseStatus stat
 void MainWindow::processFirstPackageAvailable()
 {
     ui->packagesView->setCurrentIndex(ui->packagesView->model()->index(0, 0));
-    setStatusBarMessage("Loading installed packages");
 }
 
 void MainWindow::processOperationsCountChanged(int tasksCount)

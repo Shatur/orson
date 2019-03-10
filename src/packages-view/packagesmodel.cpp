@@ -404,6 +404,8 @@ void PackagesModel::loadDatabases()
 // Load installed (local) packages
 int PackagesModel::loadLocalDatabase()
 {
+    emit databaseLoadingMessageChanged("Loading installed packages");
+
     alpm_db_t *database = alpm_get_localdb(m_handle);
     alpm_list_t *cache = alpm_db_get_pkgcache(database);
     while (cache != nullptr) {
