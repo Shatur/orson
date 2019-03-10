@@ -2,12 +2,12 @@
 #define PACKAGESMODEL_H
 
 #include <QAbstractItemModel>
-#include <QNetworkAccessManager>
 #include <QtConcurrent>
 
 #include <alpm.h>
 
 class Package;
+class QNetworkAccessManager;
 
 class PackagesModel : public QAbstractItemModel
 {
@@ -82,7 +82,7 @@ private:
     QVector<Package *> m_aurPackages;
     QVector<Package *> m_outdatedPackages;
 
-    QNetworkAccessManager m_manager;
+    QNetworkAccessManager *m_manager;
 };
 
 Q_DECLARE_METATYPE(PackagesModel::DatabaseStatus)

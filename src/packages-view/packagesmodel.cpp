@@ -12,6 +12,7 @@ constexpr char AUR_API_URL[] = "https://aur.archlinux.org/rpc/";
 PackagesModel::PackagesModel(QObject *parent) :
     QAbstractItemModel(parent)
 {
+    m_manager = new QNetworkAccessManager(this);
     qRegisterMetaType<DatabaseStatus>("DatabaseStatus"); // To allow use databaseStatusChanged signal
     reloadRepoPackages();
 }
@@ -275,7 +276,7 @@ void PackagesModel::aurQuery(const QString &text, const QString &searchType)
     url.setQuery("v=5&type=search&by=" + searchType + "&arg=" + text);
 
     // Get request
-    QScopedPointer reply(m_manager.get(QNetworkRequest(url)));
+    QScopedPointer reply(m_manager->get(QNetworkRequest(url)));
     QEventLoop waitForReply;
     connect(reply.get(), &QNetworkReply::finished, &waitForReply, &QEventLoop::quit);
     waitForReply.exec();
@@ -329,7 +330,7 @@ void PackagesModel::loadMoreAurInfo(Package *package)
     QUrl url(AUR_API_URL);
     url.setQuery("v=5&type=info&arg[]=" + package->name());
 
-    QScopedPointer reply(m_manager.get(QNetworkRequest(url)));
+    QScopedPointer reply(m_manager->get(QNetworkRequest(url)));
     QEventLoop waitForReply;
     connect(reply.get(), &QNetworkReply::finished, &waitForReply, &QEventLoop::quit);
     waitForReply.exec();
