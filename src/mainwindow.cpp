@@ -26,6 +26,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    // Packages view reactions
     connect(ui->packagesView->model(), &PackagesModel::databaseLoadingMessageChanged, this, &MainWindow::setStatusBarMessage);
     connect(ui->packagesView->model(), &PackagesModel::firstPackageAvailable, this, &MainWindow::processFirstPackageAvailable);
     connect(ui->packagesView->model(), &PackagesModel::databaseStatusChanged, this, &MainWindow::processDatabaseStatusChanged);
@@ -35,15 +37,19 @@ MainWindow::MainWindow(QWidget *parent) :
     m_changeModeShortcut = new QShortcut(this);
     connect(m_changeModeShortcut, &QShortcut::activated, this, &MainWindow::changeSearchMode);
 
-    // Setup terminal
+    // Terminal
     m_pacman = new Pacman(this);
     m_pacman->setTasks(ui->packagesView);
     connect(m_pacman, &Pacman::finished, this, &MainWindow::processTerminalFinish);
     connect(m_pacman, &Pacman::started, this, &MainWindow::processTerminalStart);
 
-    // Setup autosync
+    // Autosync
     m_autosyncTimer = new AutosyncTimer(this);
     connect(m_autosyncTimer, &AutosyncTimer::timeout, m_pacman, &Pacman::syncDatabase); // Automatically sync databases in background
+
+    // Select package when clicking on dependencies
+    m_depsButtonGroup = new QButtonGroup(this);
+    connect(m_depsButtonGroup, qOverload<QAbstractButton *>(&QButtonGroup::buttonClicked), this, &MainWindow::findDepend);
 
     // Make after completion actions exclusive
     m_afterCompletionGroup = new QActionGroup(this);
@@ -52,11 +58,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_afterCompletionGroup->addAction(ui->rebootAction);
     connect(m_afterCompletionGroup, &QActionGroup::triggered, this, &MainWindow::setAfterTasksCompletionAction);
 
-    // Select package when clicking on dependencies
-    m_depsButtonGroup = new QButtonGroup(this);
-    connect(m_depsButtonGroup, qOverload<QAbstractButton *>(&QButtonGroup::buttonClicked), this, &MainWindow::findDepend);
-
-    // System tray menu
+    // System tray context menu
     m_trayMenu = new QMenu(this);
     m_trayMenu->addAction(QIcon::fromTheme("window"), tr("Show window"), this, &MainWindow::show);
     m_trayMenu->addAction(ui->settingsAction->icon(), ui->settingsAction->iconText(), this, &MainWindow::on_settingsAction_triggered);
