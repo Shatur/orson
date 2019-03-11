@@ -349,6 +349,16 @@ void AppSettings::setProxyPassword(const QString &password)
     setValue("Connection/ProxyPassword", password);
 }
 
+QString AppSettings::changeModeShortcut() const
+{
+    return value("Shortcuts/ChangeMode", defaultChangeModeShortcut()).toString();
+}
+
+void AppSettings::setChangeModeShortcut(const QString &hotkey)
+{
+    setValue("Shortcuts/ChangeMode", hotkey);
+}
+
 QByteArray AppSettings::mainWindowGeometry() const
 {
     return value("WindowGeometry").toByteArray();

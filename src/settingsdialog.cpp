@@ -13,7 +13,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     ui->setupUi(this);
     connect(ui->dialogButtonBox->button(QDialogButtonBox::RestoreDefaults), &QPushButton::clicked, this, &SettingsDialog::restoreDefaults);
 
-    // Shortcuts
+    // Setup shortcuts widget
     ui->shortcutsTreeWidget->expandAll();
     ui->shortcutsTreeWidget->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
@@ -114,12 +114,12 @@ void SettingsDialog::on_shortcutsTreeWidget_itemSelectionChanged()
 {
     if (ui->shortcutsTreeWidget->currentItem()->childCount() == 0) {
         ui->shortcutGroupBox->setEnabled(true);
-        ui->shortcutSequenceEdit->setKeySequence(ui->shortcutsTreeWidget->currentItem()->text(1));
     } else {
         ui->shortcutGroupBox->setEnabled(false);
         ui->shortcutSequenceEdit->clear();
     }
 
+    ui->shortcutSequenceEdit->setKeySequence(ui->shortcutsTreeWidget->currentItem()->text(1));
     ui->acceptShortcutButton->setEnabled(false);
 }
 
@@ -152,7 +152,7 @@ void SettingsDialog::on_resetShortcutButton_clicked()
 
 void SettingsDialog::on_resetAllShortcutsButton_clicked()
 {
-    QTreeWidgetItemIterator it(ui->shortcutsTreeWidget, QTreeWidgetItemIterator::NoChildren);
+    QTreeWidgetItemIterator it(ui->shortcutsTreeWidget);
     while (*it) {
         QTreeWidgetItem *item = *it;
         item->setText(1, item->data(1, Qt::UserRole).toString());
@@ -188,6 +188,9 @@ void SettingsDialog::on_SettingsDialog_accepted()
     settings.setProxyAuthEnabled(ui->proxyAuthCheckBox->isChecked());
     settings.setProxyUsername(ui->proxyUsernameEdit->text());
     settings.setProxyPassword(ui->proxyPasswordEdit->text());
+
+    // Shortcuts
+    settings.setChangeModeShortcut(ui->shortcutsTreeWidget->topLevelItem(0)->text(1));
 }
 
 
@@ -269,6 +272,10 @@ void SettingsDialog::loadSettings()
     ui->proxyAuthCheckBox->setChecked(settings.isProxyAuthEnabled());
     ui->proxyUsernameEdit->setText(settings.proxyUsername());
     ui->proxyPasswordEdit->setText(settings.proxyPassword());
+
+    // Shortcuts
+    ui->shortcutsTreeWidget->topLevelItem(0)->setText(1, settings.changeModeShortcut());
+    ui->shortcutsTreeWidget->topLevelItem(0)->setData(1, Qt::UserRole, settings.defaultChangeModeShortcut());
 }
 
 void SettingsDialog::chooseIcon(QLineEdit *iconPathEdit)

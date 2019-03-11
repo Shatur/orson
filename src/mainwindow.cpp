@@ -19,6 +19,7 @@
 #include <QDBusInterface>
 #include <QButtonGroup>
 #include <QTimer>
+#include <QShortcut>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -29,6 +30,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->packagesView->model(), &PackagesModel::firstPackageAvailable, this, &MainWindow::processFirstPackageAvailable);
     connect(ui->packagesView->model(), &PackagesModel::databaseStatusChanged, this, &MainWindow::processDatabaseStatusChanged);
     connect(ui->packagesView, &PackagesView::operationsCountChanged, this, &MainWindow::processOperationsCountChanged);
+
+    // Shortcuts
+    m_changeModeShortcut = new QShortcut(this);
+    connect(m_changeModeShortcut, &QShortcut::activated, this, &MainWindow::changeSearchMode);
 
     // Setup terminal
     m_pacman = new Pacman(this);
@@ -325,6 +330,18 @@ void MainWindow::setStatusBarMessage(const QString &text)
     statusBar()->showMessage(text);
 }
 
+void MainWindow::changeSearchMode()
+{
+    switch (ui->searchModeComboBox->currentIndex()) {
+    case PackagesModel::Repo:
+        ui->searchModeComboBox->setCurrentIndex(PackagesModel::AUR);
+        break;
+    case PackagesModel::AUR:
+        ui->searchModeComboBox->setCurrentIndex(PackagesModel::Repo);
+        break;
+    }
+}
+
 void MainWindow::findDepend(QAbstractButton *button)
 {
     // Clear filter
@@ -590,6 +607,9 @@ void MainWindow::loadAppSettings()
         }
     }
     QNetworkProxy::setApplicationProxy(proxy);
+
+    // Shortcuts
+    m_changeModeShortcut->setKey(QKeySequence(settings.changeModeShortcut()));
 }
 
 void MainWindow::loadMainWindowSettings()

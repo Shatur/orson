@@ -14,6 +14,7 @@ class Pacman;
 class Package;
 class AutosyncTimer;
 class SystemTray;
+class QShortcut;
 
 namespace Ui {
 class MainWindow;
@@ -59,6 +60,7 @@ private slots:
     void on_packageTabsWidget_currentChanged(int index);
 
     void setStatusBarMessage(const QString &text);
+    void changeSearchMode();
     void findDepend(QAbstractButton* button);
 
     void processDatabaseStatusChanged(PackagesModel::DatabaseStatus status);
@@ -86,6 +88,8 @@ private:
     QButtonGroup *m_depsButtonGroup;
     QMenu *m_trayMenu;
     QActionGroup *m_afterCompletionGroup;
+    QShortcut *m_changeModeShortcut;
+
     Pacman *m_pacman;
     AutosyncTimer *m_autosyncTimer;
     SystemTray *m_trayIcon;

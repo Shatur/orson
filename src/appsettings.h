@@ -94,6 +94,12 @@ public:
     QString proxyPassword() const;
     void setProxyPassword(const QString &password);
 
+    // Shortcuts
+    QString changeModeShortcut() const;
+    void setChangeModeShortcut(const QString &hotkey);
+    constexpr const char *defaultChangeModeShortcut() const
+    { return "Ctrl+M"; }
+
     // Main window settings
     QByteArray mainWindowGeometry() const;
     void setMainWindowGeometry(const QByteArray &geometry);
