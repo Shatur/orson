@@ -62,6 +62,7 @@ private slots:
     void setStatusBarMessage(const QString &text);
     void changeSearchMode();
     void findDepend(QAbstractButton* button);
+    void showAppRunningMessage();
 
     void processDatabaseStatusChanged(PackagesModel::DatabaseStatus status);
     void processFirstPackageAvailable();

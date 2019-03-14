@@ -19,7 +19,9 @@ public:
 
     SystemTray(MainWindow *parent);
 
+    MainWindow *parent() const;
     void showNotification(const QString &message, int interval = 10000);
+    void showMainWindow();
     void loadTrayStatus(const PackagesModel *model);
 
 #ifndef KDE

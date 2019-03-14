@@ -27,6 +27,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    // Show a message that the application is already running
+    connect(qobject_cast<SingleApplication*>(SingleApplication::instance()), &SingleApplication::instanceStarted, this, &MainWindow::showAppRunningMessage);
+
     // Packages view reactions
     connect(ui->packagesView->model(), &PackagesModel::databaseLoadingMessageChanged, this, &MainWindow::setStatusBarMessage);
     connect(ui->packagesView->model(), &PackagesModel::firstPackageAvailable, this, &MainWindow::processFirstPackageAvailable);
@@ -253,6 +256,14 @@ void MainWindow::on_searchPackagesEdit_returnPressed()
 {
     const auto filterType = static_cast<PackagesView::SearchType>(ui->searchByComboBox->currentIndex());
     ui->packagesView->search(ui->searchPackagesEdit->text(), filterType);
+}
+
+void MainWindow::showAppRunningMessage()
+{
+    auto *message = new QMessageBox(QMessageBox::Information, SingleApplication::applicationName(), tr("The application is already running"));
+    message->setAttribute(Qt::WA_DeleteOnClose); // Need to allocate on heap to avoid crash!
+    m_trayIcon->showMainWindow();
+    message->show();
 }
 
 void MainWindow::on_packagesView_currentPackageChanged(Package *package)

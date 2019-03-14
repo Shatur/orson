@@ -26,6 +26,11 @@ SystemTray::SystemTray(MainWindow *parent) :
 #endif
 }
 
+MainWindow *SystemTray::parent() const
+{
+    return qobject_cast<MainWindow *>(QObject::parent());
+}
+
 void SystemTray::showNotification(const QString &message, int interval)
 {
 #ifdef KDE
@@ -42,6 +47,18 @@ void SystemTray::showNotification(const QString &message, int interval)
     notifyArguments << QVariantMap();
     notifyArguments << interval; // Show interval
     notify.callWithArgumentList(QDBus::AutoDetect, "Notify", notifyArguments);
+#endif
+}
+
+void SystemTray::showMainWindow()
+{
+#ifdef KDE
+    activate();
+#else
+    MainWindow *window = parent();
+    window->show();
+    window->activateWindow();
+    window->raise();
 #endif
 }
 
@@ -106,14 +123,11 @@ void SystemTray::processTrayActivation(QSystemTrayIcon::ActivationReason reason)
     if (reason != QSystemTrayIcon::Trigger)
         return;
 
-    auto window = qobject_cast<MainWindow *>(parent());
-    if (!window->isVisible()) {
-        window->show();
-        window->activateWindow();
-        window->raise();
-    } else {
+    MainWindow *window = parent();
+    if (!window->isVisible())
+        showMainWindow();
+    else
         window->hide();
-    }
 }
 #endif
 
