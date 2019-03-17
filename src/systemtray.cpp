@@ -63,11 +63,11 @@ void SystemTray::showMainWindow()
 }
 
 
-void SystemTray::loadTrayStatus(const PackagesModel *model)
+void SystemTray::loadTrayStatus(PackagesModel::DatabaseStatus status, int updatesCount)
 {
     // Set icon
     const AppSettings settings;
-    const QString iconName = settings.trayIconName(model->databaseStatus());
+    const QString iconName = settings.trayIconName(status);
 #ifdef KDE
     if (QIcon::hasThemeIcon(iconName))
         setIconByName(iconName);
@@ -88,7 +88,7 @@ void SystemTray::loadTrayStatus(const PackagesModel *model)
 #endif
 
     // Show notification and set KDE tooltip
-    switch (model->databaseStatus()) {
+    switch (status) {
     case PackagesModel::NoUpdates:
     {
         const QString message = tr("No updates available");
@@ -107,7 +107,7 @@ void SystemTray::loadTrayStatus(const PackagesModel *model)
         break;
     case PackagesModel::UpdatesAvailable:
     {
-        const QString message = QString::number(model->outdatedPackages().size()) + tr(" updates available");
+        const QString message = QString::number(updatesCount) + tr(" updates available");
         showNotification(message);
 #ifdef KDE
         setToolTipSubTitle(message + '\n' + lastSyncString(settings.lastSync()));

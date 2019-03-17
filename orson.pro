@@ -65,7 +65,7 @@ LIBS += -lalpm
 
 #DEFINES += KDE
 contains(DEFINES, KDE){
-  QT += KNotifications
+    QT += KNotifications
 }
 
 # Rules for deployment

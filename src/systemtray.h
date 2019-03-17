@@ -22,7 +22,7 @@ public:
     MainWindow *parent() const;
     void showNotification(const QString &message, int interval = 10000);
     void showMainWindow();
-    void loadTrayStatus(const PackagesModel *model);
+    void loadTrayStatus(PackagesModel::DatabaseStatus status, int updatesCount = 0);
 
 #ifndef KDE
 private slots:
