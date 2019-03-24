@@ -375,7 +375,7 @@ void MainWindow::findDepend(QAbstractButton *button)
 
 void MainWindow::processDatabaseStatusChanged(PackagesModel::DatabaseStatus status)
 {
-    m_trayIcon->loadTrayStatus(status, ui->packagesView->model()->outdatedPackages().size());
+    m_trayIcon->setTrayStatus(status, ui->packagesView->model()->outdatedPackages().size());
 
     switch (status) {
     case PackagesModel::Loading:
@@ -603,7 +603,7 @@ void MainWindow::loadAppSettings()
     const AppSettings settings;
 
     // Tray icon
-    m_trayIcon->loadTrayStatus(ui->packagesView->model()->databaseStatus(), ui->packagesView->model()->outdatedPackages().size());
+    m_trayIcon->setTrayStatus(ui->packagesView->model()->databaseStatus(), ui->packagesView->model()->outdatedPackages().size());
 
     // Set autosync databases timer
     m_autosyncTimer->loadSettings();

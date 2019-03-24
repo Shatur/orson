@@ -71,9 +71,9 @@ public:
     void setLastSync(QDateTime dateTime);
 
     // Interface settings
-    QString trayIconName(PackagesModel::DatabaseStatus status) const;
-    void setTrayIconName(PackagesModel::DatabaseStatus status, const QString &name);
-    static constexpr const char *defaultTrayIconName(PackagesModel::DatabaseStatus status);
+    QString statusIconName(PackagesModel::DatabaseStatus status) const;
+    void setStatusIconName(PackagesModel::DatabaseStatus status, const QString &name);
+    static QString defaultStatusIconName(PackagesModel::DatabaseStatus status);
 
     // Connection settings
     QNetworkProxy::ProxyType proxyType() const;
@@ -107,19 +107,5 @@ public:
 private:
     static QTranslator m_appTranslator;
 };
-
-constexpr const char *AppSettings::defaultTrayIconName(PackagesModel::DatabaseStatus status)
-{
-    switch (status) {
-    case PackagesModel::NoUpdates:
-        return "update-none";
-    case PackagesModel::Loading:
-        return "state-sync";
-    case PackagesModel::UpdatesAvailable:
-        return "update-high";
-    }
-
-    return nullptr;
-}
 
 #endif // APPSETTINGS_H

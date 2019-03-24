@@ -63,25 +63,27 @@ void SystemTray::showMainWindow()
 }
 
 
-void SystemTray::loadTrayStatus(PackagesModel::DatabaseStatus status, int updatesCount)
+void SystemTray::setTrayStatus(PackagesModel::DatabaseStatus status, int updatesCount)
 {
     // Set icon
-    const AppSettings settings;
-    const QString iconName = settings.trayIconName(status);
+    AppSettings settings;
+    QString statusIconName = settings.statusIconName(status);
 #ifdef KDE
-    if (QIcon::hasThemeIcon(iconName))
-        setIconByName(iconName);
-    else if (QFile::exists(iconName))
-        setIconByPixmap(QIcon(iconName));
-    else
-        setIconByName("dialog-error");
+    if (!QIcon::hasThemeIcon(statusIconName) && !QFile::exists(statusIconName)) {
+        statusIconName = AppSettings::defaultStatusIconName(status);
+        settings.setStatusIconName(status, statusIconName);
+        showNotification(tr("The specified icon '%1' for the current database state is invalid. The default icon will be used.").arg(statusIconName));
+    }
+    setIconByName(statusIconName);
 #else
-    if (QIcon::hasThemeIcon(iconName))
-        setIcon(QIcon::fromTheme(iconName));
-    else if (QFile::exists(iconName))
-        setIcon(QIcon(iconName));
-    else
-        setIcon(QIcon::fromTheme("dialog-error"));
+    QIcon statusIcon = trayIcon(statusIconName);
+    if (statusIcon.isNull()) {
+        const QString defaultIconName = AppSettings::defaultStatusIconName(status);
+        statusIcon = trayIcon(defaultIconName);
+        settings.setStatusIconName(status, defaultIconName);
+        showNotification(tr("The specified icon '%1' for the current database state is invalid. The default icon will be used.").arg(statusIconName));
+    }
+    setIcon(statusIcon);
 
     if (!isVisible())
         show();
@@ -115,6 +117,17 @@ void SystemTray::loadTrayStatus(PackagesModel::DatabaseStatus status, int update
 #endif
     }
     }
+}
+
+QIcon SystemTray::trayIcon(const QString &iconName)
+{
+    if (QIcon::hasThemeIcon(iconName))
+        return QIcon::fromTheme(iconName);
+
+    if (QFileInfo::exists(iconName))
+        return QIcon(iconName);
+
+    return QIcon();
 }
 
 #ifndef KDE

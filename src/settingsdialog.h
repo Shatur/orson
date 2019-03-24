@@ -4,7 +4,6 @@
 #include <QDialog>
 
 class QLineEdit;
-class QLabel;
 class QAbstractButton;
 
 namespace Ui {
@@ -21,7 +20,7 @@ public:
 
 private slots:
     // UI
-    void on_loadingIconEditButton_clicked();
+    void on_loadingIconButton_clicked();
     void on_updatesAvailableIconButton_clicked();
     void on_noUpdatesIconButton_clicked();
     void on_loadingIconEdit_textChanged(const QString &fileName);
@@ -46,7 +45,6 @@ private slots:
 private:
     void loadSettings();
     void chooseIcon(QLineEdit *iconPathEdit);
-    void showIconPreview(QLabel *previewLabel, const QString &fileName);
 
     Ui::SettingsDialog *ui;
 };

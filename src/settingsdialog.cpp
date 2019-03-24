@@ -1,6 +1,7 @@
 #include "settingsdialog.h"
 #include "ui_settingsdialog.h"
 #include "appsettings.h"
+#include "systemtray.h"
 #include "singleapplication.h"
 
 #include <QNetworkProxy>
@@ -51,7 +52,7 @@ void SettingsDialog::on_proxyTypeComboBox_currentIndexChanged(int index)
     }
 }
 
-void SettingsDialog::on_loadingIconEditButton_clicked()
+void SettingsDialog::on_loadingIconButton_clicked()
 {
     chooseIcon(ui->loadingIconEdit);
 }
@@ -68,17 +69,20 @@ void SettingsDialog::on_noUpdatesIconButton_clicked()
 
 void SettingsDialog::on_loadingIconEdit_textChanged(const QString &fileName)
 {
-    showIconPreview(ui->loadingIconPreviewLabel, fileName);
+    const QIcon icon = SystemTray::trayIcon(fileName);
+    ui->loadingIconButton->setIcon(icon);
 }
 
 void SettingsDialog::on_updatesAvailableIconEdit_textChanged(const QString &fileName)
 {
-    showIconPreview(ui->updatesAvailableIconPreviewLabel, fileName);
+    const QIcon icon = SystemTray::trayIcon(fileName);
+    ui->updatesAvailableIconButton->setIcon(icon);
 }
 
 void SettingsDialog::on_noUpdatesIconEdit_textChanged(const QString &fileName)
 {
-    showIconPreview(ui->noUpdatesIconPreviewLabel, fileName);
+    const QIcon icon = SystemTray::trayIcon(fileName);
+    ui->noUpdatesIconButton->setIcon(icon);
 }
 
 void SettingsDialog::on_terminalComboBox_currentTextChanged(const QString &terminalName)
@@ -177,9 +181,9 @@ void SettingsDialog::on_SettingsDialog_accepted()
     settings.setAutosyncInterval(ui->autosyncIntervalSpinBox->value());
 
     // Interface settings
-    settings.setTrayIconName(PackagesModel::Loading, ui->loadingIconEdit->text());
-    settings.setTrayIconName(PackagesModel::NoUpdates, ui->noUpdatesIconEdit->text());
-    settings.setTrayIconName(PackagesModel::UpdatesAvailable, ui->updatesAvailableIconEdit->text());
+    settings.setStatusIconName(PackagesModel::Loading, ui->loadingIconEdit->text());
+    settings.setStatusIconName(PackagesModel::NoUpdates, ui->noUpdatesIconEdit->text());
+    settings.setStatusIconName(PackagesModel::UpdatesAvailable, ui->updatesAvailableIconEdit->text());
 
     // Connection settings
     settings.setProxyType(static_cast<QNetworkProxy::ProxyType>(ui->proxyTypeComboBox->currentIndex()));
@@ -211,9 +215,9 @@ void SettingsDialog::restoreDefaults()
     ui->autosyncIntervalSpinBox->setValue(AppSettings::defaultAutosyncInterval());
 
     // Interface settings
-    ui->loadingIconEdit->setText(AppSettings::defaultTrayIconName(PackagesModel::Loading));
-    ui->updatesAvailableIconEdit->setText(AppSettings::defaultTrayIconName(PackagesModel::UpdatesAvailable));
-    ui->noUpdatesIconEdit->setText(AppSettings::defaultTrayIconName(PackagesModel::NoUpdates));
+    ui->loadingIconEdit->setText(AppSettings::defaultStatusIconName(PackagesModel::Loading));
+    ui->updatesAvailableIconEdit->setText(AppSettings::defaultStatusIconName(PackagesModel::UpdatesAvailable));
+    ui->noUpdatesIconEdit->setText(AppSettings::defaultStatusIconName(PackagesModel::NoUpdates));
 
     // Connection settings
     ui->proxyTypeComboBox->setCurrentIndex(1);
@@ -261,9 +265,9 @@ void SettingsDialog::loadSettings()
     ui->autosyncIntervalSpinBox->setValue(settings.autosyncInterval());
 
     // Interface settings
-    ui->loadingIconEdit->setText(settings.trayIconName(PackagesModel::Loading));
-    ui->updatesAvailableIconEdit->setText(settings.trayIconName(PackagesModel::UpdatesAvailable));
-    ui->noUpdatesIconEdit->setText(settings.trayIconName(PackagesModel::NoUpdates));
+    ui->loadingIconEdit->setText(settings.statusIconName(PackagesModel::Loading));
+    ui->updatesAvailableIconEdit->setText(settings.statusIconName(PackagesModel::UpdatesAvailable));
+    ui->noUpdatesIconEdit->setText(settings.statusIconName(PackagesModel::NoUpdates));
 
     // Connection settings
     ui->proxyTypeComboBox->setCurrentIndex(settings.proxyType());
@@ -289,12 +293,4 @@ void SettingsDialog::chooseIcon(QLineEdit *iconPathEdit)
         return;
 
     iconPathEdit->setText(dialog.selectedFiles().at(0));
-}
-
-void SettingsDialog::showIconPreview(QLabel *previewLabel, const QString &fileName)
-{
-    if (QIcon::hasThemeIcon(fileName))
-        previewLabel->setPixmap(QIcon::fromTheme(fileName).pixmap(24, 24));
-    else
-        previewLabel->setPixmap(QIcon(fileName).pixmap(24, 24));
 }

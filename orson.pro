@@ -15,6 +15,11 @@ DEFINES += \
     QAPPLICATION_CLASS=QApplication \
     QT_DEPRECATED_WARNINGS
 
+#DEFINES += KDE
+contains(DEFINES, KDE){
+    QT += KNotifications
+}
+
 SOURCES += \
     src/main.cpp \
     src/mainwindow.cpp \
@@ -62,11 +67,6 @@ FORMS += \
     src/settingsdialog.ui
 
 LIBS += -lalpm
-
-#DEFINES += KDE
-contains(DEFINES, KDE){
-    QT += KNotifications
-}
 
 # Rules for deployment
 bin.path = /usr/bin

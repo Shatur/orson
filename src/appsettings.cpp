@@ -260,21 +260,21 @@ void AppSettings::setLastSync(QDateTime dateTime)
     setValue("LastSync", dateTime);
 }
 
-QString AppSettings::trayIconName(PackagesModel::DatabaseStatus status) const
+QString AppSettings::statusIconName(PackagesModel::DatabaseStatus status) const
 {
     switch (status) {
     case PackagesModel::NoUpdates:
-        return value("NoUpdatesIcon", defaultTrayIconName(status)).toString();
+        return value("NoUpdatesIcon", defaultStatusIconName(status)).toString();
     case PackagesModel::Loading:
-        return value("LoadingIcon", defaultTrayIconName(status)).toString();
+        return value("LoadingIcon", defaultStatusIconName(status)).toString();
     case PackagesModel::UpdatesAvailable:
-        return value("UpdatesAvailableIcon", defaultTrayIconName(status)).toString();
+        return value("UpdatesAvailableIcon", defaultStatusIconName(status)).toString();
     }
 
     return QString();
 }
 
-void AppSettings::setTrayIconName(PackagesModel::DatabaseStatus status, const QString &name)
+void AppSettings::setStatusIconName(PackagesModel::DatabaseStatus status, const QString &name)
 {
     switch (status) {
     case PackagesModel::NoUpdates:
@@ -287,6 +287,20 @@ void AppSettings::setTrayIconName(PackagesModel::DatabaseStatus status, const QS
         setValue("UpdatesAvailableIcon", name);
         break;
     }
+}
+
+QString AppSettings::defaultStatusIconName(PackagesModel::DatabaseStatus status)
+{
+    switch (status) {
+    case PackagesModel::NoUpdates:
+        return QStringLiteral("update-none");
+    case PackagesModel::Loading:
+        return QStringLiteral("state-sync");
+    case PackagesModel::UpdatesAvailable:
+        return QStringLiteral("update-high");
+    }
+
+    return QString();
 }
 
 QNetworkProxy::ProxyType AppSettings::proxyType() const
