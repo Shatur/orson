@@ -17,7 +17,7 @@ DEFINES += \
 
 #DEFINES += PLASMA
 contains(DEFINES, PLASMA){
-    QT += KNotifications
+    QT += KNotifications KIconThemes
 }
 
 SOURCES += \

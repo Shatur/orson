@@ -3,7 +3,6 @@
 
 #include <QDialog>
 
-class QLineEdit;
 class QAbstractButton;
 
 namespace Ui {
@@ -44,7 +43,7 @@ private slots:
 
 private:
     void loadSettings();
-    void chooseIcon(QLineEdit *iconPathEdit);
+    QString chooseIcon();
 
     Ui::SettingsDialog *ui;
 };

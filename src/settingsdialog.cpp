@@ -5,7 +5,11 @@
 #include "singleapplication.h"
 
 #include <QNetworkProxy>
+#ifdef PLASMA
+#include <KIconDialog>
+#else
 #include <QFileDialog>
+#endif
 
 SettingsDialog::SettingsDialog(QWidget *parent) :
     QDialog(parent),
@@ -54,17 +58,17 @@ void SettingsDialog::on_proxyTypeComboBox_currentIndexChanged(int index)
 
 void SettingsDialog::on_loadingIconButton_clicked()
 {
-    chooseIcon(ui->loadingIconEdit);
+    ui->loadingIconEdit->setText(chooseIcon());
 }
 
 void SettingsDialog::on_updatesAvailableIconButton_clicked()
 {
-    chooseIcon(ui->updatesAvailableIconEdit);
+    ui->updatesAvailableIconEdit->setText(chooseIcon());
 }
 
 void SettingsDialog::on_noUpdatesIconButton_clicked()
 {
-    chooseIcon(ui->noUpdatesIconEdit);
+    ui->noUpdatesIconEdit->setText(chooseIcon());
 }
 
 void SettingsDialog::on_loadingIconEdit_textChanged(const QString &fileName)
@@ -282,15 +286,22 @@ void SettingsDialog::loadSettings()
     ui->shortcutsTreeWidget->topLevelItem(0)->setData(1, Qt::UserRole, settings.defaultChangeModeShortcut());
 }
 
-void SettingsDialog::chooseIcon(QLineEdit *iconPathEdit)
+QString SettingsDialog::chooseIcon()
 {
+#ifdef PLASMA
+    KIconDialog dialog(this);
+    dialog.setup(KIconLoader::Panel, KIconLoader::StatusIcon);
+
+    return dialog.openDialog();
+#else
     QFileDialog dialog(this, tr("Select icon"));
     dialog.setNameFilter(tr("Images (*.png *.jpg *.bmp);;All files(*)"));
     dialog.setDirectory(QDir::homePath());
     dialog.setFileMode(QFileDialog::ExistingFile);
 
     if (!dialog.exec())
-        return;
+        return QString();
 
-    iconPathEdit->setText(dialog.selectedFiles().at(0));
+    return dialog.selectedFiles().at(0);
+#endif
 }
