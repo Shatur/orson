@@ -3,13 +3,13 @@
 
 #include "mainwindow.h"
 
-#ifdef KDE
+#ifdef PLASMA
 #include <KF5/KNotifications/KStatusNotifierItem>
 #else
 #include <QSystemTrayIcon>
 #endif
 
-#ifdef KDE
+#ifdef PLASMA
 class SystemTray : public KStatusNotifierItem
 #else
 class SystemTray : public QSystemTrayIcon
@@ -27,7 +27,7 @@ public:
     static QIcon trayIcon(const QString &iconName);
     static QString trayIconName(const QString &iconName);
 
-#ifndef KDE
+#ifndef PLASMA
 private slots:
     void processTrayActivation(QSystemTrayIcon::ActivationReason reason);
 #endif

@@ -15,8 +15,8 @@ DEFINES += \
     QAPPLICATION_CLASS=QApplication \
     QT_DEPRECATED_WARNINGS
 
-#DEFINES += KDE
-contains(DEFINES, KDE){
+#DEFINES += PLASMA
+contains(DEFINES, PLASMA){
     QT += KNotifications
 }
 

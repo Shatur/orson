@@ -4,18 +4,18 @@
 
 #include <QFile>
 #include <QDateTime>
-#ifndef KDE
+#ifndef PLASMA
 #include <QDBusInterface>
 #endif
 
 SystemTray::SystemTray(MainWindow *parent) :
-#ifdef KDE
+#ifdef PLASMA
     KStatusNotifierItem(parent)
 #else
     QSystemTrayIcon(parent)
 #endif
 {
-#ifdef KDE
+#ifdef PLASMA
     setStandardActionsEnabled(false);
     setToolTipTitle(SingleApplication::applicationName());
     setToolTipIconByName(parent->windowIcon().name());
@@ -33,7 +33,7 @@ MainWindow *SystemTray::parent() const
 
 void SystemTray::showNotification(const QString &message, int interval)
 {
-#ifdef KDE
+#ifdef PLASMA
     showMessage(SingleApplication::applicationName(), message, toolTipIconName(), interval);
 #else
     QDBusInterface notify("org.freedesktop.Notifications", "/org/freedesktop/Notifications", "org.freedesktop.Notifications");
@@ -52,7 +52,7 @@ void SystemTray::showNotification(const QString &message, int interval)
 
 void SystemTray::showMainWindow()
 {
-#ifdef KDE
+#ifdef PLASMA
     activate();
 #else
     MainWindow *window = parent();
@@ -68,7 +68,7 @@ void SystemTray::setTrayStatus(PackagesModel::DatabaseStatus status, int updates
     // Set icon
     AppSettings settings;
     QString statusIconName = settings.statusIconName(status);
-#ifdef KDE
+#ifdef PLASMA
     if (!QIcon::hasThemeIcon(statusIconName) && !QFile::exists(statusIconName)) {
         statusIconName = AppSettings::defaultStatusIconName(status);
         settings.setStatusIconName(status, statusIconName);
@@ -89,20 +89,20 @@ void SystemTray::setTrayStatus(PackagesModel::DatabaseStatus status, int updates
         show();
 #endif
 
-    // Show notification and set KDE tooltip
+    // Show notification and set Plasma tray tooltip
     switch (status) {
     case PackagesModel::NoUpdates:
     {
         const QString message = tr("No updates available");
         showNotification(message);
-#ifdef KDE
+#ifdef PLASMA
         setToolTipSubTitle(message + '\n' + lastSyncString(settings.lastSync()));
         setStatus(KStatusNotifierItem::Passive);
 #endif
         break;
     }
     case PackagesModel::Loading:
-#ifdef KDE
+#ifdef PLASMA
         setToolTipSubTitle("Synchronizing databases");
         setStatus(KStatusNotifierItem::Active);
 #endif
@@ -111,7 +111,7 @@ void SystemTray::setTrayStatus(PackagesModel::DatabaseStatus status, int updates
     {
         const QString message = QString::number(updatesCount) + tr(" updates available");
         showNotification(message);
-#ifdef KDE
+#ifdef PLASMA
         setToolTipSubTitle(message + '\n' + lastSyncString(settings.lastSync()));
         setStatus(KStatusNotifierItem::NeedsAttention);
 #endif
@@ -130,7 +130,7 @@ QIcon SystemTray::trayIcon(const QString &iconName)
     return QIcon();
 }
 
-#ifndef KDE
+#ifndef PLASMA
 void SystemTray::processTrayActivation(QSystemTrayIcon::ActivationReason reason)
 {
     if (reason != QSystemTrayIcon::Trigger)
