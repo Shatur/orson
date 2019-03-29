@@ -414,9 +414,15 @@ void PackagesView::filterPackages(const QString &text, T... packagesMembers)
 {
     for (int i = 0; i < model()->packages().size(); ++i) {
         const Package *package = model()->packages().at(i);
-        if (((package->*packagesMembers)().contains(text) || ...))
-            setRowHidden(i, QModelIndex(), false);
-        else
-            setRowHidden(i, QModelIndex(), true);
+
+        // Use narrow search
+        bool found = true;
+        for (const QString &textPart : text.split(' ', QString::SkipEmptyParts)) {
+            if ((!(package->*packagesMembers)().contains(textPart) && ...)) {
+                found = false;
+                break;
+            }
+        }
+        setRowHidden(i, QModelIndex(), !found);
     }
 }
