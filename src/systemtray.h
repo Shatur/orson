@@ -20,7 +20,7 @@ public:
     SystemTray(MainWindow *parent);
 
     MainWindow *parent() const;
-    void showNotification(const QString &message, int interval = 10000);
+    void showNotification(const QString &message, int interval = 10'000);
     void showMainWindow();
     void setTrayStatus(PackagesModel::DatabaseStatus status, int updatesCount = 0);
 

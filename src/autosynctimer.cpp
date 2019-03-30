@@ -23,7 +23,7 @@ void AutosyncTimer::loadSettings()
         break;
     case Interval:
     {
-        constexpr int secsInHour = 3600;
+        constexpr int secsInHour = 3'600;
         const int intervalInHours = settings.autosyncInterval();
         const QDateTime nextSync = settings.lastSync().addSecs(intervalInHours * secsInHour);
 //        if (nextSync < QDateTime::currentDateTime())
@@ -60,15 +60,15 @@ void AutosyncTimer::processTimeout()
 
 int AutosyncTimer::intervalToMsec(int hours)
 {
-    constexpr int msecsInHour = 3600000;
+    constexpr int msecsInHour = 3'600'000;
     return hours * msecsInHour;
 }
 
 int AutosyncTimer::timeToMsec(QTime time)
 {
     int msecs = QTime::currentTime().msecsTo(time);
-    if (msecs < 2000) {
-        constexpr int msecsInDay = 86400000;
+    if (msecs < 2'000) {
+        constexpr int msecsInDay = 86'400'000;
         msecs += msecsInDay; // Need to convert from earlier time (https://doc.qt.io/qt-5/qtime.html#msecsTo)
     }
 
