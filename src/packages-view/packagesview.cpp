@@ -412,12 +412,13 @@ void PackagesView::removeFromTasks(Package *package)
 template<class... T>
 void PackagesView::filterPackages(const QString &text, T... packagesMembers)
 {
+    const QStringList splittedText = text.split(' ', QString::SkipEmptyParts);
     for (int i = 0; i < model()->packages().size(); ++i) {
         const Package *package = model()->packages().at(i);
 
         // Use narrow search
         bool found = true;
-        for (const QString &textPart : text.split(' ', QString::SkipEmptyParts)) {
+        foreach (const QString &textPart, splittedText) {
             if ((!(package->*packagesMembers)().contains(textPart) && ...)) {
                 found = false;
                 break;
