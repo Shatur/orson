@@ -169,10 +169,10 @@ QString Pacman::afterCompletionCommand(AfterCompletion afterCompletion)
     QString command;
     switch (afterCompletion) {
     case Shutdown:
-        command.append(" && sudo shutdown 0");
+        command.append(" && shutdown -h now");
         break;
     case Reboot:
-        command.append(" && sudo reboot");
+        command.append(" && shutdown -r now");
         break;
     default:
         break;
