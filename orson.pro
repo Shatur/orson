@@ -25,6 +25,7 @@ SOURCES += \
     src/mainwindow.cpp \
     src/tasksdialog.cpp \
     src/settingsdialog.cpp \
+    src/searchedit.cpp \
     src/autosynctimer.cpp \
     src/systemtray.cpp \
     src/pacman.cpp \
@@ -45,6 +46,7 @@ HEADERS += \
     src/mainwindow.h \
     src/tasksdialog.h \
     src/settingsdialog.h \
+    src/searchedit.h \
     src/autosynctimer.h \
     src/systemtray.h \
     src/pacman.h \

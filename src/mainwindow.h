@@ -33,6 +33,7 @@ private slots:
     void on_installLocalAction_triggered();
     void on_installLocalDependAction_triggered();
     void on_exitAction_triggered();
+    void on_instantSearchAction_toggled(bool checked);
     void on_noConfirmAction_toggled(bool checked);
     void on_forceAction_toggled(bool checked);
     void on_openHistoryFileAction_triggered();
@@ -55,7 +56,7 @@ private slots:
 
     // General
     void on_searchModeComboBox_currentIndexChanged(int index);
-    void on_searchPackagesEdit_returnPressed();
+    void on_searchPackagesEdit_textSearched();
     void on_packagesView_currentPackageChanged(Package *package);
     void on_packageTabsWidget_currentChanged(int index);
 

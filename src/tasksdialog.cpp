@@ -24,7 +24,7 @@ TasksDialog::TasksDialog(Pacman *terminal, PackagesView *view, QMenuBar *bar, QW
     okButton->setIcon(QIcon::fromTheme("utilities-terminal"));
 
     // Load tasks options from "Tools" menu
-    const QMenu *toolsMenu = bar->actions().at(1)->menu();
+    const QMenu *toolsMenu = bar->actions().at(2)->menu();
 
     // No confirm checkbox
     const QAction *noConfirmAction = toolsMenu->actions().at(0);

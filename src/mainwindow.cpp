@@ -96,6 +96,7 @@ MainWindow::~MainWindow()
     QAction *afterCompletionAction = m_afterCompletionGroup->checkedAction();
     const auto afterCompletion = static_cast<Pacman::AfterCompletion>(m_afterCompletionGroup->actions().indexOf(afterCompletionAction));
     settings.setAfterCompletion(afterCompletion);
+    settings.setInstantSearchEnabled(ui->instantSearchAction->isChecked());
 
     delete ui;
 }
@@ -129,6 +130,13 @@ void MainWindow::on_installLocalDependAction_triggered()
 void MainWindow::on_exitAction_triggered()
 {
     SingleApplication::exit();
+}
+
+void MainWindow::on_instantSearchAction_toggled(bool checked)
+{
+    ui->searchPackagesEdit->setInstantSearchEnabled(checked);
+    if (checked)
+        on_searchPackagesEdit_textSearched();
 }
 
 void MainWindow::on_noConfirmAction_toggled(bool checked)
@@ -249,10 +257,10 @@ void MainWindow::on_searchModeComboBox_currentIndexChanged(int index)
     }
 
     ui->packagesView->model()->setMode(mode);
-    on_searchPackagesEdit_returnPressed(); // Search packages
+    on_searchPackagesEdit_textSearched(); // Search packages
 }
 
-void MainWindow::on_searchPackagesEdit_returnPressed()
+void MainWindow::on_searchPackagesEdit_textSearched()
 {
     const auto filterType = static_cast<PackagesView::SearchType>(ui->searchByComboBox->currentIndex());
     ui->packagesView->search(ui->searchPackagesEdit->text(), filterType);
@@ -361,8 +369,8 @@ void MainWindow::findDepend(QAbstractButton *button)
     ui->searchPackagesEdit->clear();
     if (ui->searchModeComboBox->currentIndex() != PackagesModel::Repo)
         ui->searchModeComboBox->setCurrentIndex(PackagesModel::Repo);
-    else
-        on_searchPackagesEdit_returnPressed();
+    else if (!ui->instantSearchAction->isChecked())
+        on_searchPackagesEdit_textSearched();
 
     // Search package in repo first
     const bool found = ui->packagesView->find(button->toolTip());
@@ -629,6 +637,7 @@ void MainWindow::loadMainWindowSettings()
 {
     const AppSettings settings;
     restoreGeometry(settings.mainWindowGeometry());
-    ui->noConfirmAction->setChecked(settings.isNoConfirm());
     m_afterCompletionGroup->actions().at(settings.afterCompletion())->setChecked(true);
+    ui->noConfirmAction->setChecked(settings.isNoConfirm());
+    ui->instantSearchAction->setChecked(settings.isInstantSearchEnabled());
 }

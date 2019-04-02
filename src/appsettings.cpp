@@ -33,6 +33,16 @@ void AppSettings::setAfterCompletion(Pacman::AfterCompletion afterCompletion)
     setValue("AfterCompletion", afterCompletion);
 }
 
+bool AppSettings::isInstantSearchEnabled() const
+{
+    return value("InteractiveSearch", defaultIsInstantSearchEnabled()).toBool();
+}
+
+void AppSettings::setInstantSearchEnabled(bool enabled)
+{
+    setValue("InteractiveSearch", enabled);
+}
+
 void AppSettings::setupLocale()
 {
     loadLocale(locale());

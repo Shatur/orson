@@ -93,7 +93,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="searchPackagesEdit">
+       <widget class="SearchEdit" name="searchPackagesEdit">
         <property name="placeholderText">
          <string>Search packages</string>
         </property>
@@ -275,7 +275,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>692</width>
+             <width>718</width>
              <height>450</height>
             </rect>
            </property>
@@ -766,8 +766,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>692</width>
-             <height>318</height>
+             <width>718</width>
+             <height>368</height>
             </rect>
            </property>
            <layout class="QFormLayout" name="depsContentLayout">
@@ -913,7 +913,7 @@
      <x>0</x>
      <y>0</y>
      <width>740</width>
-     <height>30</height>
+     <height>31</height>
     </rect>
    </property>
    <widget class="QMenu" name="fileMenu">
@@ -959,7 +959,14 @@
     <addaction name="forceAction"/>
     <addaction name="afterCompletionMenu"/>
    </widget>
+   <widget class="QMenu" name="searchMenu">
+    <property name="title">
+     <string>Search</string>
+    </property>
+    <addaction name="instantSearchAction"/>
+   </widget>
    <addaction name="fileMenu"/>
+   <addaction name="searchMenu"/>
    <addaction name="tasksMenu"/>
    <addaction name="toolsMenu"/>
   </widget>
@@ -1063,6 +1070,17 @@
     <string>Force (--force)</string>
    </property>
   </action>
+  <action name="instantSearchAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Instant search</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -1075,6 +1093,11 @@
    <class>PackagesView</class>
    <extends>QTreeView</extends>
    <header>src/packages-view/packagesview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SearchEdit</class>
+   <extends>QLineEdit</extends>
+   <header>src/searchedit.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

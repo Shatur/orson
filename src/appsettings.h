@@ -23,6 +23,11 @@ public:
     Pacman::AfterCompletion afterCompletion() const;
     void setAfterCompletion(Pacman::AfterCompletion afterCompletion);
 
+    bool isInstantSearchEnabled() const;
+    void setInstantSearchEnabled(bool enabled);
+    static constexpr bool defaultIsInstantSearchEnabled()
+    { return true; }
+
     // General settings
     void setupLocale();
     QLocale::Language locale() const;
