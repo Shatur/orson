@@ -84,7 +84,7 @@ void Pacman::installLocalPackage(const QString &fileName, bool asDepend)
 void Pacman::syncDatabase()
 {
     m_terminal->setProgram("systemctl");
-    m_terminal->setArguments({ "start", "orson-sync"});
+    m_terminal->setArguments({"start", "orson-sync"});
     m_terminal->start();
 }
 
@@ -174,12 +174,12 @@ QString Pacman::afterCompletionCommand(AfterCompletion afterCompletion)
     case Reboot:
         command.append(" && shutdown -r now");
         break;
-    default:
+    case WaitForInput:
+        command.append(" && echo");
+        command.append(" && read -s -p '" + tr("Success! To close this window, press <Enter>...") + "'");
         break;
     }
 
-    command.append(" && echo");
-    command.append(" && read -s -p '" + tr("Success! To close this window, press <Enter>...") + "'");
     command.append(" || (echo $? > " + errorFile);
     command.append(" && echo");
     command.append(" && read -s -p '" + tr("Failed! To close this window, press <Enter>...") + "')");
