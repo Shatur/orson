@@ -90,13 +90,15 @@ MainWindow::~MainWindow()
 {
     // Save window settings
     AppSettings settings;
-    settings.setNoConfirm(ui->noConfirmAction->isChecked());
     settings.setMainWindowGeometry(saveGeometry());
+
+    settings.setInstantSearchEnabled(ui->instantSearchAction->isChecked());
+    settings.setNoConfirm(ui->noConfirmAction->isChecked());
+    settings.setForce(ui->forceAction->isChecked());
 
     QAction *afterCompletionAction = m_afterCompletionGroup->checkedAction();
     const auto afterCompletion = static_cast<Pacman::AfterCompletion>(m_afterCompletionGroup->actions().indexOf(afterCompletionAction));
     settings.setAfterCompletion(afterCompletion);
-    settings.setInstantSearchEnabled(ui->instantSearchAction->isChecked());
 
     delete ui;
 }
@@ -639,5 +641,6 @@ void MainWindow::loadMainWindowSettings()
     restoreGeometry(settings.mainWindowGeometry());
     m_afterCompletionGroup->actions().at(settings.afterCompletion())->setChecked(true);
     ui->noConfirmAction->setChecked(settings.isNoConfirm());
+    ui->forceAction->setChecked(settings.isForce());
     ui->instantSearchAction->setChecked(settings.isInstantSearchEnabled());
 }

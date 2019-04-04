@@ -20,6 +20,9 @@ public:
     bool isNoConfirm() const;
     void setNoConfirm(bool noConfirm);
 
+    bool isForce() const;
+    void setForce(bool force);
+
     Pacman::AfterCompletion afterCompletion() const;
     void setAfterCompletion(Pacman::AfterCompletion afterCompletion);
 

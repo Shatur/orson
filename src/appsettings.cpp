@@ -23,6 +23,16 @@ void AppSettings::setNoConfirm(bool noConfirm)
     setValue("NoConfirm", noConfirm);
 }
 
+bool AppSettings::isForce() const
+{
+    return value("Force", false).toBool();
+}
+
+void AppSettings::setForce(bool force)
+{
+    setValue("Force", force);
+}
+
 Pacman::AfterCompletion AppSettings::afterCompletion() const
 {
     return value("AfterCompletion", Pacman::WaitForInput).value<Pacman::AfterCompletion>();
