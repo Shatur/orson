@@ -388,9 +388,19 @@ QString AppSettings::changeModeShortcut() const
     return value("Shortcuts/ChangeMode", defaultChangeModeShortcut()).toString();
 }
 
-void AppSettings::setChangeModeShortcut(const QString &hotkey)
+void AppSettings::setChangeModeShortcut(const QString &shortcut)
 {
-    setValue("Shortcuts/ChangeMode", hotkey);
+    setValue("Shortcuts/ChangeMode", shortcut);
+}
+
+QString AppSettings::searchPackagesShortcut() const
+{
+    return value("Shortcuts/SearchPackages", defaultSearchPackagesShortcut()).toString();
+}
+
+void AppSettings::setSearchPackagesShortcut(const QString &shortcut)
+{
+    setValue("Shortcuts/SearchPackages", shortcut);
 }
 
 QByteArray AppSettings::mainWindowGeometry() const

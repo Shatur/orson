@@ -153,7 +153,12 @@ void SettingsDialog::on_clearShortcutButton_clicked()
 
 void SettingsDialog::on_resetShortcutButton_clicked()
 {
-    ui->shortcutsTreeWidget->currentItem()->setText(1, ui->shortcutsTreeWidget->currentItem()->data(1, Qt::UserRole).toString());
+    QTreeWidgetItemIterator it(ui->shortcutsTreeWidget, QTreeWidgetItemIterator::NoChildren);
+    while (*it) {
+        (*it)->setText(1, (*it)->data(1, Qt::UserRole).toString());
+        ++it;
+    }
+
     ui->shortcutSequenceEdit->setKeySequence(ui->shortcutsTreeWidget->currentItem()->text(1));
     ui->acceptShortcutButton->setEnabled(false);
 }
@@ -199,6 +204,7 @@ void SettingsDialog::on_SettingsDialog_accepted()
 
     // Shortcuts
     settings.setChangeModeShortcut(ui->shortcutsTreeWidget->topLevelItem(0)->text(1));
+    settings.setSearchPackagesShortcut(ui->shortcutsTreeWidget->topLevelItem(1)->text(1));
 }
 
 
@@ -284,6 +290,8 @@ void SettingsDialog::loadSettings()
     // Shortcuts
     ui->shortcutsTreeWidget->topLevelItem(0)->setText(1, settings.changeModeShortcut());
     ui->shortcutsTreeWidget->topLevelItem(0)->setData(1, Qt::UserRole, settings.defaultChangeModeShortcut());
+    ui->shortcutsTreeWidget->topLevelItem(1)->setText(1, settings.searchPackagesShortcut());
+    ui->shortcutsTreeWidget->topLevelItem(1)->setData(1, Qt::UserRole, settings.defaultSearchPackagesShortcut());
 }
 
 QString SettingsDialog::chooseIcon()

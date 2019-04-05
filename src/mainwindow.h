@@ -90,7 +90,9 @@ private:
     QButtonGroup *m_depsButtonGroup;
     QMenu *m_trayMenu;
     QActionGroup *m_afterCompletionGroup;
+
     QShortcut *m_changeModeShortcut;
+    QShortcut *m_searchPackagesShortcut;
 
     Pacman *m_pacman;
     AutosyncTimer *m_autosyncTimer;

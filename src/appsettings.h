@@ -104,9 +104,14 @@ public:
 
     // Shortcuts
     QString changeModeShortcut() const;
-    void setChangeModeShortcut(const QString &hotkey);
+    void setChangeModeShortcut(const QString &shortcut);
     constexpr const char *defaultChangeModeShortcut() const
     { return "Ctrl+M"; }
+
+    QString searchPackagesShortcut() const;
+    void setSearchPackagesShortcut(const QString &shortcut);
+    constexpr const char *defaultSearchPackagesShortcut() const
+    { return "Ctrl+F"; }
 
     // Main window settings
     QByteArray mainWindowGeometry() const;

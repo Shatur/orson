@@ -38,7 +38,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Shortcuts
     m_changeModeShortcut = new QShortcut(this);
+    m_searchPackagesShortcut = new QShortcut(this);
     connect(m_changeModeShortcut, &QShortcut::activated, this, &MainWindow::changeSearchMode);
+    connect(m_searchPackagesShortcut, &QShortcut::activated, ui->searchPackagesEdit, qOverload<>(&SearchEdit::setFocus));
 
     // Terminal
     m_pacman = new Pacman(this);
@@ -633,6 +635,7 @@ void MainWindow::loadAppSettings()
 
     // Shortcuts
     m_changeModeShortcut->setKey(QKeySequence(settings.changeModeShortcut()));
+    m_searchPackagesShortcut->setKey(QKeySequence(settings.searchPackagesShortcut()));
 }
 
 void MainWindow::loadMainWindowSettings()
