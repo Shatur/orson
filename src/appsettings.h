@@ -10,7 +10,7 @@
 #include <QNetworkProxy>
 #include <QTranslator>
 
-class AppSettings : private QSettings
+class AppSettings : public QSettings
 {
     Q_OBJECT
 public:
