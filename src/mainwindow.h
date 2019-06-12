@@ -23,6 +23,7 @@ class MainWindow;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+    Q_DISABLE_COPY(MainWindow)
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
@@ -72,7 +73,7 @@ private slots:
     void processTerminalFinish(int exitCode);
 
 private:
-    virtual void closeEvent(QCloseEvent *event) override;
+    void closeEvent(QCloseEvent *event) override;
 
     // Package info tabs
     void loadPackageInfo(const Package *package);

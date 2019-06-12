@@ -28,11 +28,11 @@ QVariant TasksModel::data(const QModelIndex &index, int role) const
                 return item->package()->name() + " " + item->package()->version();
             return item->package()->name() + " " + item->package()->version() + " ⇒ " + item->package()->availableUpdate();
         }
-        return item->categoryName(item->type());
+        return Task::categoryName(item->type());
     case Qt::DecorationRole:
         if (item->type() == Task::Item)
             return item->package()->icon();
-        return item->categoryIcon(item->type());
+        return Task::categoryIcon(item->type());
     default:
         return QVariant();
     }

@@ -3,8 +3,10 @@
 
 #include <QSettings>
 
-class PacmanSettings : private QSettings
+class PacmanSettings : public QSettings
 {
+    Q_DISABLE_COPY(PacmanSettings)
+
 public:
     PacmanSettings();
 

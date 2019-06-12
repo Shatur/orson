@@ -16,7 +16,6 @@ class SystemTray : public QSystemTrayIcon
 #endif
 {
 public:
-
     SystemTray(MainWindow *parent);
 
     MainWindow *parent() const;
@@ -33,7 +32,7 @@ private slots:
 #endif
 
 private:
-    static QString lastSyncString(QDateTime dateTime);
+    static QString lastSyncString(const QDateTime& dateTime);
 };
 
 #endif // SYSTEMTRAY_H

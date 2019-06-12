@@ -144,7 +144,7 @@ void SystemTray::processTrayActivation(QSystemTrayIcon::ActivationReason reason)
 }
 #endif
 
-QString SystemTray::lastSyncString(QDateTime dateTime)
+QString SystemTray::lastSyncString(const QDateTime& dateTime)
 {
     QString syncString = tr("Last sync: ");
     if (dateTime.isNull())

@@ -14,12 +14,13 @@ class TasksDialog;
 class TasksDialog : public QDialog
 {
     Q_OBJECT
+    Q_DISABLE_COPY(TasksDialog)
 
 public:
     TasksDialog(Pacman *terminal, PackagesView *view, QMenuBar *bar, QWidget *parent = nullptr);
     ~TasksDialog() override;
 
-    virtual int exec() override;
+    int exec() override;
 
 private slots:
     void on_noConfirmCheckBox_toggled(bool checked);

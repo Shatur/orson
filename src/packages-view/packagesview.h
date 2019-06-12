@@ -10,6 +10,7 @@ class PackagesModel;
 class PackagesView : public QTreeView
 {
     Q_OBJECT
+    Q_DISABLE_COPY(PackagesView)
 
 public:
     enum SearchType {

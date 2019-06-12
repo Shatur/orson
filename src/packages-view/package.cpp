@@ -202,7 +202,7 @@ QStringList Package::files() const
     else
         filesList = alpm_pkg_get_files(m_localData);
 
-    for (unsigned i = 0; i < filesList->count; ++i)
+    for (size_t i = 0; i < filesList->count; ++i)
         files.append(filesList->files[i].name);
 
     return files;
@@ -322,8 +322,8 @@ QIcon Package::icon() const
 
     if (QIcon::hasThemeIcon(packageName))
         return QIcon::fromTheme(packageName);
-    else
-        return QIcon::fromTheme("package-x-generic");
+
+    return QIcon::fromTheme("package-x-generic");
 }
 
 double Package::popularity() const

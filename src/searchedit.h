@@ -6,6 +6,7 @@
 class SearchEdit : public QLineEdit
 {
     Q_OBJECT
+    Q_DISABLE_COPY(SearchEdit)
 
 public:
     SearchEdit(QWidget *parent = nullptr);

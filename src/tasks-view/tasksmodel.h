@@ -33,7 +33,7 @@ private:
     void addCategory(Task::Type category, const QVector<Package *> &packages = {});
 
     Task *m_rootItem;
-    PackagesView *m_PackagesView;
+    PackagesView *m_PackagesView{};
 };
 
 #endif // TASKSMODEL_H

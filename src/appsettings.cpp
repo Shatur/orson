@@ -1,4 +1,4 @@
-#include "appsettings.h"
+﻿#include "appsettings.h"
 #include "singleapplication.h"
 
 #include <QStandardPaths>
@@ -114,7 +114,7 @@ void AppSettings::setAutostartEnabled(bool enabled)
     if (enabled) {
         // Create autorun file
         if (!autorunFile.exists()) {
-            constexpr char desktopFileName[] = "/usr/share/applications/orson.desktop";
+            const QString desktopFileName = QStringLiteral("/usr/share/applications/orson.desktop");
 
             if (!QFile::copy(desktopFileName, autorunFile.fileName()))
                 qCritical() << tr("Unable to create autorun file from ") + desktopFileName;
@@ -187,12 +187,14 @@ QStringList AppSettings::defaultArguments(const QString &terminal) const
 {
     if (terminal == "konsole")
         return { "--hide-menubar", "--hide-tabbar", "-e" };
-    else if (terminal == "gnome-terminal")
+
+    if (terminal == "gnome-terminal")
         return { "--hide-menubar", "--" };
-    else if (terminal == "mate-terminal" || terminal == "xfce4-terminal")
+
+    if (terminal == "mate-terminal" || terminal == "xfce4-terminal")
         return { "--hide-menubar", "-x" };
-    else
-        return { "-e" };
+
+    return { "-e" };
 }
 
 void AppSettings::setTerminalArguments(const QString &terminal, const QStringList &arguments)
@@ -275,7 +277,7 @@ QDateTime AppSettings::lastSync() const
     return value("LastSync", QDateTime()).toDateTime();
 }
 
-void AppSettings::setLastSync(QDateTime dateTime)
+void AppSettings::setLastSync(const QDateTime& dateTime)
 {
     setValue("LastSync", dateTime);
 }

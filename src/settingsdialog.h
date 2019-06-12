@@ -12,10 +12,11 @@ class SettingsDialog;
 class SettingsDialog : public QDialog
 {
     Q_OBJECT
+    Q_DISABLE_COPY(SettingsDialog)
 
 public:
     explicit SettingsDialog(QWidget *parent = nullptr);
-    ~SettingsDialog();
+    ~SettingsDialog() override;
 
 private slots:
     // UI

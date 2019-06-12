@@ -13,6 +13,8 @@
 class AppSettings : public QSettings
 {
     Q_OBJECT
+    Q_DISABLE_COPY(AppSettings)
+
 public:
     AppSettings(QObject *parent = nullptr);
 
@@ -76,7 +78,7 @@ public:
     static QTime defaultAutosyncTime();
 
     QDateTime lastSync() const;
-    void setLastSync(QDateTime dateTime);
+    void setLastSync(const QDateTime& dateTime);
 
     // Interface settings
     QString statusIconName(PackagesModel::DatabaseStatus status) const;

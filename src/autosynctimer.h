@@ -8,6 +8,7 @@ class QTimer;
 class AutosyncTimer : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(AutosyncTimer)
 
 public:
     enum AutosyncType {

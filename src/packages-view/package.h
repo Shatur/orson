@@ -9,8 +9,8 @@
 
 class __alpm_pkg_t;
 class __alpm_list_t;
-typedef __alpm_list_t alpm_list_t;
-typedef __alpm_pkg_t alpm_pkg_t;
+using alpm_list_t = __alpm_list_t;
+using alpm_pkg_t = __alpm_pkg_t;
 
 class Package
 {

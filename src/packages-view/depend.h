@@ -4,7 +4,7 @@
 #include <QStringList>
 
 class _alpm_depend_t;
-typedef _alpm_depend_t alpm_depend_t;
+using alpm_depend_t = _alpm_depend_t;
 
 class Depend
 {

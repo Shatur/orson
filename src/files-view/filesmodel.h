@@ -8,6 +8,7 @@ class File;
 class FilesModel : public QAbstractItemModel
 {
     Q_OBJECT
+    Q_DISABLE_COPY(FilesModel)
 
 public:
     explicit FilesModel(QObject *parent = nullptr);

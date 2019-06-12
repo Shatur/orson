@@ -7,6 +7,8 @@ class FilesModel;
 
 class FilesView : public QTreeView
 {
+    Q_DISABLE_COPY(FilesView)
+
 public:
     explicit FilesView(QWidget *parent = nullptr);
     FilesModel *model() const;

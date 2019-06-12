@@ -11,6 +11,7 @@ class Package;
 class Pacman : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(Pacman)
 
 public:
     enum AfterCompletion {
@@ -52,7 +53,7 @@ private:
     static QString afterCompletionCommand(AfterCompletion afterCompletion);
     void exec(const QString &commands, AfterCompletion afterCompletion);
 
-    PackagesView *m_tasksView;
+    PackagesView *m_tasksView = nullptr;
     QProcess *m_terminal;
     AfterCompletion m_afterTasksCompletion = WaitForInput;
     bool m_noConfirm = true;

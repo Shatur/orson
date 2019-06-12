@@ -12,6 +12,7 @@ class QNetworkAccessManager;
 class PackagesModel : public QAbstractItemModel
 {
     Q_OBJECT
+    Q_DISABLE_COPY(PackagesModel)
 
 public:
     enum Mode {
@@ -49,7 +50,7 @@ public:
     void loadMoreAurInfo(Package *package);
 
 signals:
-    void databaseStatusChanged(DatabaseStatus status);
+    void databaseStatusChanged(PackagesModel::DatabaseStatus status);
     void databaseLoadingMessageChanged(const QString &text);
     void firstPackageAvailable();
     void packageChanged(Package *package);
