@@ -237,6 +237,11 @@ void AppSettings::setPacmanTool(const QString &programName)
     setValue("PacmanTool", programName);
 }
 
+QString AppSettings::defaultPacmanTool()
+{
+    return QStringLiteral("sudo pacman");
+}
+
 AutosyncTimer::AutosyncType AppSettings::autosyncType() const
 {
     return value("AutosyncType", defaultAutosyncType()).value<AutosyncTimer::AutosyncType>();
@@ -395,6 +400,11 @@ void AppSettings::setChangeModeShortcut(const QString &shortcut)
     setValue("Shortcuts/ChangeMode", shortcut);
 }
 
+QString AppSettings::defaultChangeModeShortcut()
+{
+    return QStringLiteral("Ctrl+M");
+}
+
 QString AppSettings::searchPackagesShortcut() const
 {
     return value("Shortcuts/SearchPackages", defaultSearchPackagesShortcut()).toString();
@@ -403,6 +413,11 @@ QString AppSettings::searchPackagesShortcut() const
 void AppSettings::setSearchPackagesShortcut(const QString &shortcut)
 {
     setValue("Shortcuts/SearchPackages", shortcut);
+}
+
+QString AppSettings::defaultSearchPackagesShortcut()
+{
+    return QStringLiteral("Ctrl+F");
 }
 
 QByteArray AppSettings::mainWindowGeometry() const

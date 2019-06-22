@@ -60,8 +60,7 @@ public:
     QString pacmanTool() const;
     QStringList availablePacmanTools() const;
     void setPacmanTool(const QString &programName);
-    static constexpr const char *defaultPacmanTool()
-    { return "sudo pacman"; }
+    static QString defaultPacmanTool();
 
     AutosyncTimer::AutosyncType autosyncType() const;
     void setAutosyncType(AutosyncTimer::AutosyncType type);
@@ -107,13 +106,11 @@ public:
     // Shortcuts
     QString changeModeShortcut() const;
     void setChangeModeShortcut(const QString &shortcut);
-    constexpr const char *defaultChangeModeShortcut() const
-    { return "Ctrl+M"; }
+    static QString defaultChangeModeShortcut();
 
     QString searchPackagesShortcut() const;
     void setSearchPackagesShortcut(const QString &shortcut);
-    constexpr const char *defaultSearchPackagesShortcut() const
-    { return "Ctrl+F"; }
+    static QString defaultSearchPackagesShortcut();
 
     // Main window settings
     QByteArray mainWindowGeometry() const;
