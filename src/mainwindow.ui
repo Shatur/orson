@@ -2,14 +2,6 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>740</width>
-    <height>745</height>
-   </rect>
-  </property>
   <property name="windowTitle">
    <string>Orson</string>
   </property>
@@ -36,6 +28,9 @@
          <iconset theme="dialog-apply">
           <normaloff>.</normaloff>.</iconset>
         </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonFollowStyle</enum>
+        </property>
        </widget>
       </item>
       <item>
@@ -56,6 +51,9 @@
         <property name="checkable">
          <bool>true</bool>
         </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonFollowStyle</enum>
+        </property>
        </widget>
       </item>
       <item>
@@ -73,6 +71,9 @@
         <property name="checkable">
          <bool>true</bool>
         </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonFollowStyle</enum>
+        </property>
        </widget>
       </item>
       <item>
@@ -89,6 +90,9 @@
         <property name="icon">
          <iconset theme="reload">
           <normaloff>.</normaloff>.</iconset>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonFollowStyle</enum>
         </property>
        </widget>
       </item>
@@ -275,7 +279,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>718</width>
+             <width>874</width>
              <height>450</height>
             </rect>
            </property>
@@ -766,8 +770,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>718</width>
-             <height>368</height>
+             <width>894</width>
+             <height>429</height>
             </rect>
            </property>
            <layout class="QFormLayout" name="depsContentLayout">
@@ -912,8 +916,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>740</width>
-     <height>31</height>
+     <width>930</width>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="fileMenu">
