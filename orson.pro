@@ -68,7 +68,7 @@ FORMS += \
     src/tasksdialog.ui \
     src/settingsdialog.ui
 
-LIBS += -lalpm
+LIBS += -lalpm -ltbb
 
 # Rules for deployment
 bin.path = /usr/bin

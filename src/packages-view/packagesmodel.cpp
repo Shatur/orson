@@ -7,6 +7,8 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 
+#include <execution>
+
 constexpr char AUR_API_URL[] = "https://aur.archlinux.org/rpc/";
 
 PackagesModel::PackagesModel(QObject *parent) :
@@ -522,16 +524,17 @@ void PackagesModel::setDatabaseStatus(DatabaseStatus databaseStatus)
 template<typename T1, typename T2>
 void PackagesModel::sortPackages(QVector<Package *> &container, Qt::SortOrder order, T1 firstMember, T2 secondMember)
 {
+//    map
     switch (order) {
     case Qt::AscendingOrder:
-        std::sort(container.begin(), container.end(), [&](Package *first, Package *second) {
+        std::sort(std::execution::par_unseq, container.begin(), container.end(), [&](Package *first, Package *second) {
             if ((first->*firstMember)() == (second->*firstMember)())
                 return (first->*secondMember)() < (second->*secondMember)();
             return (first->*firstMember)() > (second->*firstMember)();
         });
         break;
     case Qt::DescendingOrder:
-        std::sort(container.begin(), container.end(), [&](Package *first, Package *second) {
+        std::sort(std::execution::par_unseq, container.begin(), container.end(), [&](Package *first, Package *second) {
             if ((first->*firstMember)() == (second->*firstMember)())
                 return (first->*secondMember)() < (second->*secondMember)();
             return (first->*firstMember)() < (second->*firstMember)();
@@ -545,12 +548,12 @@ void PackagesModel::sortPackages(QVector<Package *> &container, Qt::SortOrder or
 {
     switch (order) {
     case Qt::AscendingOrder:
-        std::sort(container.begin(), container.end(), [&](Package *first, Package *second) {
+        std::sort(std::execution::par_unseq, container.begin(), container.end(), [&](Package *first, Package *second) {
             return (first->*member)() > (second->*member)();
         });
         break;
     case Qt::DescendingOrder:
-        std::sort(container.begin(), container.end(), [&](Package *first, Package *second) {
+        std::sort(std::execution::par_unseq, container.begin(), container.end(), [&](Package *first, Package *second) {
             return (first->*member)() < (second->*member)();
         });
         break;
