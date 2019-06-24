@@ -49,5 +49,5 @@ QStringList PacmanSettings::repositories() const
 QStringList PacmanSettings::ignoredPackages() const
 {
     const QString ignoredPackages = value("ignorePkg").toString();
-    return ignoredPackages.split(' ');
+    return ignoredPackages.split(' ', QString::SkipEmptyParts);
 }
