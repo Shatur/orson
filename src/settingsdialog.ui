@@ -68,8 +68,7 @@
         <string>Pacman</string>
        </property>
        <property name="icon">
-        <iconset theme="kapman">
-         <normaloff>.</normaloff>.</iconset>
+        <iconset theme="system-software-install"/>
        </property>
       </item>
       <item>
