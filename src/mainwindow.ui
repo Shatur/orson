@@ -2,6 +2,14 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>930</width>
+    <height>843</height>
+   </rect>
+  </property>
   <property name="windowTitle">
    <string>Orson</string>
   </property>
@@ -39,10 +47,10 @@
          <bool>false</bool>
         </property>
         <property name="toolTip">
-         <string>Check for updates</string>
+         <string>Sync repositories (-Sy)</string>
         </property>
         <property name="text">
-         <string>Sync repositories (-Sy)</string>
+         <string>Sync</string>
         </property>
         <property name="icon">
          <iconset theme="mail-send-receive">
@@ -61,8 +69,11 @@
         <property name="enabled">
          <bool>false</bool>
         </property>
-        <property name="text">
+        <property name="toolTip">
          <string>Upgrade all (-Su)</string>
+        </property>
+        <property name="text">
+         <string>Upgrade all</string>
         </property>
         <property name="icon">
          <iconset theme="go-up">
@@ -85,7 +96,7 @@
          <string>Reload database</string>
         </property>
         <property name="text">
-         <string>Reload database</string>
+         <string>Reload</string>
         </property>
         <property name="icon">
          <iconset theme="reload">
