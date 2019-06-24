@@ -128,14 +128,12 @@ void AppSettings::setAutostartEnabled(bool enabled)
 
 QString AppSettings::terminal() const
 {
-    return value("Terminal", availableTerminals().at(0)).toString();
+    return value("Terminal", availableTerminals().first()).toString();
 }
 
 QStringList AppSettings::availableTerminals() const
 {
     QStringList terminals;
-    if (QFileInfo::exists("/usr/bin/xterm"))
-        terminals.append("xterm");
     if (QFileInfo::exists("/usr/bin/konsole"))
         terminals.append("konsole");
     if (QFileInfo::exists("/usr/bin/gnome-terminal"))
@@ -166,9 +164,11 @@ QStringList AppSettings::availableTerminals() const
         terminals.append("termite");
     if (QFileInfo::exists("/usr/bin/tilix"))
         terminals.append("tilix");
+    if (QFileInfo::exists("/usr/bin/xterm"))
+        terminals.append("xterm");
 
     if (terminals.isEmpty())
-        terminals.append("");
+        terminals.append(QString());
 
     return terminals;
 }
