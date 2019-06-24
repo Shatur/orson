@@ -8,6 +8,7 @@
 
 class Package;
 class QNetworkAccessManager;
+class PacmanSettings;
 
 class PackagesModel : public QAbstractItemModel
 {
@@ -59,10 +60,13 @@ private:
     void setDatabaseStatus(DatabaseStatus databaseStatus);
     void loadDatabases();
 
-    // Helper functions for loading all databases
-    int loadLocalDatabase();
+    // Helper functions for loading all types of databases
+    void loadLocalDatabase();
     void loadSyncDatabase(const QString &databaseName);
     void loadAurDatabase();
+
+    void checkForUpdates(const PacmanSettings &settings);
+    void resetDatabase();
 
     // Sorting
     template<typename T1, typename T2>
@@ -81,6 +85,7 @@ private:
 
     QVector<Package *> m_repoPackages;
     QVector<Package *> m_aurPackages;
+    QVector<Package *> m_installedPackages;
     QVector<Package *> m_outdatedPackages;
 
     QNetworkAccessManager *m_manager;

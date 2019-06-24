@@ -1,7 +1,7 @@
 #include "pacmansettings.h"
 
-PacmanSettings::PacmanSettings() :
-    QSettings("/etc/pacman.conf", QSettings::IniFormat)
+PacmanSettings::PacmanSettings(QObject *parent) :
+    QSettings("/etc/pacman.conf", QSettings::IniFormat, parent)
 {
 }
 
@@ -44,4 +44,10 @@ QStringList PacmanSettings::repositories() const
     repositories.removeAt(index);
 
     return repositories;
+}
+
+QStringList PacmanSettings::ignoredPackages() const
+{
+    const QString ignoredPackages = value("ignorePkg").toString();
+    return ignoredPackages.split(' ');
 }

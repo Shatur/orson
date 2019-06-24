@@ -350,17 +350,8 @@ void PackagesModel::loadDatabases()
 {
     setDatabaseStatus(Loading);
 
-    // Reset old data
-    if (!m_repoPackages.isEmpty()) {
-        beginResetModel();
-
-        qDeleteAll(m_repoPackages);
-        m_repoPackages.clear();
-        m_outdatedPackages.clear();
-        alpm_release(m_handle);
-
-        endResetModel();
-    }
+    if (m_handle != nullptr)
+        resetDatabase();
 
     // Initialize ALPM
     const PacmanSettings settings;
@@ -370,39 +361,23 @@ void PackagesModel::loadDatabases()
         return;
     }
 
-    // Load local database
-    const int installedPackages = loadLocalDatabase();
-
-    // Load sync packages
+    // Load packages
+    loadLocalDatabase();
     foreach (const QString &repo, settings.repositories())
         loadSyncDatabase(repo);
-
-    // Load additional information for packages installed from AUR
     loadAurDatabase();
-
-    // Check for updates
-    emit databaseLoadingMessageChanged("Checking for updates");
-    foreach (Package *package, m_repoPackages) {
-        if (!package->availableUpdate().isEmpty())
-            m_outdatedPackages.append(package);
-    }
-
-    // Set status
-    if (m_outdatedPackages.empty())
-        setDatabaseStatus(NoUpdates);
-    else
-        setDatabaseStatus(UpdatesAvailable);
+    checkForUpdates(settings);
 
     emit databaseLoadingMessageChanged(QString::number(m_repoPackages.size())
                                + " packages avaible in official repositories, "
-                               + QString::number(installedPackages)
+                               + QString::number(m_installedPackages.size())
                                + " packages installed, "
                                + (m_outdatedPackages.empty() ? "no" : QString::number(m_outdatedPackages.size()))
                                + " updates available");
 }
 
 // Load installed (local) packages
-int PackagesModel::loadLocalDatabase()
+void PackagesModel::loadLocalDatabase()
 {
     emit databaseLoadingMessageChanged("Loading installed packages");
 
@@ -410,7 +385,7 @@ int PackagesModel::loadLocalDatabase()
     alpm_list_t *cache = alpm_db_get_pkgcache(database);
     while (cache != nullptr) {
         if (m_loadingDatabases.isCanceled())
-            return 0;
+            return;
 
         auto *packageData = static_cast<alpm_pkg_t *>(cache->data);
         auto *package = new Package;
@@ -418,6 +393,7 @@ int PackagesModel::loadLocalDatabase()
 
         beginInsertRows(QModelIndex(), m_repoPackages.size(), m_repoPackages.size());
         m_repoPackages.append(package);
+        m_installedPackages.append(package);
 
         // Emit signal about first package
         if (m_repoPackages.size() == 1)
@@ -426,8 +402,6 @@ int PackagesModel::loadLocalDatabase()
         cache = cache->next;
     }
     endInsertRows();
-
-    return m_repoPackages.size();
 }
 
 void PackagesModel::loadSyncDatabase(const QString &databaseName)
@@ -504,6 +478,36 @@ void PackagesModel::loadAurDatabase()
                 package->setAurData(packageData.toObject(), true);
         }
     }
+}
+
+// Check if updates for local packages is available from sync and aur databases
+void PackagesModel::checkForUpdates(const PacmanSettings &settings)
+{
+    emit databaseLoadingMessageChanged("Checking for updates");
+
+    const QStringList ignoredPackages = settings.ignoredPackages();
+    foreach (Package *package, m_repoPackages) {
+        if (!package->availableUpdate().isEmpty() && !ignoredPackages.contains(package->name()))
+            m_outdatedPackages.append(package);
+    }
+
+    if (m_outdatedPackages.empty())
+        setDatabaseStatus(NoUpdates);
+    else
+        setDatabaseStatus(UpdatesAvailable);
+}
+
+void PackagesModel::resetDatabase()
+{
+    beginResetModel();
+
+    qDeleteAll(m_repoPackages);
+    m_repoPackages.clear();
+    m_outdatedPackages.clear();
+    m_installedPackages.clear();
+    alpm_release(m_handle);
+
+    endResetModel();
 }
 
 void PackagesModel::setDatabaseStatus(DatabaseStatus databaseStatus)

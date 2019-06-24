@@ -8,7 +8,7 @@ class PacmanSettings : public QSettings
     Q_DISABLE_COPY(PacmanSettings)
 
 public:
-    PacmanSettings();
+    explicit PacmanSettings(QObject *parent = nullptr);
 
     QString rootDir() const;
     QString databasesPath() const;
@@ -18,6 +18,7 @@ public:
     QString hookDir() const;
 
     QStringList repositories() const;
+    QStringList ignoredPackages() const;
 };
 
 #endif // PACMANSETTINGS_H
