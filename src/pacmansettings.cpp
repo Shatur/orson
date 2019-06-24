@@ -39,9 +39,8 @@ QStringList PacmanSettings::repositories() const
 {
     QStringList repositories = childGroups();
 
-    // Remove "options" field
-    const int index = repositories.indexOf("options");
-    repositories.removeAt(index);
+    // Remove "options" field that
+    repositories.removeOne(QStringLiteral("options"));
 
     return repositories;
 }
