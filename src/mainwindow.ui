@@ -782,7 +782,7 @@
              <x>0</x>
              <y>0</y>
              <width>894</width>
-             <height>429</height>
+             <height>417</height>
             </rect>
            </property>
            <layout class="QFormLayout" name="depsContentLayout">
@@ -985,6 +985,17 @@
    <addaction name="tasksMenu"/>
    <addaction name="toolsMenu"/>
   </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
   <action name="installLocalAction">
    <property name="icon">
     <iconset theme="package-x-generic">
@@ -1108,11 +1119,17 @@
    <class>PackagesView</class>
    <extends>QTreeView</extends>
    <header>src/packages-view/packagesview.h</header>
+   <slots>
+    <signal>currentPackageChanged(Package*)</signal>
+   </slots>
   </customwidget>
   <customwidget>
    <class>SearchEdit</class>
    <extends>QLineEdit</extends>
    <header>src/searchedit.h</header>
+   <slots>
+    <signal>textSearched(QString)</signal>
+   </slots>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -1131,5 +1148,314 @@
   <tabstop>depsScrollArea</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>installLocalAction</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>installLocalPackage()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>464</x>
+     <y>421</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>installLocalDependAction</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>installLocalPackageAsDepend()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>464</x>
+     <y>421</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>exitAction</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>exit()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>464</x>
+     <y>421</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>instantSearchAction</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setInstantSearch(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>464</x>
+     <y>421</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>noConfirmAction</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setNoConfirm(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>464</x>
+     <y>421</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>forceAction</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setForce(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>464</x>
+     <y>421</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>openHistoryFileAction</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>openHistoryFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>464</x>
+     <y>421</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>openHistoryFolderAction</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>openHistoryFileFolder()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>464</x>
+     <y>421</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>settingsAction</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>openSettings()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>464</x>
+     <y>421</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>applyButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>applyTasks()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>45</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>464</x>
+     <y>421</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>syncButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setSyncDatabase(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>125</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>464</x>
+     <y>421</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>upgradeButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setUpgradeDatabase(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>223</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>464</x>
+     <y>421</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>reloadButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>reloadDatabase()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>327</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>464</x>
+     <y>421</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>browserButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>openInBrowser()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>863</x>
+     <y>301</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>464</x>
+     <y>421</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>searchModeComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setSearchMode(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>743</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>464</x>
+     <y>421</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>searchPackagesEdit</sender>
+   <signal>textSearched(QString)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>searchPackages(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>540</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>464</x>
+     <y>421</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>packagesView</sender>
+   <signal>currentPackageChanged(Package*)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>displayPackage(Package*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>464</x>
+     <y>173</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>464</x>
+     <y>421</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>packageTabsWidget</sender>
+   <signal>currentChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setPackageTab(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>464</x>
+     <y>573</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>464</x>
+     <y>421</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>installLocalPackage()</slot>
+  <slot>installLocalPackageAsDepend()</slot>
+  <slot>exit()</slot>
+  <slot>setInstantSearch(bool)</slot>
+  <slot>setNoConfirm(bool)</slot>
+  <slot>setForce(bool)</slot>
+  <slot>openHistoryFileFolder()</slot>
+  <slot>openHistoryFile()</slot>
+  <slot>openSettings()</slot>
+  <slot>applyTasks()</slot>
+  <slot>setSyncDatabase(bool)</slot>
+  <slot>setUpgradeDatabase(bool)</slot>
+  <slot>reloadDatabase()</slot>
+  <slot>openInBrowser()</slot>
+  <slot>setSearchMode(int)</slot>
+  <slot>searchPackages(QString)</slot>
+  <slot>displayPackage(Package*)</slot>
+  <slot>setPackageTab(int)</slot>
+ </slots>
 </ui>

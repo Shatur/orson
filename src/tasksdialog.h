@@ -23,10 +23,9 @@ public:
     int exec() override;
 
 private slots:
-    void on_noConfirmCheckBox_toggled(bool checked);
-    void on_forceCheckBox_toggled(bool checked);
-    void on_afterCompletionComboBox_currentIndexChanged(int index);
-
+    void setNoConfirm(bool enabled);
+    void setForce(bool enabled);
+    void setAfterCompletion(int action);
     void processTaskRemoving();
 
 private:

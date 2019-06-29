@@ -56,34 +56,34 @@ void SettingsDialog::on_proxyTypeComboBox_currentIndexChanged(int index)
     }
 }
 
-void SettingsDialog::on_loadingIconButton_clicked()
+void SettingsDialog::chooseLoadingIcon()
 {
     ui->loadingIconEdit->setText(chooseIcon());
 }
 
-void SettingsDialog::on_updatesAvailableIconButton_clicked()
+void SettingsDialog::chooseUpdatesAvailableIcon()
 {
     ui->updatesAvailableIconEdit->setText(chooseIcon());
 }
 
-void SettingsDialog::on_noUpdatesIconButton_clicked()
+void SettingsDialog::chooseNoUpdatesIcon()
 {
     ui->noUpdatesIconEdit->setText(chooseIcon());
 }
 
-void SettingsDialog::on_loadingIconEdit_textChanged(const QString &fileName)
+void SettingsDialog::setLoadingIcon(const QString &fileName)
 {
     const QIcon icon = SystemTray::trayIcon(fileName);
     ui->loadingIconButton->setIcon(icon);
 }
 
-void SettingsDialog::on_updatesAvailableIconEdit_textChanged(const QString &fileName)
+void SettingsDialog::setUpdatesAvailableIcon(const QString &fileName)
 {
     const QIcon icon = SystemTray::trayIcon(fileName);
     ui->updatesAvailableIconButton->setIcon(icon);
 }
 
-void SettingsDialog::on_noUpdatesIconEdit_textChanged(const QString &fileName)
+void SettingsDialog::setNoUpdatesIcon(const QString &fileName)
 {
     const QIcon icon = SystemTray::trayIcon(fileName);
     ui->noUpdatesIconButton->setIcon(icon);
@@ -173,7 +173,7 @@ void SettingsDialog::on_resetAllShortcutsButton_clicked()
     }
 }
 
-void SettingsDialog::on_SettingsDialog_accepted()
+void SettingsDialog::accept()
 {
     // General settings
     AppSettings settings;
@@ -205,6 +205,8 @@ void SettingsDialog::on_SettingsDialog_accepted()
     // Shortcuts
     settings.setChangeModeShortcut(ui->shortcutsTreeWidget->topLevelItem(0)->text(1));
     settings.setSearchPackagesShortcut(ui->shortcutsTreeWidget->topLevelItem(1)->text(1));
+
+    QDialog::accept();
 }
 
 

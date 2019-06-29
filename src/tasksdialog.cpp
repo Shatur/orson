@@ -56,21 +56,21 @@ int TasksDialog::exec()
     return QDialog::exec();
 }
 
-void TasksDialog::on_noConfirmCheckBox_toggled(bool checked)
+void TasksDialog::setNoConfirm(bool enabled)
 {
-    m_pacman->setNoConfirm(checked);
+    m_pacman->setNoConfirm(enabled);
     updateCommandsText();
 }
 
-void TasksDialog::on_forceCheckBox_toggled(bool checked)
+void TasksDialog::setForce(bool enabled)
 {
-    m_pacman->setForce(checked);
+    m_pacman->setForce(enabled);
     updateCommandsText();
 }
 
-void TasksDialog::on_afterCompletionComboBox_currentIndexChanged(int index)
+void TasksDialog::setAfterCompletion(int action)
 {
-    const auto afterCompletion = static_cast<Pacman::AfterCompletion>(index);
+    const auto afterCompletion = static_cast<Pacman::AfterCompletion>(action);
     m_pacman->setAfterTasksCompletion(afterCompletion);
 }
 

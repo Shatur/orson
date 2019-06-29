@@ -31,16 +31,15 @@ public:
 
 private slots:
     // Menu bar
-    void on_installLocalAction_triggered();
-    void on_installLocalDependAction_triggered();
-    void on_exitAction_triggered();
-    void on_instantSearchAction_toggled(bool checked);
-    void on_noConfirmAction_toggled(bool checked);
-    void on_forceAction_toggled(bool checked);
-    void on_openHistoryFileAction_triggered();
-    void on_openHistoryFolderAction_triggered();
-    void on_settingsAction_triggered();
-
+    void installLocalPackage();
+    void installLocalPackageAsDepend();
+    void exit();
+    void setInstantSearch(bool enabled);
+    void setNoConfirm(bool enabled);
+    void setForce(bool enabled);
+    void openHistoryFile();
+    void openHistoryFileFolder();
+    void openSettings();
     void setAfterTasksCompletionAction(QAction *action);
 
     // Tray context menu
@@ -49,18 +48,17 @@ private slots:
     void upgrade();
 
     // Buttons
-    void on_applyButton_clicked();
-    void on_syncButton_toggled(bool checked);
-    void on_upgradeButton_toggled(bool checked);
-    void on_reloadButton_clicked();
-    void on_browserButton_clicked();
+    void applyTasks();
+    void setSyncDatabase(bool sync);
+    void setUpgradeDatabase(bool upgrade);
+    void reloadDatabase();
+    void openInBrowser();
 
     // General
-    void on_searchModeComboBox_currentIndexChanged(int index);
-    void on_searchPackagesEdit_textSearched();
-    void on_packagesView_currentPackageChanged(Package *package);
-    void on_packageTabsWidget_currentChanged(int index);
-
+    void setSearchMode(int mode);
+    void searchPackages(const QString &text);
+    void displayPackage(Package *package);
+    void setPackageTab(int index);
     void setStatusBarMessage(const QString &text);
     void changeSearchMode();
     void findDepend(QAbstractButton* button);

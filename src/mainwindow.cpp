@@ -66,12 +66,12 @@ MainWindow::MainWindow(QWidget *parent) :
     // System tray context menu
     m_trayMenu = new QMenu(this);
     m_trayMenu->addAction(QIcon::fromTheme("window"), tr("Show window"), this, &MainWindow::show);
-    m_trayMenu->addAction(ui->settingsAction->icon(), ui->settingsAction->iconText(), this, &MainWindow::on_settingsAction_triggered);
+    m_trayMenu->addAction(ui->settingsAction->icon(), ui->settingsAction->iconText(), this, &MainWindow::openSettings);
     m_trayMenu->addSeparator();
     m_trayMenu->addAction(QIcon::fromTheme("system-upgrade"), tr("Sync and upgrade (-Syu)"), this, &MainWindow::syncAndUpgrade);
     m_trayMenu->addAction(ui->upgradeButton->icon(), ui->upgradeButton->text(), this, &MainWindow::upgrade);
     m_trayMenu->addAction(ui->syncButton->icon(), ui->syncButton->text(), this, &MainWindow::syncRepositories);
-    m_trayMenu->addAction(ui->reloadButton->icon(), ui->reloadButton->text(), this, &MainWindow::on_reloadButton_clicked);
+    m_trayMenu->addAction(ui->reloadButton->icon(), ui->reloadButton->text(), this, &MainWindow::reloadDatabase);
     m_trayMenu->addSeparator();
     m_trayMenu->addAction(QIcon::fromTheme("application-exit"), tr("Exit"), SingleApplication::instance(), &SingleApplication::quit);
 
@@ -105,7 +105,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_installLocalAction_triggered()
+void MainWindow::installLocalPackage()
 {
     QFileDialog dialog(this, tr("Select package"));
     dialog.setNameFilter(tr("Pacman package (*.pkg.tar.xz);;All files(*)"));
@@ -118,7 +118,7 @@ void MainWindow::on_installLocalAction_triggered()
     m_pacman->installLocalPackage(dialog.selectedFiles().at(0));
 }
 
-void MainWindow::on_installLocalDependAction_triggered()
+void MainWindow::installLocalPackageAsDepend()
 {
     QFileDialog dialog(this, tr("Select package"));
     dialog.setNameFilter(tr("Pacman package (*.pkg.tar.xz);;All files(*)"));
@@ -131,43 +131,43 @@ void MainWindow::on_installLocalDependAction_triggered()
     m_pacman->installLocalPackage(dialog.selectedFiles().at(0), true);
 }
 
-void MainWindow::on_exitAction_triggered()
+void MainWindow::exit()
 {
     SingleApplication::exit();
 }
 
-void MainWindow::on_instantSearchAction_toggled(bool checked)
+void MainWindow::setInstantSearch(bool enabled)
 {
-    ui->searchPackagesEdit->setInstantSearchEnabled(checked);
-    if (checked)
-        on_searchPackagesEdit_textSearched();
+    ui->searchPackagesEdit->setInstantSearchEnabled(enabled);
+    if (enabled)
+        searchPackages(ui->searchPackagesEdit->text());
 }
 
-void MainWindow::on_noConfirmAction_toggled(bool checked)
+void MainWindow::setNoConfirm(bool enabled)
 {
-    m_pacman->setNoConfirm(checked);
+    m_pacman->setNoConfirm(enabled);
 }
 
-void MainWindow::on_forceAction_toggled(bool checked)
+void MainWindow::setForce(bool enabled)
 {
-    m_pacman->setForce(checked);
+    m_pacman->setForce(enabled);
 }
 
-void MainWindow::on_openHistoryFileAction_triggered()
+void MainWindow::openHistoryFile()
 {
     const PacmanSettings pacmanSettings;
     const QFileInfo logFile = pacmanSettings.logFile();
     QDesktopServices::openUrl(logFile.filePath());
 }
 
-void MainWindow::on_openHistoryFolderAction_triggered()
+void MainWindow::openHistoryFileFolder()
 {
     const PacmanSettings pacmanSettings;
     const QFileInfo logFile = pacmanSettings.logFile();
     QDesktopServices::openUrl(logFile.dir().path());
 }
 
-void MainWindow::on_settingsAction_triggered()
+void MainWindow::openSettings()
 {
     SettingsDialog dialog;
     if (dialog.exec())
@@ -184,40 +184,40 @@ void MainWindow::syncAndUpgrade()
 {
     ui->packagesView->setSyncRepositories(true);
     ui->packagesView->setUpgradePackages(true);
-    on_applyButton_clicked();
+    applyTasks();
 }
 
 void MainWindow::syncRepositories()
 {
     ui->packagesView->setSyncRepositories(true);
     ui->packagesView->setUpgradePackages(false);
-    on_applyButton_clicked();
+    applyTasks();
 }
 
 void MainWindow::upgrade()
 {
     ui->packagesView->setUpgradePackages(true);
     ui->packagesView->setSyncRepositories(false);
-    on_applyButton_clicked();
+    applyTasks();
 }
 
-void MainWindow::on_applyButton_clicked()
+void MainWindow::applyTasks()
 {
     TasksDialog dialog(m_pacman, ui->packagesView, ui->menuBar, this);
     if (dialog.exec())
         m_pacman->executeTasks();
 
     // Set pacman options back (thay may be changed in dialog)
-    on_noConfirmAction_toggled(ui->noConfirmAction->isChecked());
-    on_forceAction_toggled(ui->forceAction->isChecked());
+    setNoConfirm(ui->noConfirmAction->isChecked());
+    setForce(ui->forceAction->isChecked());
     setAfterTasksCompletionAction(m_afterCompletionGroup->checkedAction());
 }
 
-void MainWindow::on_syncButton_toggled(bool checked)
+void MainWindow::setSyncDatabase(bool sync)
 {
-    ui->packagesView->setSyncRepositories(checked);
+    ui->packagesView->setSyncRepositories(sync);
 
-    if (checked) {
+    if (sync) {
         ui->upgradeButton->setEnabled(true); // Enable upgrade button even if no updates available
     } else if (ui->packagesView->model()->outdatedPackages().isEmpty()) {
         ui->upgradeButton->setChecked(false);
@@ -225,17 +225,17 @@ void MainWindow::on_syncButton_toggled(bool checked)
     }
 }
 
-void MainWindow::on_upgradeButton_toggled(bool checked)
+void MainWindow::setUpgradeDatabase(bool upgrade)
 {
-    ui->packagesView->setUpgradePackages(checked);
+    ui->packagesView->setUpgradePackages(upgrade);
 }
 
-void MainWindow::on_reloadButton_clicked()
+void MainWindow::reloadDatabase()
 {
     ui->packagesView->model()->reloadRepoPackages();
 }
 
-void MainWindow::on_browserButton_clicked()
+void MainWindow::openInBrowser()
 {
     QUrl url;
     const Package *package = ui->packagesView->currentPackage();
@@ -247,10 +247,8 @@ void MainWindow::on_browserButton_clicked()
     QDesktopServices::openUrl(url);
 }
 
-void MainWindow::on_searchModeComboBox_currentIndexChanged(int index)
+void MainWindow::setSearchMode(int mode)
 {
-    const auto mode = static_cast<PackagesModel::Mode>(index);
-
     // Disable search by description for AUR
     if (mode == PackagesModel::AUR) {
         qobject_cast<QStandardItemModel *>(ui->searchByComboBox->model())->item(3)->setEnabled(false);
@@ -260,14 +258,14 @@ void MainWindow::on_searchModeComboBox_currentIndexChanged(int index)
         qobject_cast<QStandardItemModel *>(ui->searchByComboBox->model())->item(3)->setEnabled(true);
     }
 
-    ui->packagesView->model()->setMode(mode);
-    on_searchPackagesEdit_textSearched(); // Search packages
+    ui->packagesView->model()->setMode(static_cast<PackagesModel::Mode>(mode));
+    searchPackages(ui->searchPackagesEdit->text()); // Search packages
 }
 
-void MainWindow::on_searchPackagesEdit_textSearched()
+void MainWindow::searchPackages(const QString &text)
 {
     const auto filterType = static_cast<PackagesView::SearchType>(ui->searchByComboBox->currentIndex());
-    ui->packagesView->search(ui->searchPackagesEdit->text(), filterType);
+    ui->packagesView->search(text, filterType);
 }
 
 void MainWindow::showAppRunningMessage()
@@ -278,7 +276,7 @@ void MainWindow::showAppRunningMessage()
     message->show();
 }
 
-void MainWindow::on_packagesView_currentPackageChanged(Package *package)
+void MainWindow::displayPackage(Package *package)
 {
     // Reset loaded tabs information
     ui->infoTab->setProperty("loaded", false);
@@ -328,7 +326,7 @@ void MainWindow::on_packagesView_currentPackageChanged(Package *package)
     }
 }
 
-void MainWindow::on_packageTabsWidget_currentChanged(int index)
+void MainWindow::setPackageTab(int index)
 {
     const Package *package = ui->packagesView->currentPackage();
 
@@ -374,7 +372,7 @@ void MainWindow::findDepend(QAbstractButton *button)
     if (ui->searchModeComboBox->currentIndex() != PackagesModel::Repo)
         ui->searchModeComboBox->setCurrentIndex(PackagesModel::Repo);
     else if (!ui->instantSearchAction->isChecked())
-        on_searchPackagesEdit_textSearched();
+        searchPackages(ui->searchPackagesEdit->text());
 
     // Search package in repo first
     const bool found = ui->packagesView->find(button->toolTip());
@@ -444,7 +442,7 @@ void MainWindow::processTerminalFinish(int exitCode)
         else
             processDatabaseStatusChanged(PackagesModel::UpdatesAvailable);
     } else {
-        on_reloadButton_clicked();
+        reloadDatabase();
     }
 }
 

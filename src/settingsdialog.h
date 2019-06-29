@@ -18,14 +18,16 @@ public:
     explicit SettingsDialog(QWidget *parent = nullptr);
     ~SettingsDialog() override;
 
+public slots:
+    void accept() override;
+
 private slots:
-    // UI
-    void on_loadingIconButton_clicked();
-    void on_updatesAvailableIconButton_clicked();
-    void on_noUpdatesIconButton_clicked();
-    void on_loadingIconEdit_textChanged(const QString &fileName);
-    void on_updatesAvailableIconEdit_textChanged(const QString &fileName);
-    void on_noUpdatesIconEdit_textChanged(const QString &fileName);
+    void chooseLoadingIcon();
+    void chooseUpdatesAvailableIcon();
+    void chooseNoUpdatesIcon();
+    void setLoadingIcon(const QString &fileName);
+    void setUpdatesAvailableIcon(const QString &fileName);
+    void setNoUpdatesIcon(const QString &fileName);
 
     void on_terminalComboBox_currentTextChanged(const QString &terminalName);
     void on_autosyncButtonGroup_buttonToggled(QAbstractButton *button, bool checked);
@@ -39,7 +41,6 @@ private slots:
     void on_resetShortcutButton_clicked();
     void on_resetAllShortcutsButton_clicked();
 
-    void on_SettingsDialog_accepted();
     void restoreDefaults();
 
 private:

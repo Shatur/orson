@@ -68,7 +68,8 @@
         <string>Pacman</string>
        </property>
        <property name="icon">
-        <iconset theme="system-software-install"/>
+        <iconset theme="system-software-install">
+         <normaloff>.</normaloff>.</iconset>
        </property>
       </item>
       <item>
@@ -1078,7 +1079,111 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>loadingIconButton</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>chooseLoadingIcon()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>256</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>275</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>updatesAvailableIconButton</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>chooseUpdatesAvailableIcon()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>256</x>
+     <y>27</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>275</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>noUpdatesIconButton</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>chooseNoUpdatesIcon()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>256</x>
+     <y>45</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>275</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>loadingIconEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>setLoadingIcon(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>282</x>
+     <y>45</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>275</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>updatesAvailableIconEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>setUpdatesAvailableIcon(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>282</x>
+     <y>27</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>275</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>noUpdatesIconEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>setNoUpdatesIcon(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>282</x>
+     <y>45</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>275</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>chooseLoadingIcon()</slot>
+  <slot>chooseUpdatesAvailableIcon()</slot>
+  <slot>chooseNoUpdatesIcon()</slot>
+  <slot>setLoadingIcon(QString)</slot>
+  <slot>setUpdatesAvailableIcon(QString)</slot>
+  <slot>setNoUpdatesIcon(QString)</slot>
+ </slots>
  <buttongroups>
   <buttongroup name="autosyncButtonGroup"/>
  </buttongroups>

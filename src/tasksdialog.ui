@@ -123,5 +123,58 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>noConfirmCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>TasksDialog</receiver>
+   <slot>setNoConfirm(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>254</x>
+     <y>213</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>254</x>
+     <y>213</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>forceCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>TasksDialog</receiver>
+   <slot>setForce(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>254</x>
+     <y>239</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>254</x>
+     <y>213</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>afterCompletionComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>TasksDialog</receiver>
+   <slot>setAfterCompletion(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>62</x>
+     <y>272</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>254</x>
+     <y>213</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>setNoConfirm(bool)</slot>
+  <slot>setForce(bool)</slot>
+  <slot>setAfterCompletion(int)</slot>
+ </slots>
 </ui>
