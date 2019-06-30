@@ -96,6 +96,10 @@ private:
     Pacman *m_pacman;
     AutosyncTimer *m_autosyncTimer;
     SystemTray *m_trayIcon;
+
+    bool m_packageInfoLoaded = false;
+    bool m_packageDepsLoaded = false;
+    bool m_packageFilesLoaded = false;
 };
 
 #endif // MAINWINDOW_H

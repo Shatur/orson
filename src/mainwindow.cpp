@@ -279,9 +279,9 @@ void MainWindow::showAppRunningMessage()
 void MainWindow::displayPackage(Package *package)
 {
     // Reset loaded tabs information
-    ui->infoTab->setProperty("loaded", false);
-    ui->depsTab->setProperty("loaded", false);
-    ui->filesTab->setProperty("loaded", false);
+    m_packageInfoLoaded = false;
+    m_packageDepsLoaded = false;
+    m_packageFilesLoaded = false;
 
     // Load package info header
     ui->iconLabel->setPixmap(package->icon().pixmap(64, 64));
@@ -332,15 +332,15 @@ void MainWindow::setPackageTab(int index)
 
     switch (index) {
     case 0:
-        if (!ui->infoTab->property("loaded").toBool())
+        if (!m_packageInfoLoaded)
             loadPackageInfo(package);
         return;
     case 1:
-        if (!ui->depsTab->property("loaded").toBool())
+        if (!m_packageDepsLoaded)
             loadPackageDeps(package);
         return;
     case 2:
-        if (!ui->filesTab->property("loaded").toBool())
+        if (!m_packageFilesLoaded)
             loadPackageFiles(package);
         return;
     default:
@@ -533,7 +533,7 @@ void MainWindow::loadPackageInfo(const Package *package)
         ui->scriptTitleLabel->setVisible(false);
     }
 
-    ui->infoTab->setProperty("loaded", true);
+    m_packageInfoLoaded = true;
 }
 
 void MainWindow::loadPackageDeps(const Package *package)
@@ -544,13 +544,13 @@ void MainWindow::loadPackageDeps(const Package *package)
     loadDepsButtons(3, package->depends());
     loadDepsButtons(4, package->optdepends());
 
-    ui->depsTab->setProperty("loaded", true);
+    m_packageDepsLoaded = true;
 }
 
 void MainWindow::loadPackageFiles(const Package *package)
 {
     ui->filesView->model()->setPaths(package->files());
-    ui->filesTab->setProperty("loaded", true);
+    m_packageFilesLoaded = true;
 }
 
 void MainWindow::displayInfo(bool display, const QString &text, QLabel *titleLabel, QLabel *label)
