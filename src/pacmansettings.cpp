@@ -1,5 +1,7 @@
 #include "pacmansettings.h"
 
+#include <QDir>
+
 PacmanSettings::PacmanSettings(QObject *parent) :
     QSettings("/etc/pacman.conf", QSettings::IniFormat, parent)
 {
@@ -7,7 +9,7 @@ PacmanSettings::PacmanSettings(QObject *parent) :
 
 QString PacmanSettings::rootDir() const
 {
-    return value("RootDir", "/").toString();
+    return value("RootDir", QDir::separator()).toString();
 }
 
 QString PacmanSettings::databasesPath() const

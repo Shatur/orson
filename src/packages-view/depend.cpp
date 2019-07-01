@@ -9,33 +9,33 @@ Depend::Depend(alpm_depend_t *dependData) :
 
 Depend::Depend(const QString &text)
 {
-    int index = text.indexOf(">");
+    int index = text.indexOf('>');
     if (index != -1) {
-        parseDepend(text, QStringLiteral(">"), index);
+        parseDepend(text, index);
         return;
     }
 
-    index = text.indexOf("<");
+    index = text.indexOf('<');
     if (index != -1) {
-        parseDepend(text, QStringLiteral("<"), index);
+        parseDepend(text, index);
         return;
     }
 
-    index = text.indexOf("=");
+    index = text.indexOf('=');
     if (index != -1) {
-        parseDepend(text, QStringLiteral("="), index);
+        parseDepend(text, index);
         return;
     }
 
-    index = text.indexOf(">=");
+    index = text.indexOf(QStringLiteral(">="));
     if (index != -1) {
-        parseDepend(text, QStringLiteral(">="), index);
+        parseDepend(text, index, 2);
         return;
     }
 
-    index = text.indexOf("<=");
+    index = text.indexOf(QStringLiteral("<="));
     if (index != -1) {
-        parseDepend(text, QStringLiteral("<="), index);
+        parseDepend(text, index, 2);
         return;
     }
 
@@ -87,12 +87,10 @@ QString Depend::mod() const
     }
 }
 
-void Depend::parseDepend(const QString &text, const QString &mod, int position)
+// Tokenize string like jre>=11 to jre, >= and 11
+void Depend::parseDepend(const QString &text, int modPosition, int modSize)
 {
-    const int modSize = mod.size();
-
-    // Tokenize string like jre>=11 to jre, >= and 11
-    m_name = text.left(position);
-    m_mod = text.mid(position, position + modSize);
-    m_version = text.right(position + modSize);
+    m_name = text.left(modPosition);
+    m_mod = text.mid(modPosition, modPosition + modSize);
+    m_version = text.right(modPosition + modSize);
 }

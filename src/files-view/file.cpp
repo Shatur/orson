@@ -1,13 +1,14 @@
-#include <QMimeDatabase>
-
 #include "file.h"
+
+#include <QMimeDatabase>
+#include <QDir>
 
 File::File()
 {
     m_nameColumn = QStringLiteral("Name");
     m_sizeColumn = QStringLiteral("Size");
     m_typeColumn = QStringLiteral("Type");
-    m_info.setFile("/");
+    m_info.setFile(QDir::rootPath());
 }
 
 File::File(const QString &path, File *parent) :

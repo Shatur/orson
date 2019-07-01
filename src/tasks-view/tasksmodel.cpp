@@ -25,8 +25,8 @@ QVariant TasksModel::data(const QModelIndex &index, int role) const
         if (item->type() == Task::Item) {
             const QString update = item->package()->availableUpdate();
             if (update.isEmpty())
-                return item->package()->name() + " " + item->package()->version();
-            return item->package()->name() + " " + item->package()->version() + " ⇒ " + item->package()->availableUpdate();
+                return item->package()->name() + ' ' + item->package()->version();
+            return item->package()->name() + ' ' + item->package()->version() + " ⇒ " + item->package()->availableUpdate();
         }
         return Task::categoryName(item->type());
     case Qt::DecorationRole:

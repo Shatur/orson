@@ -153,7 +153,7 @@ void Pacman::appendPackagesCommand(QString &commands, const QString &pacmanTool,
     commands.append(action);
 
     foreach (Package *package, packages)
-        commands.append(" " + package->name());
+        commands.append(' ' + package->name());
 
     commands.append(parameters);
 
@@ -176,7 +176,7 @@ QString Pacman::afterCompletionCommand(AfterCompletion afterCompletion)
         break;
     case WaitForInput:
         command.append(" && echo");
-        command.append(" && read -s -p '" + tr("Success! To close this window, press <Enter>...") + "'");
+        command.append(" && read -s -p '" + tr("Success! To close this window, press <Enter>...") + '\'');
         break;
     }
 

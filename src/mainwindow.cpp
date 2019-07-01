@@ -242,7 +242,7 @@ void MainWindow::openInBrowser()
     if (package->repo() == "aur")
         url = "https://aur.archlinux.org/packages/" + package->name();
     else
-        url = "https://www.archlinux.org/packages/" + package->repo() + "/" + package->arch() + "/" + package->name();
+        url = "https://www.archlinux.org/packages/" + package->repo() + '/' + package->arch() + '/' + package->name();
 
     QDesktopServices::openUrl(url);
 }
@@ -418,7 +418,7 @@ void MainWindow::processFirstPackageAvailable()
 void MainWindow::processOperationsCountChanged(int tasksCount)
 {
     if (tasksCount > 0) {
-        ui->applyButton->setToolTip("Apply tasks (" + QString::number(tasksCount) + ")");
+        ui->applyButton->setToolTip("Apply tasks (" + QString::number(tasksCount) + ')');
         ui->applyButton->setEnabled(true);
     } else {
         ui->applyButton->setToolTip("Apply tasks");

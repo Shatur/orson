@@ -1,6 +1,8 @@
 #include "filesmodel.h"
 #include "file.h"
 
+#include <QDir>
+
 FilesModel::FilesModel(QObject *parent) :
     QAbstractItemModel(parent)
 {
@@ -98,7 +100,7 @@ void FilesModel::setPaths(const QStringList &paths)
     beginResetModel();
     m_rootItem->removeChildren();
     foreach (const QString &path, paths)
-        addPath(path.split("/", QString::SkipEmptyParts));
+        addPath(path.split('/', QString::SkipEmptyParts));
     endResetModel();
 }
 
@@ -122,7 +124,7 @@ void FilesModel::addPath(const QStringList &path)
             // Get item path
             QString itemPath;
             for (int i = 0; i <= partIndex; ++i)
-                itemPath.append("/" + path.at(i));
+                itemPath.append(QDir::separator() + path.at(i));
 
             auto *item = new File(itemPath, lastFound);
             lastFound = item;
