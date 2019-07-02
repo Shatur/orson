@@ -16,7 +16,7 @@ Pacman::Pacman(QObject *parent) :
     m_terminal = new QProcess(this);
 
     // Add finished and started signal
-    connect(m_terminal, qOverload<int>(&QProcess::finished), this, &Pacman::getExitCode);
+    connect(m_terminal, qOverload<int, QProcess::ExitStatus>(&QProcess::finished), this, &Pacman::getExitCode);
     connect(m_terminal, &QProcess::started, this, &Pacman::started);
 }
 
